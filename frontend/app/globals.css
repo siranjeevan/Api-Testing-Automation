@@ -2,40 +2,40 @@
 
 :root {
   /* User Requested Palette */
-  --slate-gray: #708090;
-  --warm-linen: #faf3e0;
+  --navy: #0A2540;
+  --powder-blue: #C7DDEB;
   
   /* Thematic variables */
-  --bg-page: #fefcf6; /* Slightly lighter linen for background */
-  --bg-sidebar: var(--slate-gray);
+  --bg-page: #f2f7fa; /* Very light powder blue tint */
+  --bg-sidebar: var(--navy);
   --bg-surface: #ffffff;
   --bg-card: #ffffff;
   
-  --accent-primary: var(--slate-gray);
-  --accent-secondary: #5a6b7a;
-  --accent-gradient: linear-gradient(135deg, #708090 0%, #4a5568 100%);
+  --accent-primary: var(--navy);
+  --accent-secondary: #1e3a5f;
+  --accent-gradient: linear-gradient(135deg, #0A2540 0%, #1e3a5f 100%);
   
-  --text-primary: #1e293b;
-  --text-on-dark: var(--warm-linen);
-  --text-muted: #64748b;
+  --text-primary: #0A2540;
+  --text-on-dark: var(--powder-blue);
+  --text-muted: #475569;
   --text-dim: #94a3b8;
   
   --success: #059669;
   --error: #dc2626;
   --warning: #d97706;
   
-  --border-muted: rgba(112, 128, 144, 0.15);
+  --border-muted: rgba(10, 37, 64, 0.1);
   
   --glass-bg: rgba(255, 255, 255, 0.7);
-  --glass-border: rgba(112, 128, 144, 0.1);
+  --glass-border: rgba(10, 37, 64, 0.05);
   --glass-blur: blur(8px);
 
   --font-main: 'Outfit', sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
   
   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-  --shadow-md: 0 4px 6px -1px rgb(112 128 144 / 0.1), 0 2px 4px -2px rgb(112 128 144 / 0.1);
-  --shadow-lg: 0 10px 15px -3px rgb(112 128 144 / 0.1), 0 4px 6px -4px rgb(112 128 144 / 0.1);
+  --shadow-md: 0 4px 6px -1px rgb(10 37 64 / 0.1), 0 2px 4px -2px rgb(10 37 64 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(10 37 64 / 0.15), 0 4px 6px -4px rgb(10 37 64 / 0.1);
 }
 
 * {
@@ -43,7 +43,7 @@
   padding: 0;
   margin: 0;
   scrollbar-width: thin;
-  scrollbar-color: var(--slate-gray) var(--warm-linen);
+  scrollbar-color: var(--navy) var(--powder-blue);
 }
 
 ::-webkit-scrollbar {
@@ -51,11 +51,11 @@
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--warm-linen);
+  background: var(--powder-blue);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--slate-gray);
+  background: var(--navy);
   border-radius: 10px;
 }
 

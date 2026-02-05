@@ -5,17 +5,37 @@ import { ApiEndpoint, TestExecutionResult } from './types';
 
 export default function Home() {
 
-    const [config, setConfig] = useState({
-        baseUrl: 'http://localhost:8000', // Default example
-        openapiUrl: 'http://localhost:8000/openapi.json',
-        environment: 'local',
-        apiKey: ''
+    const [config, setConfig] = React.useState(() => {
+        if (typeof window !== 'undefined') {
+            const saved = localStorage.getItem('ag_config');
+            return saved ? JSON.parse(saved) : {
+                baseUrl: 'http://localhost:8000',
+                openapiUrl: 'http://localhost:8000/openapi.json',
+                environment: 'local',
+                apiKey: ''
+            };
+        }
+        return { baseUrl: '', openapiUrl: '', environment: 'local', apiKey: '' };
     });
-    const [endpoints, setEndpoints] = useState<ApiEndpoint[]>([]);
-    const [testData, setTestData] = useState('{\n  "users": []\n}');
-    const [results, setResults] = useState<TestExecutionResult[]>([]);
-    const [loading, setLoading] = useState(false);
-    const [tab, setTab] = useState('setup');
+    const [endpoints, setEndpoints] = React.useState<ApiEndpoint[]>([]);
+    const [testData, setTestData] = React.useState(() => {
+        if (typeof window !== 'undefined') {
+            const saved = localStorage.getItem('ag_test_data');
+            return saved || '{\n  "users": []\n}';
+        }
+        return '{\n  "users": []\n}';
+    });
+    const [results, setResults] = React.useState<TestExecutionResult[]>([]);
+    const [loading, setLoading] = React.useState(false);
+    const [tab, setTab] = React.useState('setup');
+
+    React.useEffect(() => {
+        localStorage.setItem('ag_config', JSON.stringify(config));
+    }, [config]);
+
+    React.useEffect(() => {
+        localStorage.setItem('ag_test_data', testData);
+    }, [testData]);
 
     const parseSwagger = async () => {
         setLoading(true);
@@ -167,44 +187,96 @@ export default function Home() {
             </aside>
             <main className={styles.main}>
                 {tab === 'setup' && (
-                    <div className={styles.card}>
-                        <h2 className="mb-8">Project Setup</h2>
-                        <div className={styles.formGroup}>
-                            <label className={styles.label}>OpenAPI Definition URL</label>
-                            <input
-                                className={styles.input}
-                                value={config.openapiUrl}
-                                onChange={e => setConfig({ ...config, openapiUrl: e.target.value })}
-                                placeholder="https://api.example.com/openapi.json"
-                            />
+                    <div className="animate-in fade-in slide-in-from-right-4 duration-500">
+                        <div className={styles.header}>
+                            <h2 className="text-2xl font-bold">System Configuration</h2>
                         </div>
-                        <div className={styles.formGroup}>
-                            <label className={styles.label}>Target Environment Base URL</label>
-                            <input
-                                className={styles.input}
-                                value={config.baseUrl}
-                                onChange={e => setConfig({ ...config, baseUrl: e.target.value })}
-                                placeholder="https://api.example.com"
-                            />
+                        
+                        <div className={styles.setupGrid}>
+                            <div className={styles.card}>
+                                <div className={styles.cardHeader}>
+                                    <div className={styles.iconBox}>
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-navy"><path d="M21 12V7a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 7v10a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l2-1.14"/><polyline points="3.29 7 12 12 20.71 7"/><line x1="12" y1="22" x2="12" y2="12"/></svg>
+                                    </div>
+                                    <h3 className="text-lg font-bold text-navy">API Source</h3>
+                                </div>
+                                
+                                <div className={styles.formGroup}>
+                                    <label className={styles.label}>Swagger URL</label>
+                                    <input
+                                        className={styles.input}
+                                        value={config.openapiUrl}
+                                        onChange={e => setConfig({ ...config, openapiUrl: e.target.value })}
+                                        placeholder="https://api.example.com/swagger.json"
+                                    />
+                                    <p className={styles.helperText}>
+                                        Provide the public URL to your Swagger or OpenAPI JSON/YAML definition.
+                                    </p>
+                                </div>
+
+                                <button className={`${styles.button} w-full mt-auto`} onClick={parseSwagger} disabled={loading}>
+                                    {loading ? (
+                                        <>
+                                            <svg className="animate-spin" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
+                                            Mapping API context...
+                                        </>
+                                    ) : (
+                                        <>
+                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                                            Fetch Definitions
+                                        </>
+                                    )}
+                                </button>
+                            </div>
+
+                            <div className={styles.card}>
+                                <div className={styles.cardHeader}>
+                                    <div className={styles.iconBox}>
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-navy"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                                    </div>
+                                    <h3 className="text-lg font-bold text-navy">Environment Settings</h3>
+                                </div>
+
+                                <div className={styles.formGroup}>
+                                    <label className={styles.label}>Target Base URL</label>
+                                    <input
+                                        className={styles.input}
+                                        value={config.baseUrl}
+                                        onChange={e => setConfig({ ...config, baseUrl: e.target.value })}
+                                        placeholder="https://api.production.com"
+                                    />
+                                    <p className={styles.helperText}>
+                                        The root endpoint where requests will be executed.
+                                    </p>
+                                </div>
+
+                                <div className={styles.formGroup} style={{ marginBottom: 0 }}>
+                                    <label className={styles.label}>AI Assistant Key (Groq)</label>
+                                    <input
+                                        className={styles.input}
+                                        value={config.apiKey}
+                                        onChange={e => setConfig({ ...config, apiKey: e.target.value })}
+                                        placeholder="gsk_..."
+                                        type="password"
+                                    />
+                                    <p className={styles.helperText}>
+                                        Required for generating high-quality synthetic test data.
+                                    </p>
+                                </div>
+                            </div>
                         </div>
-                        <div className={styles.formGroup}>
-                            <label className={styles.label}>AI Processor API Key (Groq)</label>
-                            <input
-                                className={styles.input}
-                                value={config.apiKey}
-                                onChange={e => setConfig({ ...config, apiKey: e.target.value })}
-                                placeholder="gsk_..."
-                                type="password"
-                            />
+
+                        <div className={styles.persistenceBar}>
+                            <div className={styles.avatarStack}>
+                                <div className={styles.initials}>
+                                    <div className={styles.initial} style={{ background: 'var(--navy)', color: '#fff' }}>JSON</div>
+                                    <div className={styles.initial} style={{ background: 'var(--powder-blue)', color: 'var(--navy)' }}>AI</div>
+                                    <div className={styles.initial} style={{ background: '#94a3b8', color: '#fff' }}>DOC</div>
+                                </div>
+                                <span className={styles.persistenceText}>All session data is encrypted and stored locally in your browser.</span>
+                            </div>
+                            <span className={styles.badge}>Local Persistence Active</span>
                         </div>
-                        <button className={styles.button} onClick={parseSwagger} disabled={loading}>
-                            {loading ? (
-                                <>
-                                    <svg className="animate-spin" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
-                                    Initializing...
-                                </>
-                            ) : 'Load API Context'}
-                        </button>
                     </div>
                 )}
 
