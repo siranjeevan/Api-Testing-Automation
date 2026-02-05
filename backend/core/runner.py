@@ -1,7 +1,7 @@
 import httpx
 import time
 from typing import Dict, Any, List
-from backend.models import ApiEndpoint
+from models import ApiEndpoint
 
 async def execute_test_step(
     client: httpx.AsyncClient, 

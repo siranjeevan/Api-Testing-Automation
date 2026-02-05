@@ -5,10 +5,10 @@ from typing import Dict, Any, List
 import httpx
 import logging
 
-from .models import ApiEndpoint
-from .core.parser import fetch_swagger, parse_swagger_endpoints
-from .core.runner import execute_test_step
-from .core.ai import generate_ai_test_data
+from models import ApiEndpoint
+from core.parser import fetch_swagger, parse_swagger_endpoints
+from core.runner import execute_test_step
+from core.ai import generate_ai_test_data
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)

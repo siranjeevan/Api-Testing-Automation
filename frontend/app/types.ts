@@ -6,6 +6,7 @@ export interface ApiEndpoint {
     description?: string;
     parameters?: any[];
     responses?: any;
+    tags?: string[];
 }
 
 export interface TestExecutionResult {

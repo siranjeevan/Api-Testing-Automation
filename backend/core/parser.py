@@ -3,7 +3,7 @@ import asyncio
 import httpx
 import json
 from typing import Dict, Any, List
-from backend.models import ApiEndpoint
+from models import ApiEndpoint
 
 
 

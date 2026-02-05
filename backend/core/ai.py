@@ -1,7 +1,7 @@
 from groq import Groq
 import json
 from typing import Dict, Any, List
-from ..models import ApiEndpoint
+from models import ApiEndpoint
 
 def generate_ai_test_data(api_key: str, endpoints: List[ApiEndpoint]) -> Dict[str, Any]:
     client = Groq(api_key=api_key)
