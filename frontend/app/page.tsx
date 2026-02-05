@@ -1,10 +1,12 @@
 "use client";
-import React, { useState } from 'react';
+import React from 'react';
 import styles from './page.module.css';
 import { ApiEndpoint, TestExecutionResult } from './types';
 
 export default function Home() {
     const [sidebarExpanded, setSidebarExpanded] = React.useState(true);
+    const [selectedTag, setSelectedTag] = React.useState<string | null>(null);
+    const [autoParams, setAutoParams] = React.useState<Record<string, string>>({});
     const [config, setConfig] = React.useState(() => {
         if (typeof window !== 'undefined') {
             const saved = localStorage.getItem('ag_config');
@@ -74,7 +76,7 @@ export default function Home() {
                     setConfig(prev => ({ ...prev, baseUrl: detectedUrl }));
                 }
 
-                setTab('data');
+                setTab('run-get');
             }
         } catch (e: any) {
             console.error(e);
@@ -176,10 +178,6 @@ export default function Home() {
                     <div className={`${styles.navItem} ${tab === 'setup' ? styles.active : ''}`} onClick={() => setTab('setup')}>
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
                         <span>Configuration</span>
-                    </div>
-                    <div className={`${styles.navItem} ${tab === 'data' ? styles.active : ''}`} onClick={() => setTab('data')}>
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.29 7 12 12 20.71 7"/><line x1="12" y1="22" x2="12" y2="12"/></svg>
-                        <span>Test Data</span>
                     </div>
                     
                     <div className="mt-8 mb-2 px-4 text-[10px] uppercase tracking-widest text-dim font-bold opacity-50">Runners</div>
@@ -295,132 +293,268 @@ export default function Home() {
                     </div>
                 )}
 
-                {tab === 'data' && (
-                    <div className="h-full flex flex-col" style={{ height: 'calc(100vh - 120px)' }}>
-                        <div className={styles.header}>
-                            <h2 className="text-xl font-bold">Mock Data Engine</h2>
-                            <div className="flex gap-4">
-                                <button className={`${styles.button} ${styles.secondary}`} onClick={generateData} disabled={loading}>
-                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/><path d="M5 3v4"/><path d="M19 17v4"/><path d="M3 5h4"/><path d="M17 19h4"/></svg>
-                                    AI Data Generation
-                                </button>
-                                <button className={styles.button} onClick={() => setTab('run-get')}>Prepare Runner</button>
-                            </div>
-                        </div>
-                        <p className="text-sm text-dim mb-4">The engine expects JSON data keyed by operationId or path. Use variables like {"{variable_name}"} for dynamic data.</p>
-                        <textarea
-                            className={`${styles.input} flex-1 font-mono`}
-                            value={testData}
-                            onChange={e => setTestData(e.target.value)}
-                            style={{ minHeight: '400px', background: 'rgba(0,0,0,0.3)', color: '#f8fafc', padding: '24px', lineHeight: '1.6' }}
-                        />
-                    </div>
-                )}
 
                 {(tab === 'run-get' || tab === 'run-post' || tab === 'run-upload') && (
-                    <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-                        <div className={styles.header}>
-                            <h2 className="text-xl font-bold">
-                                {tab === 'run-get' && 'Data Retrieval (GET)'}
-                                {tab === 'run-post' && 'Data Creation (POST)'}
-                                {tab === 'run-upload' && 'Asset Management (Upload)'}
-                            </h2>
-                            <button 
-                                className={styles.button} 
-                                onClick={() => {
-                                    const m = tab === 'run-get' ? 'GET' : tab === 'run-post' ? 'POST' : undefined;
-                                    const isUpload = tab === 'run-upload';
-                                    const filtered = endpoints.filter(ep => {
-                                        const path = ep.path.toLowerCase();
-                                        const isUp = path.includes('upload') || path.includes('image') || path.includes('file');
-                                        if (isUpload) return isUp;
-                                        if (m) return ep.method.toUpperCase() === m && !isUp;
-                                        return false;
-                                    });
-                                    const runFiltered = async () => {
-                                        setLoading(true);
-                                        setResults(prev => prev.filter(r => !filtered.some(f => f.path === r.endpoint && f.method === r.method)));
-                                        try {
-                                            const res = await fetch('http://localhost:8000/run', {
-                                                method: 'POST', headers: { 'Content-Type': 'application/json' },
-                                                body: JSON.stringify({ baseUrl: config.baseUrl, endpoints: filtered, testData: JSON.parse(testData), variables: {} })
-                                            });
-                                            const data = await res.json();
-                                            setResults(prev => [...prev, ...data.results]);
-                                        } catch (e) { console.error(e); }
-                                        finally { setLoading(false); }
-                                    };
-                                    runFiltered();
-                                }} 
-                                disabled={loading}
-                            >
-                                {loading ? (
-                                    <svg className="animate-spin" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
-                                ) : <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>}
-                                Execute Suite
-                            </button>
-                        </div>
+                    <div className={styles.suiteContainer}>
+                        {(() => {
+                            const m = tab === 'run-get' ? 'GET' : tab === 'run-post' ? 'POST' : undefined;
+                            const isUpload = tab === 'run-upload';
+                            const filtered = endpoints.filter(ep => {
+                                const path = ep.path.toLowerCase();
+                                const isUp = path.includes('upload') || path.includes('image') || path.includes('file');
+                                if (isUpload) return isUp;
+                                if (m) return ep.method.toUpperCase() === m && !isUp;
+                                return false;
+                            });
 
-                        <div className={styles.grid}>
-                            <div className={styles.card}>
-                                <div className="space-y-4">
-                                    {(() => {
-                                        const currentEndpoints = endpoints.filter(ep => {
-                                            const path = ep.path.toLowerCase();
-                                            const isUp = path.includes('upload') || path.includes('image') || path.includes('file');
-                                            if (tab === 'run-upload') return isUp;
-                                            if (tab === 'run-get') return ep.method.toUpperCase() === 'GET' && !isUp;
-                                            if (tab === 'run-post') return ep.method.toUpperCase() === 'POST' && !isUp;
-                                            return false;
-                                        });
+                            const suiteResults = filtered.map(ep => getResult(ep)).filter(Boolean);
+                            const passedCount = suiteResults.filter(r => r?.passed).length;
+                            const failedCount = suiteResults.length - passedCount;
 
-                                        if (currentEndpoints.length === 0) return <div className="text-dim py-20 text-center font-medium">No specialized endpoints detected for this category.</div>;
+                            // Extract unique tags and counts for the selector
+                            const tagCounts = filtered.reduce((acc, ep) => {
+                                const epTags = ep.tags || ['General'];
+                                epTags.forEach(t => {
+                                    acc[t] = (acc[t] || 0) + 1;
+                                });
+                                return acc;
+                            }, {} as Record<string, number>);
+                            
+                            const uniqueTags = Object.keys(tagCounts).sort();
+                            const activeTag = selectedTag || 'All';
 
-                                        return currentEndpoints.map((ep, i) => {
-                                            const res = getResult(ep);
-                                            return (
-                                                <div key={i} className={styles.endpointCard}>
-                                                    <div className={styles.endpointHeader}>
-                                                        <div className="flex items-center gap-4">
-                                                            <span className={`${styles.method} ${styles[ep.method.toLowerCase()]}`}>{ep.method}</span>
-                                                            <div className="flex flex-col">
-                                                                <span className="text-sm font-mono font-bold text-slate-100">{ep.path}</span>
-                                                                {ep.summary && <span className="text-[11px] text-muted">{ep.summary}</span>}
-                                                            </div>
-                                                        </div>
-                                                        {res && (
-                                                            <div className="flex items-center gap-6">
-                                                                <span className="text-[10px] uppercase tracking-widest font-bold text-dim">{res.time.toFixed(0)} ms</span>
-                                                                <span className={`${styles.status} ${res.passed ? styles.pass : styles.fail}`}>
-                                                                    {res.passed ? '✓ SUCCESS' : '✕ FAILED'}
-                                                                </span>
-                                                            </div>
-                                                        )}
-                                                    </div>
-                                                    
-                                                    {res && (
-                                                        <details className="mt-2 group">
-                                                            <summary className="list-none cursor-pointer text-[10px] font-bold text-dim hover:text-accent-primary uppercase tracking-widest flex items-center gap-2 select-none">
-                                                                <svg className="group-open:rotate-90 transition-transform" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><polyline points="9 18 15 12 9 6"/></svg>
-                                                                Inspector
-                                                            </summary>
-                                                            <div className="mt-4 animate-in slide-in-from-top-2 duration-300">
-                                                                <div className={styles.responseData}>
-                                                                    <pre className="whitespace-pre-wrap break-all leading-relaxed">
-                                                                        {JSON.stringify(res.response, null, 2)}
-                                                                    </pre>
-                                                                    {res.error && <div className="text-error mt-4 pt-4 border-t border-white/5 font-bold">Error: {res.error}</div>}
-                                                                </div>
-                                                            </div>
-                                                        </details>
-                                                    )}
+                            return (
+                                <>
+                                    <div className={styles.suiteHeader}>
+                                        <div className={styles.suiteTitleGroup}>
+                                            <h2 className="animate-in fade-in slide-in-from-left-4 duration-700">
+                                                {tab === 'run-get' && 'GET Suite.'}
+                                                {tab === 'run-post' && 'POST Suite.'}
+                                                {tab === 'run-upload' && 'Upload Suite.'}
+                                            </h2>
+                                            <p className="animate-in fade-in slide-in-from-left-4 duration-1000">Automated validation of {filtered.length} system endpoints.</p>
+                                        </div>
+
+                                        <div className="flex items-center gap-12">
+                                            <div className={styles.suiteStats}>
+                                                <div className={styles.statItem}>
+                                                    <span className={styles.statValue}>{filtered.length}</span>
+                                                    <span className={styles.statLabel}>Total</span>
                                                 </div>
-                                            );
-                                        });
-                                    })()}
-                                </div>
-                            </div>
-                        </div>
+                                                <div className={styles.statItem}>
+                                                    <span className={styles.statValue} style={{ color: '#10b981' }}>{passedCount}</span>
+                                                    <span className={styles.statLabel}>Passed</span>
+                                                </div>
+                                                <div className={styles.statItem}>
+                                                    <span className={styles.statValue} style={{ color: '#f43f5e' }}>{failedCount}</span>
+                                                    <span className={styles.statLabel}>Failed</span>
+                                                </div>
+                                            </div>
+
+                                            <button 
+                                                className={styles.runAllButton}
+                                                onClick={async () => {
+                                                    setLoading(true);
+                                                    setResults(prev => prev.filter(r => !filtered.some(f => f.path === r.endpoint && f.method === r.method)));
+                                                    try {
+                                                        const res = await fetch('http://localhost:8000/run', {
+                                                            method: 'POST', headers: { 'Content-Type': 'application/json' },
+                                                            body: JSON.stringify({ baseUrl: config.baseUrl, endpoints: filtered, testData: JSON.parse(testData), variables: {} })
+                                                        });
+                                                        const data = await res.json();
+                                                        setResults(prev => [...prev, ...data.results]);
+                                                    } catch (e) { console.error(e); }
+                                                    finally { setLoading(false); }
+                                                }}
+                                                disabled={loading}
+                                            >
+                                                {loading ? (
+                                                    <svg className="animate-spin" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
+                                                ) : (
+                                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M5 3l14 9-14 9V3z"/></svg>
+                                                )}
+                                                <span>Execute Full Suite</span>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div className={styles.tagNav}>
+                                        <button 
+                                            className={`${styles.tagPill} ${activeTag === 'All' ? styles.active : ''}`}
+                                            onClick={() => setSelectedTag('All')}
+                                        >
+                                            <span>All Categories</span>
+                                            <span className={styles.tagCount}>{filtered.length}</span>
+                                        </button>
+                                        {uniqueTags.map(tag => (
+                                            <button 
+                                                key={tag}
+                                                className={`${styles.tagPill} ${activeTag === tag ? styles.active : ''}`}
+                                                onClick={() => setSelectedTag(tag)}
+                                            >
+                                                <span>{tag}</span>
+                                                <span className={styles.tagCount}>{tagCounts[tag]}</span>
+                                            </button>
+                                        ))}
+                                    </div>
+
+                                    <div className={styles.suiteGrid}>
+                                        {filtered.length === 0 ? (
+                                            <div className="col-span-full py-32 text-center">
+                                                <p className="text-dim text-lg">No endpoints detected in this category.</p>
+                                            </div>
+                                        ) : (
+                                            Object.entries(
+                                                filtered.reduce((acc, ep) => {
+                                                    const tag = ep.tags?.[0] || 'General';
+                                                    if (!acc[tag]) acc[tag] = [];
+                                                    acc[tag].push(ep);
+                                                    return acc;
+                                                }, {} as Record<string, typeof filtered>)
+                                            )
+                                            .filter(([tag]) => activeTag === 'All' || activeTag === tag)
+                                            .map(([tag, categoryEndpoints], catIdx) => (
+                                                <div key={tag} className={styles.categorySection}>
+                                                    <div className={styles.categoryLabel}>
+                                                        <div className={styles.catLabelGroup}>
+                                                            <h3>{tag}</h3>
+                                                            <span className={styles.count}>{categoryEndpoints.length}</span>
+                                                        </div>
+                                                        <button 
+                                                            className={styles.catRunButton}
+                                                            disabled={loading}
+                                                            onClick={async () => {
+                                                                setLoading(true);
+                                                                setResults(prev => prev.filter(r => !categoryEndpoints.some(f => f.path === r.endpoint && f.method === r.method)));
+                                                                try {
+                                                                    const res = await fetch('http://localhost:8000/run', {
+                                                                        method: 'POST', headers: { 'Content-Type': 'application/json' },
+                                                                        body: JSON.stringify({ baseUrl: config.baseUrl, endpoints: categoryEndpoints, testData: JSON.parse(testData), variables: {} })
+                                                                    });
+                                                                    const data = await res.json();
+                                                                    setResults(prev => [...prev, ...data.results]);
+                                                                } catch (e) { console.error(e); }
+                                                                finally { setLoading(false); }
+                                                            }}
+                                                        >
+                                                            {loading ? (
+                                                                <svg className="animate-spin" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
+                                                            ) : (
+                                                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M5 3l10 9-10 9V3z"/></svg>
+                                                            )}
+                                                            Execute Category
+                                                        </button>
+                                                    </div>
+                                                    <div className={styles.categoryGrid}>
+                                                        {categoryEndpoints.map((ep, i) => {
+                                                            const res = getResult(ep);
+                                                            const placeholders = ep.path.match(/\{([^}]+)\}/g) || [];
+                                                            
+                                                            const extractIdentifiers = (data: any) => {
+                                                                const found: Record<string, string> = {};
+                                                                const scan = (obj: any) => {
+                                                                    if (!obj || typeof obj !== 'object') return;
+                                                                    if (Array.isArray(obj)) {
+                                                                        obj.forEach(scan);
+                                                                        return;
+                                                                    }
+                                                                    Object.entries(obj).forEach(([key, val]) => {
+                                                                        if (typeof val === 'string' || typeof val === 'number') {
+                                                                            // Match common ID patterns or exact matches like 'id', 'admin_id', etc.
+                                                                            if (key.toLowerCase().includes('id') || key.toLowerCase().includes('uuid')) {
+                                                                                found[key] = String(val);
+                                                                            }
+                                                                        } else {
+                                                                            scan(val);
+                                                                        }
+                                                                    });
+                                                                };
+                                                                scan(data);
+                                                                return found;
+                                                            };
+
+                                                            const resolvePath = (path: string) => {
+                                                                let resolved = path;
+                                                                placeholders.forEach(p => {
+                                                                    const key = p.slice(1, -1);
+                                                                    const val = autoParams[key] || autoParams['id'];
+                                                                    if (val) {
+                                                                        resolved = resolved.replace(p, val);
+                                                                    }
+                                                                });
+                                                                return resolved;
+                                                            };
+
+                                                            const updateAutoParams = (responseData: any) => {
+                                                                const learned = extractIdentifiers(responseData);
+                                                                setAutoParams(prev => ({ ...prev, ...learned }));
+                                                            };
+
+                                                            const runEndpoint = async (singleEp: typeof ep) => {
+                                                                setLoading(true);
+                                                                setResults(prev => prev.filter(r => !(r.endpoint === singleEp.path && r.method === singleEp.method)));
+                                                                try {
+                                                                    const resolvedEp = { ...singleEp, path: resolvePath(singleEp.path) };
+                                                                    const r = await fetch('http://localhost:8000/run', {
+                                                                        method: 'POST', headers: { 'Content-Type': 'application/json' },
+                                                                        body: JSON.stringify({ baseUrl: config.baseUrl, endpoints: [resolvedEp], testData: JSON.parse(testData), variables: {} })
+                                                                    });
+                                                                    const data = await r.json();
+                                                                    setResults(prev => [...prev, ...data.results]);
+                                                                    if (data.results?.[0]?.response) {
+                                                                        updateAutoParams(data.results[0].response);
+                                                                    }
+                                                                } catch (e) { console.error(e); }
+                                                                finally { setLoading(false); }
+                                                            };
+
+                                                            return (
+                                                                <div key={i} className={styles.endpointTile}>
+                                                                    <div className={styles.tileHeader}>
+                                                                        <div className={styles.tilePath}>{ep.path}</div>
+                                                                        <button 
+                                                                            className={styles.tileMethod}
+                                                                            disabled={loading}
+                                                                            onClick={() => runEndpoint(ep)}
+                                                                        >
+                                                                            {loading ? (
+                                                                                <svg className="animate-spin" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
+                                                                            ) : (
+                                                                                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M5 3l14 9-14 9V3z"/></svg>
+                                                                            )}
+                                                                            {ep.method}
+                                                                        </button>
+                                                                    </div>
+                                                                    
+                                                                    {ep.summary && <p className="text-xs text-muted leading-relaxed line-clamp-2">{ep.summary}</p>}
+
+                                                                    {res && (
+                                                                        <div className="animate-in fade-in duration-500">
+                                                                            <div className={styles.tileInfo}>
+                                                                                <div className={styles.tileTime}>{res.time.toFixed(0)} MS</div>
+                                                                                <div className={`${styles.status} ${res.passed ? styles.pass : styles.fail}`}>
+                                                                                    <div className={`w-1.5 h-1.5 rounded-full ${res.passed ? 'bg-success' : 'bg-error'}`}></div>
+                                                                                    {res.passed ? 'Passed' : 'Failed'}
+                                                                                </div>
+                                                                            </div>
+
+                                                                            <div className={styles.inspectorBox}>
+                                                                                <pre>{JSON.stringify(res.response, null, 2)}</pre>
+                                                                            </div>
+                                                                            {res.error && <div className="text-[10px] text-error mt-2 font-mono">{res.error}</div>}
+                                                                        </div>
+                                                                    )}
+                                                                </div>
+                                                            );
+                                                        })}
+                                                    </div>
+                                                </div>
+                                            ))
+                                        )}
+                                    </div>
+                                </>
+                            );
+                        })()}
                     </div>
                 )}
             </main>
