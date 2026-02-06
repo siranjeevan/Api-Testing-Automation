@@ -73,7 +73,7 @@ export default function Home() {
                 }
 
                 if (detectedUrl) {
-                    setConfig(prev => ({ ...prev, baseUrl: detectedUrl }));
+                    setConfig((prev: any) => ({ ...prev, baseUrl: detectedUrl }));
                 }
 
                 setTab('run-get');
@@ -154,6 +154,28 @@ export default function Home() {
     };
 
     const getResult = (ep: ApiEndpoint) => results.find(r => r.endpoint === ep.path && r.method === ep.method);
+
+    const extractIdentifiers = (data: any) => {
+        const found: Record<string, string> = {};
+        const scan = (obj: any) => {
+            if (!obj || typeof obj !== 'object') return;
+            if (Array.isArray(obj)) {
+                obj.forEach(scan);
+                return;
+            }
+            Object.entries(obj).forEach(([key, val]) => {
+                // Capture ALL scalar values (strings, numbers, booleans)
+                // This allows resolving {phone_number}, {email}, {status}, etc.
+                if (typeof val === 'string' || typeof val === 'number' || typeof val === 'boolean') {
+                    found[key] = String(val);
+                } else {
+                    scan(val);
+                }
+            });
+        };
+        scan(data);
+        return found;
+    };
 
     return (
         <div className={styles.container}>
@@ -425,16 +447,79 @@ export default function Home() {
                                                             disabled={loading}
                                                             onClick={async () => {
                                                                 setLoading(true);
+                                                                // Clear results for these endpoints
                                                                 setResults(prev => prev.filter(r => !categoryEndpoints.some(f => f.path === r.endpoint && f.method === r.method)));
-                                                                try {
-                                                                    const res = await fetch('http://localhost:8000/run', {
-                                                                        method: 'POST', headers: { 'Content-Type': 'application/json' },
-                                                                        body: JSON.stringify({ baseUrl: config.baseUrl, endpoints: categoryEndpoints, testData: JSON.parse(testData), variables: {} })
-                                                                    });
-                                                                    const data = await res.json();
-                                                                    setResults(prev => [...prev, ...data.results]);
-                                                                } catch (e) { console.error(e); }
-                                                                finally { setLoading(false); }
+                                                                
+                                                                // 1. Sort: Producers (no vars) first, Consumers (vars) last
+                                                                const sortedEndpoints = [...categoryEndpoints].sort((a, b) => {
+                                                                    const aHasVars = a.path.includes('{');
+                                                                    const bHasVars = b.path.includes('{');
+                                                                    if (aHasVars === bHasVars) return 0;
+                                                                    return aHasVars ? 1 : -1;
+                                                                });
+
+                                                                // 2. Local Context Accumulator
+                                                                let currentContext = { ...autoParams };
+
+                                                                // 3. Sequential Execution Strategy
+                                                                for (const ep of sortedEndpoints) {
+                                                                    try {
+                                                                        // a. Smart Resolve
+                                                                        let resolvedPath = ep.path;
+                                                                        const placeholders = ep.path.match(/\{([^}]+)\}/g) || [];
+                                                                        
+                                                                        placeholders.forEach(p => {
+                                                                            const key = p.slice(1, -1);
+                                                                            // Resolution Priority: Exact Match -> 'id' Fallback
+                                                                            const val = currentContext[key] || currentContext['id'];
+                                                                            if (val) {
+                                                                                resolvedPath = resolvedPath.replace(p, val);
+                                                                            }
+                                                                        });
+
+                                                                        // b. Execute Single
+                                                                        const resolvedEp = { ...ep, path: resolvedPath };
+                                                                        const res = await fetch('http://localhost:8000/run', {
+                                                                            method: 'POST', 
+                                                                            headers: { 'Content-Type': 'application/json' },
+                                                                            body: JSON.stringify({ 
+                                                                                baseUrl: config.baseUrl, 
+                                                                                endpoints: [resolvedEp], // Array of 1
+                                                                                testData: JSON.parse(testData), 
+                                                                                variables: {} 
+                                                                            })
+                                                                        });
+                                                                        
+                                                                        const data = await res.json();
+                                                                        
+                                                                        // c. Learning Phase (Extract IDs)
+                                                                        if (data.results && data.results.length > 0) {
+                                                                            const resultItem = data.results[0];
+                                                                            
+                                                                            // Fix: Ensure the result maps back to the original parameterized path for UI matching
+                                                                            if (resolvedPath !== ep.path) {
+                                                                                resultItem.endpoint = ep.path; 
+                                                                            }
+
+                                                                            setResults(prev => [...prev, resultItem]);
+
+                                                                            if (resultItem.response) {
+                                                                                const learned = extractIdentifiers(resultItem.response);
+                                                                                currentContext = { ...currentContext, ...learned };
+                                                                            }
+                                                                        }
+
+                                                                        // Small delay for UI smoothness
+                                                                        await new Promise(r => setTimeout(r, 50));
+
+                                                                    } catch (e) {
+                                                                        console.error("Execution error:", e);
+                                                                    }
+                                                                }
+
+                                                                // 4. Sync Global Knowledge
+                                                                setAutoParams(currentContext);
+                                                                setLoading(false);
                                                             }}
                                                         >
                                                             {loading ? (
@@ -449,30 +534,6 @@ export default function Home() {
                                                         {categoryEndpoints.map((ep, i) => {
                                                             const res = getResult(ep);
                                                             const placeholders = ep.path.match(/\{([^}]+)\}/g) || [];
-                                                            
-                                                            const extractIdentifiers = (data: any) => {
-                                                                const found: Record<string, string> = {};
-                                                                const scan = (obj: any) => {
-                                                                    if (!obj || typeof obj !== 'object') return;
-                                                                    if (Array.isArray(obj)) {
-                                                                        obj.forEach(scan);
-                                                                        return;
-                                                                    }
-                                                                    Object.entries(obj).forEach(([key, val]) => {
-                                                                        if (typeof val === 'string' || typeof val === 'number') {
-                                                                            // Match common ID patterns or exact matches like 'id', 'admin_id', etc.
-                                                                            if (key.toLowerCase().includes('id') || key.toLowerCase().includes('uuid')) {
-                                                                                found[key] = String(val);
-                                                                            }
-                                                                        } else {
-                                                                            scan(val);
-                                                                        }
-                                                                    });
-                                                                };
-                                                                scan(data);
-                                                                return found;
-                                                            };
-
                                                             const resolvePath = (path: string) => {
                                                                 let resolved = path;
                                                                 placeholders.forEach(p => {
