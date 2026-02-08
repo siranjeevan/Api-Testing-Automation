@@ -1,0 +1,223 @@
+INFO:     Started server process [17315]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+INFO:     127.0.0.1:55091 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55113 - "OPTIONS /parse HTTP/1.1" 200 OK
+INFO:main:Parsing Swagger from: https://bio-band-backend.vercel.app/docs
+INFO:httpx:HTTP Request: GET https://bio-band-backend.vercel.app/v1/openapi.json "HTTP/1.1 404 Not Found"
+INFO:httpx:HTTP Request: GET https://bio-band-backend.vercel.app/docs "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://bio-band-backend.vercel.app/api/v1/openapi.json "HTTP/1.1 404 Not Found"
+INFO:httpx:HTTP Request: GET https://bio-band-backend.vercel.app/api/openapi.json "HTTP/1.1 404 Not Found"
+INFO:httpx:HTTP Request: GET https://bio-band-backend.vercel.app/openapi.json "HTTP/1.1 200 OK"
+Checking: https://bio-band-backend.vercel.app/openapi.json
+Checking: https://bio-band-backend.vercel.app/docs
+Checking: https://bio-band-backend.vercel.app/api/openapi.json
+Checking: https://bio-band-backend.vercel.app/api/v1/openapi.json
+Checking: https://bio-band-backend.vercel.app/v1/openapi.json
+INFO:     127.0.0.1:55113 - "POST /parse HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55113 - "OPTIONS /run HTTP/1.1" 200 OK
+INFO:main:Starting test execution
+INFO:httpx:HTTP Request: POST https://bio-band-backend.vercel.app/users/ "HTTP/1.1 422 Unprocessable Entity"
+INFO:     127.0.0.1:55113 - "POST /run HTTP/1.1" 200 OK
+INFO:main:Starting test execution
+INFO:httpx:HTTP Request: POST https://bio-band-backend.vercel.app/devices/ "HTTP/1.1 422 Unprocessable Entity"
+INFO:     127.0.0.1:55113 - "POST /run HTTP/1.1" 200 OK
+INFO:main:Starting test execution
+INFO:httpx:HTTP Request: POST https://bio-band-backend.vercel.app/health-metrics/ "HTTP/1.1 422 Unprocessable Entity"
+INFO:     127.0.0.1:55113 - "POST /run HTTP/1.1" 200 OK
+INFO:main:Starting test execution
+INFO:httpx:HTTP Request: POST https://bio-band-backend.vercel.app/chat "HTTP/1.1 422 Unprocessable Entity"
+INFO:     127.0.0.1:55113 - "POST /run HTTP/1.1" 200 OK
+INFO:main:Starting test execution
+INFO:httpx:HTTP Request: POST https://bio-band-backend.vercel.app/data-cleanup/invalid-records "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:55113 - "POST /run HTTP/1.1" 200 OK
+INFO:main:Starting test execution
+INFO:httpx:HTTP Request: POST https://bio-band-backend.vercel.app/users/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:55113 - "POST /run HTTP/1.1" 200 OK
+INFO:main:Starting test execution
+INFO:httpx:HTTP Request: POST https://bio-band-backend.vercel.app/health-metrics/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:55128 - "POST /run HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55128 - "OPTIONS /diagnose HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:55128 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Parsing Swagger from: https://bio-band-backend.vercel.app/docs
+INFO:httpx:HTTP Request: GET https://bio-band-backend.vercel.app/docs "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://bio-band-backend.vercel.app/api/openapi.json "HTTP/1.1 404 Not Found"
+INFO:httpx:HTTP Request: GET https://bio-band-backend.vercel.app/v1/openapi.json "HTTP/1.1 404 Not Found"
+INFO:httpx:HTTP Request: GET https://bio-band-backend.vercel.app/openapi.json "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://bio-band-backend.vercel.app/api/v1/openapi.json "HTTP/1.1 404 Not Found"
+Checking: https://bio-band-backend.vercel.app/openapi.json
+Checking: https://bio-band-backend.vercel.app/docs
+Checking: https://bio-band-backend.vercel.app/api/openapi.json
+Checking: https://bio-band-backend.vercel.app/api/v1/openapi.json
+Checking: https://bio-band-backend.vercel.app/v1/openapi.json
+INFO:     127.0.0.1:55143 - "POST /parse HTTP/1.1" 200 OK
+INFO:main:Starting test execution
+INFO:httpx:HTTP Request: POST https://bio-band-backend.vercel.app/health-metrics/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:55153 - "POST /run HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:55153 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Starting test execution
+INFO:httpx:HTTP Request: GET https://bio-band-backend.vercel.app/devices/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:55158 - "POST /run HTTP/1.1" 200 OK
+INFO:main:Starting test execution
+INFO:httpx:HTTP Request: POST https://bio-band-backend.vercel.app/health-metrics/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:55158 - "POST /run HTTP/1.1" 200 OK
+INFO:main:Starting test execution
+INFO:httpx:HTTP Request: GET https://bio-band-backend.vercel.app/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:55175 - "POST /run HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55396 - "OPTIONS /parse HTTP/1.1" 200 OK
+INFO:main:Parsing Swagger from: https://bio-band-backend.vercel.app/docs
+INFO:httpx:HTTP Request: GET https://bio-band-backend.vercel.app/api/openapi.json "HTTP/1.1 404 Not Found"
+INFO:httpx:HTTP Request: GET https://bio-band-backend.vercel.app/openapi.json "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://bio-band-backend.vercel.app/docs "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://bio-band-backend.vercel.app/v1/openapi.json "HTTP/1.1 404 Not Found"
+INFO:httpx:HTTP Request: GET https://bio-band-backend.vercel.app/api/v1/openapi.json "HTTP/1.1 404 Not Found"
+Checking: https://bio-band-backend.vercel.app/openapi.json
+Checking: https://bio-band-backend.vercel.app/docs
+Checking: https://bio-band-backend.vercel.app/api/openapi.json
+Checking: https://bio-band-backend.vercel.app/api/v1/openapi.json
+Checking: https://bio-band-backend.vercel.app/v1/openapi.json
+INFO:     127.0.0.1:55396 - "POST /parse HTTP/1.1" 200 OK
+INFO:main:Parsing Swagger from: https://bio-band-backend.vercel.app/docs
+INFO:httpx:HTTP Request: GET https://bio-band-backend.vercel.app/api/openapi.json "HTTP/1.1 404 Not Found"
+INFO:httpx:HTTP Request: GET https://bio-band-backend.vercel.app/docs "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://bio-band-backend.vercel.app/openapi.json "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://bio-band-backend.vercel.app/api/v1/openapi.json "HTTP/1.1 404 Not Found"
+INFO:httpx:HTTP Request: GET https://bio-band-backend.vercel.app/v1/openapi.json "HTTP/1.1 404 Not Found"
+Checking: https://bio-band-backend.vercel.app/openapi.json
+Checking: https://bio-band-backend.vercel.app/docs
+Checking: https://bio-band-backend.vercel.app/api/openapi.json
+Checking: https://bio-band-backend.vercel.app/api/v1/openapi.json
+Checking: https://bio-band-backend.vercel.app/v1/openapi.json
+INFO:     127.0.0.1:55398 - "POST /parse HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55419 - "OPTIONS /run HTTP/1.1" 200 OK
+INFO:main:Starting test execution
+INFO:httpx:HTTP Request: POST https://bio-band-backend.vercel.app/health-metrics/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:55419 - "POST /run HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55419 - "OPTIONS /diagnose HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:55419 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Starting test execution
+INFO:httpx:HTTP Request: GET https://bio-band-backend.vercel.app/devices/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:55419 - "POST /run HTTP/1.1" 200 OK
+INFO:main:Starting test execution
+INFO:httpx:HTTP Request: POST https://bio-band-backend.vercel.app/health-metrics/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:55419 - "POST /run HTTP/1.1" 200 OK
+INFO:main:Starting test execution
+INFO:httpx:HTTP Request: POST https://bio-band-backend.vercel.app/health-metrics/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:55446 - "POST /run HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55626 - "OPTIONS /run HTTP/1.1" 200 OK
+INFO:main:Starting test execution
+INFO:httpx:HTTP Request: POST https://bio-band-backend.vercel.app/users/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:55626 - "POST /run HTTP/1.1" 200 OK
+INFO:main:Starting test execution
+INFO:httpx:HTTP Request: POST https://bio-band-backend.vercel.app/health-metrics/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:55633 - "POST /run HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55633 - "OPTIONS /parse HTTP/1.1" 200 OK
+INFO:main:Parsing Swagger from: https://bio-band-backend.vercel.app/docs
+INFO:httpx:HTTP Request: GET https://bio-band-backend.vercel.app/api/v1/openapi.json "HTTP/1.1 404 Not Found"
+INFO:httpx:HTTP Request: GET https://bio-band-backend.vercel.app/openapi.json "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://bio-band-backend.vercel.app/v1/openapi.json "HTTP/1.1 404 Not Found"
+INFO:httpx:HTTP Request: GET https://bio-band-backend.vercel.app/docs "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://bio-band-backend.vercel.app/api/openapi.json "HTTP/1.1 404 Not Found"
+Checking: https://bio-band-backend.vercel.app/openapi.json
+Checking: https://bio-band-backend.vercel.app/docs
+Checking: https://bio-band-backend.vercel.app/api/openapi.json
+Checking: https://bio-band-backend.vercel.app/api/v1/openapi.json
+Checking: https://bio-band-backend.vercel.app/v1/openapi.json
+INFO:     127.0.0.1:55633 - "POST /parse HTTP/1.1" 200 OK
+INFO:main:Starting test execution
+INFO:httpx:HTTP Request: POST https://bio-band-backend.vercel.app/health-metrics/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:55787 - "POST /run HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55787 - "OPTIONS /diagnose HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:55787 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Starting test execution
+INFO:httpx:HTTP Request: POST https://bio-band-backend.vercel.app/health-metrics/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:55787 - "POST /run HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:55787 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Parsing Swagger from: https://bio-band-backend.vercel.app/docs
+INFO:httpx:HTTP Request: GET https://bio-band-backend.vercel.app/openapi.json "HTTP/1.1 200 OK"
+Checking: https://bio-band-backend.vercel.app/openapi.json
+Checking: https://bio-band-backend.vercel.app/docs
+Checking: https://bio-band-backend.vercel.app/api/openapi.json
+Checking: https://bio-band-backend.vercel.app/api/v1/openapi.json
+Checking: https://bio-band-backend.vercel.app/v1/openapi.json
+INFO:     127.0.0.1:55787 - "POST /parse HTTP/1.1" 200 OK
+INFO:main:Starting test execution
+INFO:httpx:HTTP Request: POST https://bio-band-backend.vercel.app/health-metrics/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:55787 - "POST /run HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:55787 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Starting test execution
+INFO:httpx:HTTP Request: POST https://bio-band-backend.vercel.app/health-metrics/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:55787 - "POST /run HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:55787 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56116 - "OPTIONS /parse HTTP/1.1" 200 OK
+INFO:main:Parsing Swagger from: https://bio-band-backend.vercel.app/docs
+INFO:httpx:HTTP Request: GET https://bio-band-backend.vercel.app/v1/openapi.json "HTTP/1.1 404 Not Found"
+INFO:httpx:HTTP Request: GET https://bio-band-backend.vercel.app/api/v1/openapi.json "HTTP/1.1 404 Not Found"
+INFO:httpx:HTTP Request: GET https://bio-band-backend.vercel.app/docs "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://bio-band-backend.vercel.app/api/openapi.json "HTTP/1.1 404 Not Found"
+INFO:httpx:HTTP Request: GET https://bio-band-backend.vercel.app/openapi.json "HTTP/1.1 200 OK"
+Checking: https://bio-band-backend.vercel.app/openapi.json
+Checking: https://bio-band-backend.vercel.app/docs
+Checking: https://bio-band-backend.vercel.app/api/openapi.json
+Checking: https://bio-band-backend.vercel.app/api/v1/openapi.json
+Checking: https://bio-band-backend.vercel.app/v1/openapi.json
+INFO:     127.0.0.1:56116 - "POST /parse HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56116 - "OPTIONS /run HTTP/1.1" 200 OK
+INFO:main:Starting test execution
+INFO:httpx:HTTP Request: POST https://bio-band-backend.vercel.app/health-metrics/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:56127 - "POST /run HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56127 - "OPTIONS /diagnose HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:56116 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Starting test execution
+INFO:httpx:HTTP Request: POST https://bio-band-backend.vercel.app/health-metrics/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:56116 - "POST /run HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:56116 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56337 - "OPTIONS /parse HTTP/1.1" 200 OK
+INFO:main:Parsing Swagger from: https://bio-band-backend.vercel.app/docs
+INFO:httpx:HTTP Request: GET https://bio-band-backend.vercel.app/openapi.json "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://bio-band-backend.vercel.app/v1/openapi.json "HTTP/1.1 404 Not Found"
+Checking: https://bio-band-backend.vercel.app/openapi.json
+Checking: https://bio-band-backend.vercel.app/docs
+Checking: https://bio-band-backend.vercel.app/api/openapi.json
+Checking: https://bio-band-backend.vercel.app/api/v1/openapi.json
+Checking: https://bio-band-backend.vercel.app/v1/openapi.json
+INFO:     127.0.0.1:56337 - "POST /parse HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56345 - "OPTIONS /run HTTP/1.1" 200 OK
+INFO:main:Starting test execution
+INFO:httpx:HTTP Request: POST https://bio-band-backend.vercel.app/health-metrics/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:56345 - "POST /run HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56345 - "OPTIONS /diagnose HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:56345 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Starting test execution
+INFO:httpx:HTTP Request: POST https://bio-band-backend.vercel.app/health-metrics/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:56345 - "POST /run HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:56345 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Starting test execution
+INFO:httpx:HTTP Request: GET https://bio-band-backend.vercel.app/devices/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:56355 - "POST /run HTTP/1.1" 200 OK
+INFO:main:Starting test execution
+INFO:httpx:HTTP Request: POST https://bio-band-backend.vercel.app/health-metrics/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:56355 - "POST /run HTTP/1.1" 200 OK

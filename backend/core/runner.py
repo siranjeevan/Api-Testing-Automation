@@ -51,10 +51,28 @@ async def execute_test_step(
                     url = url.replace(f"{{{p_name}}}", str(val))
 
     # 2. Prepare Body
-    body = None
-    if endpoint.method in ["POST", "PUT", "PATCH"]:
-        # Extract body from op_data or fallback to root op_id
-        body = op_data.get("body")
+    body = op_data.get("body")
+    if body and endpoint.method in ["POST", "PUT", "PATCH"]:
+        def resolve_body_placeholders(obj):
+            if isinstance(obj, str):
+                # 1. Check if it's a DIRECT replacement (e.g. "{{id}}" or "{id}")
+                # This preserves types (ints, bools) which is critical for parsing
+                stripped = obj.strip()
+                if (stripped.startswith("{{") and stripped.endswith("}}")) or (stripped.startswith("{") and stripped.endswith("}")):
+                    key = stripped.strip("{}")
+                    if key in context:
+                        return context[key]
+                
+                # 2. General string replacement for templates
+                return replace_placeholders(obj, context)
+            
+            elif isinstance(obj, dict):
+                return {k: resolve_body_placeholders(v) for k, v in obj.items()}
+            elif isinstance(obj, list):
+                return [resolve_body_placeholders(i) for i in obj]
+            return obj
+
+        body = resolve_body_placeholders(body)
     
     # 3. Request
     start_time = time.time()
@@ -74,9 +92,6 @@ async def execute_test_step(
         )
         
         duration = (time.time() - start_time) * 1000
-        # Relaxed passing condition: any response from server < 500 is technically a "successful" test execution
-        # (The user can interpret 404 as "User not found" which is valid behavior)
-        passed = response.status_code < 500
         
         # Safe JSON extraction
         resp_data = None
@@ -91,6 +106,15 @@ async def execute_test_step(
         # If data is empty string or None, explicitly return "No Data"
         if not resp_data and resp_data != 0 and resp_data != False:
              resp_data = "No Data"
+
+        # Strict passing condition: any response from server < 400 is considered a pass.
+        # 4xx (Client Error) and 5xx (Server Error) are marked as failures.
+        passed = response.status_code < 400
+        
+        # Check body for logical failures even if status is 200
+        if passed and isinstance(resp_data, dict):
+            if resp_data.get("success") is False or resp_data.get("error") is True:
+                passed = False
 
         return {
             "endpoint": endpoint.path,

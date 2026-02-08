@@ -8,7 +8,13 @@ import logging
 from models import ApiEndpoint
 from core.parser import fetch_swagger, parse_swagger_endpoints
 from core.runner import execute_test_step
-from core.ai import generate_ai_test_data
+from core.ai import generate_ai_test_data, diagnose_error
+
+class DiagnoseRequest(BaseModel):
+    apiKey: str
+    endpoint: Dict[str, Any]
+    requestBody: Any
+    responseBody: Any
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -85,3 +91,18 @@ async def run_tests(request: RunRequest):
             # Simplified for now.
             
     return {"results": results}
+
+@app.post("/diagnose")
+async def diagnose(request: DiagnoseRequest):
+    logger.info("Diagnosing API failure using AI")
+    try:
+        diagnosis = diagnose_error(
+            request.apiKey, 
+            request.endpoint, 
+            request.requestBody, 
+            request.responseBody
+        )
+        return diagnosis
+    except Exception as e:
+        logger.error(f"Error diagnosing failure: {e}")
+        raise HTTPException(status_code=500, detail=str(e))

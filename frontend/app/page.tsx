@@ -6,17 +6,14 @@ import { ApiEndpoint, TestExecutionResult } from './types';
 export default function Home() {
     const [sidebarExpanded, setSidebarExpanded] = React.useState(true);
     const [selectedTag, setSelectedTag] = React.useState<string | null>(null);
-    const [autoParams, setAutoParams] = React.useState<Record<string, string>>({});
+    const [autoParams, setAutoParams] = React.useState<Record<string, any>>({});
     const [errorDrawerOpen, setErrorDrawerOpen] = React.useState(false);
     const [warningDrawerOpen, setWarningDrawerOpen] = React.useState(false);
     
     // START: Payload Configuration State
-    const [showModal, setShowModal] = React.useState(false);
-    const [activeEndpoint, setActiveEndpoint] = React.useState<ApiEndpoint | null>(null);
-    const [requestBodyInput, setRequestBodyInput] = React.useState("{}");
     const [schemas, setSchemas] = React.useState<Record<string, any>>({});
-    const [manualInputs, setManualInputs] = React.useState<Record<string, Record<string, string>>>({});
     const [manualBodies, setManualBodies] = React.useState<Record<string, string>>({});
+    const [aiDiagnoses, setAiDiagnoses] = React.useState<Record<string, { diagnosis: 'INPUT_ISSUE' | 'API_ISSUE', explanation: string, suggested_fix?: any }>>({});
     
     // Helper to generate dummy data from schema
     const generateFromSchema = (schema: any, depth = 0, fieldName = ''): any => {
@@ -31,6 +28,19 @@ export default function Home() {
                 return generateFromSchema(resolved, depth + 1, fieldName);
             }
             return `<REF:${name}>`;
+        }
+
+        const lowerName = (fieldName || "").toLowerCase();
+
+        // 🚀 SMART DEPENDENCY RESOLUTION: Use global learned context (autoParams)
+        // Check for specific match first, then broader patterns
+        const specificKey = Object.keys(autoParams).find(k => k === fieldName || k === lowerName || (k.toLowerCase() === lowerName));
+        if (specificKey) return `{{${specificKey}}}`;
+
+        // If it's an ID field, always use a specific placeholder name to avoid collisions
+        // Even if we don't have it yet, we want runEndpoint to fetch it specifically.
+        if (lowerName.includes('id') || lowerName.endsWith('_id') || lowerName.endsWith('id')) {
+            return `{{${fieldName}}}`;
         }
 
         if (schema.example) return schema.example;
@@ -63,7 +73,6 @@ export default function Home() {
         }
 
         const type = schema.type?.toLowerCase();
-        const lowerName = (fieldName || "").toLowerCase();
 
         if (type === "string") {
             if (schema.format === "date-time") return new Date().toISOString();
@@ -72,21 +81,16 @@ export default function Home() {
             
             // Smart context-aware generation
             if (lowerName.includes('phone')) {
-                // Generate a random 10-digit phone number starting with a typical regional digit
                 return "" + (Math.floor(Math.random() * 3) + 7) + Math.floor(100000000 + Math.random() * 900000000);
             }
             if (lowerName.includes('email')) {
-                const prefixes = ['test', 'user', 'admin', 'contact', 'jeevith'];
+                const prefix = fieldName.split('_').join('').split('-').join('');
                 const rand = Math.floor(Math.random() * 1000);
-                return `${prefixes[Math.floor(Math.random() * prefixes.length)]}${rand}@gmail.com`;
+                return `${prefix}${rand}@gmail.com`;
             }
             if (lowerName.includes('name')) {
-                const firstNames = ['John', 'Jane', 'Alex', 'Sarah', 'Michael', 'Jeevith'];
-                const lastNames = ['Doe', 'Smith', 'Wilson', 'Brown', 'Kumar'];
-                const first = firstNames[Math.floor(Math.random() * firstNames.length)];
-                const last = lastNames[Math.floor(Math.random() * lastNames.length)];
                 const rand = Math.floor(Math.random() * 1000);
-                return `${first} ${last} ${rand}`;
+                return `${fieldName} ${rand}`;
             }
 
             return "string";
@@ -149,48 +153,42 @@ export default function Home() {
         }
     }, [schemas]);
 
+
+
+
     const parseSwagger = async () => {
         setLoading(true);
-
         try {
             const res = await fetch('http://localhost:8000/parse', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ url: config.openapiUrl })
             });
-
             if (!res.ok) {
                 const err = await res.json();
                 throw new Error(err.detail || 'Failed to fetch');
             }
-
             const data = await res.json();
             if (data.endpoints) {
                 setEndpoints(data.endpoints);
-
-                // Auto-detect and set Base URL from server definition or origin
                 let detectedUrl = '';
                 if (data.raw?.servers?.length > 0) {
                     detectedUrl = data.raw.servers[0].url;
                 }
-
-                // If server URL is relative or missing, derive from OpenAPI URL
                 if (!detectedUrl || !detectedUrl.startsWith('http')) {
                     try {
                         const urlObj = new URL(config.openapiUrl);
                         detectedUrl = urlObj.origin;
                     } catch (e) { }
                 }
-
                 if (detectedUrl) {
                     setConfig((prev: any) => ({ ...prev, baseUrl: detectedUrl }));
                 }
-
-                // Extract schemas for reference resolution
                 const swaggerSchemas = data.raw?.components?.schemas || data.raw?.definitions || {};
                 setSchemas(swaggerSchemas);
-
                 setTab('run-get');
+                // Automatically kick off the first suite to establish context
+                setTimeout(() => runTests('GET'), 500);
             }
         } catch (e: any) {
             console.error(e);
@@ -198,6 +196,165 @@ export default function Home() {
         } finally {
             setLoading(false);
         }
+    };
+
+    const executeStep = async (ep: ApiEndpoint, passedContext: Record<string, any>, retryCount = 0): Promise<Record<string, any>> => {
+        let currentContext = { ...passedContext };
+        const opId = ep.operationId || `${ep.method.toUpperCase()}_${ep.path}`;
+        
+        if (retryCount === 0) {
+            setAiDiagnoses(prev => {
+                const next = { ...prev };
+                delete next[opId];
+                return next;
+            });
+        }
+
+        let bodyToAnalyze = {};
+        if (manualBodies[opId]) {
+            try { bodyToAnalyze = JSON.parse(manualBodies[opId]); } catch(e) {}
+        } else {
+            try {
+                const globalData = JSON.parse(testData);
+                bodyToAnalyze = globalData[opId]?.body || globalData[ep.path]?.body || {};
+            } catch(e) {}
+        }
+        
+        const bodyString = JSON.stringify(bodyToAnalyze);
+        const needed = [
+            ...(ep.path.match(/\{([^}]+)\}/g) || []).map(p => p.slice(1, -1)),
+            ...(bodyString.match(/\{\{([^}]+)\}\}/g) || []).map(p => p.slice(2, -2))
+        ];
+
+        for (const varName of Array.from(new Set(needed))) {
+            if (!currentContext[varName]) {
+                const searchKey = varName.replace('_id', '').replace('Id', '').replace('id', '').toLowerCase();
+                const producer = endpoints.find(e => {
+                    if (e.method.toUpperCase() !== 'GET' || e.path.includes('{')) return false;
+                    const path = e.path.toLowerCase();
+                    const opIdDesc = (e.operationId || "").toLowerCase();
+                    const tags = (e.tags || []).map(t => t.toLowerCase());
+                    return path.includes(searchKey) || opIdDesc.includes(searchKey) || tags.some(t => t.includes(searchKey));
+                });
+
+                if (producer) {
+                    try {
+                        const pRes = await fetch('http://localhost:8000/run', {
+                            method: 'POST', headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ baseUrl: config.baseUrl, endpoints: [producer], testData: JSON.parse(testData), variables: currentContext })
+                        });
+                        const pData = await pRes.json();
+                        if (pData.results?.[0]?.response) {
+                            const learned = extractIdentifiers(pData.results[0].response);
+                            const pName = producer.path.split('/').filter(Boolean).pop() || "";
+                            const pSingular = pName.endsWith('s') ? pName.slice(0, -1) : pName;
+                            if (learned['id']) {
+                                if (!learned[varName]) learned[varName] = learned['id'];
+                                learned[`${pSingular}_id`] = learned['id'];
+                            }
+                            currentContext = { ...currentContext, ...learned };
+                        }
+                    } catch(e) {}
+                }
+            }
+        }
+
+        let resolvedPath = ep.path;
+        (ep.path.match(/\{([^}]+)\}/g) || []).forEach(p => {
+            const key = p.slice(1, -1);
+            const fallback = key.toLowerCase().includes('id') ? (currentContext['id'] || currentContext['uuid']) : null;
+            const val = currentContext[key] || fallback;
+            if (val) resolvedPath = resolvedPath.replace(p, val);
+        });
+
+        if (Object.keys(bodyToAnalyze).length === 0) {
+           const content = ep.requestBody?.content?.["application/json"] || ep.requestBody?.content?.["multipart/form-data"];
+           if (content?.schema) bodyToAnalyze = generateFromSchema(content.schema);
+        }
+
+        try {
+            const runRes = await fetch('http://localhost:8000/run', {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                    baseUrl: config.baseUrl, 
+                    endpoints: [{ ...ep, path: resolvedPath }], 
+                    testData: { [opId]: { body: bodyToAnalyze } }, 
+                    variables: currentContext 
+                })
+            });
+            const runData = await runRes.json();
+            const resultItem = runData.results?.[0];
+
+            if (resultItem) {
+                resultItem.endpoint = ep.path;
+                setResults(prev => {
+                    const other = prev.filter(r => !(r.endpoint === ep.path && r.method === ep.method));
+                    return [...other, resultItem];
+                });
+
+                if (resultItem.passed) {
+                    // Only clear diagnosis if it's NOT a healed state, 
+                    // or if it's a fresh run without a previous diagnosis.
+                    if (retryCount === 0) {
+                        setAiDiagnoses(prev => {
+                            const next = { ...prev };
+                            delete next[opId];
+                            return next;
+                        });
+                    }
+                } else if (config.apiKey) {
+                    try {
+                        const diagR = await fetch('http://localhost:8000/diagnose', {
+                            method: 'POST', headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ apiKey: config.apiKey, endpoint: ep, requestBody: bodyToAnalyze, responseBody: resultItem.response || resultItem.error })
+                        });
+                        const diagData = await diagR.json();
+                        if (diagData.diagnosis) {
+                            setAiDiagnoses(prev => ({ ...prev, [opId]: diagData }));
+                            
+                            // Fully Automatic AI Multi-Step Healing
+                            if (diagData.diagnosis === 'INPUT_ISSUE' && diagData.suggested_fix && retryCount < 1) {
+                                console.log(`[AI Auto-Healing] Encountered Input Issue on ${ep.path}. Applying fix and retrying...`);
+                                
+                                // WAIT for 1.5 seconds so the user can actually see the "INPUT GUIDANCE" box 
+                                // before it automatically fixes itself.
+                                await new Promise(r => setTimeout(r, 1500));
+                                
+                                const fixedContent = JSON.stringify(diagData.suggested_fix, null, 2);
+                                setManualBodies(prev => ({ ...prev, [opId]: fixedContent }));
+                                
+                                const healedCtx = await executeStep(ep, currentContext, retryCount + 1);
+                                
+                                setResults(prev => prev.map(r => 
+                                    (r.endpoint === ep.path && r.method === ep.method && r.passed) 
+                                    ? { ...r, healed: true } 
+                                    : r
+                                ));
+                                
+                                return healedCtx;
+                            }
+                        }
+                    } catch (e) {}
+                }
+
+                if (resultItem.response) {
+                    const learned = extractIdentifiers(resultItem.response);
+                    const pathSegments = ep.path.split('/').filter(Boolean);
+                    const lastSegment = pathSegments[pathSegments.length - 1];
+                    if (lastSegment && !lastSegment.includes('{')) {
+                        const singular = lastSegment.endsWith('s') ? lastSegment.slice(0, -1) : lastSegment;
+                        ['id', 'uuid', '_id', 'userId'].forEach(idKey => {
+                            if (learned[idKey]) {
+                                learned[`${singular}_id`] = learned[idKey];
+                                learned[`${singular}Id`] = learned[idKey];
+                            }
+                        });
+                    }
+                    return { ...currentContext, ...learned };
+                }
+            }
+        } catch (e) { console.error(e); }
+        return currentContext;
     };
 
     const runTests = async (methodFilter?: string) => {
@@ -216,29 +373,27 @@ export default function Home() {
             return;
         }
 
-        setTab('run');
         setLoading(true);
-        // We only clear results for the endpoints we are about to run
+        // Clear old results for these specific endpoints
         setResults(prev => prev.filter(r => !targetEndpoints.some(te => te.path === r.endpoint && te.method === r.method)));
 
-        try {
-            const res = await fetch('http://localhost:8000/run', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    baseUrl: config.baseUrl,
-                    endpoints: targetEndpoints,
-                    testData: JSON.parse(testData),
-                    variables: {}
-                })
-            });
-            const data = await res.json();
-            setResults(prev => [...prev, ...data.results]);
-        } catch (e) {
-            alert('Error running tests');
-        } finally {
-            setLoading(false);
+        // Intelligent sequential execution
+        const sorted = [...targetEndpoints].sort((a,b) => {
+            // Priority: Producers (no path params) before Consumers (with path params)
+            if (a.path.includes('{') && !b.path.includes('{')) return 1;
+            if (!a.path.includes('{') && b.path.includes('{')) return -1;
+            return 0;
+        });
+
+        let ctx = { ...autoParams };
+        for(const ep of sorted) {
+            ctx = await executeStep(ep, ctx);
+            // Small delay to allow UI to update and user to see the "flow"
+            await new Promise(r => setTimeout(r, 100));
         }
+
+        setAutoParams(ctx);
+        setLoading(false);
     };
 
     const generateData = async () => {
@@ -270,7 +425,7 @@ export default function Home() {
     const getResult = (ep: ApiEndpoint) => results.find(r => r.endpoint === ep.path && r.method === ep.method);
 
     const extractIdentifiers = (data: any) => {
-        const found: Record<string, string> = {};
+        const found: Record<string, any> = {};
         const scan = (obj: any) => {
             if (!obj || typeof obj !== 'object') return;
             if (Array.isArray(obj)) {
@@ -283,7 +438,7 @@ export default function Home() {
                 if (found[key]) return;
 
                 if (val !== null && (typeof val === 'string' || typeof val === 'number' || typeof val === 'boolean')) {
-                    found[key] = String(val);
+                    found[key] = val;
                 } else {
                     scan(val);
                 }
@@ -347,35 +502,35 @@ export default function Home() {
                     {endpoints.length > 0 && <div className="mt-8 mb-2 px-4 text-[10px] uppercase tracking-widest text-dim font-bold opacity-50">Runners</div>}
                     
                     {availableMethods.has('GET') && (
-                        <div className={`${styles.navItem} ${tab === 'run-get' ? styles.active : ''}`} onClick={() => setTab('run-get')}>
+                        <div className={`${styles.navItem} ${tab === 'run-get' ? styles.active : ''}`} onClick={() => { setTab('run-get'); runTests('GET'); }}>
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
                             <span>GET Suite</span>
                         </div>
                     )}
                     
                     {availableMethods.has('POST') && (
-                        <div className={`${styles.navItem} ${tab === 'run-post' ? styles.active : ''}`} onClick={() => setTab('run-post')}>
+                        <div className={`${styles.navItem} ${tab === 'run-post' ? styles.active : ''}`} onClick={() => { setTab('run-post'); runTests('POST'); }}>
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 5v14M5 12h14"/></svg>
                             <span>POST Suite</span>
                         </div>
                     )}
                     
                     {availableMethods.has('PUT') && (
-                        <div className={`${styles.navItem} ${tab === 'run-put' ? styles.active : ''}`} onClick={() => setTab('run-put')}>
+                        <div className={`${styles.navItem} ${tab === 'run-put' ? styles.active : ''}`} onClick={() => { setTab('run-put'); runTests('PUT'); }}>
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
                             <span>PUT Suite</span>
                         </div>
                     )}
                     
                     {availableMethods.has('PATCH') && (
-                        <div className={`${styles.navItem} ${tab === 'run-patch' ? styles.active : ''}`} onClick={() => setTab('run-patch')}>
+                        <div className={`${styles.navItem} ${tab === 'run-patch' ? styles.active : ''}`} onClick={() => { setTab('run-patch'); runTests('PATCH'); }}>
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
                             <span>PATCH Suite</span>
                         </div>
                     )}
                     
                     {availableMethods.has('DELETE') && (
-                        <div className={`${styles.navItem} ${tab === 'run-delete' ? styles.active : ''}`} onClick={() => setTab('run-delete')}>
+                        <div className={`${styles.navItem} ${tab === 'run-delete' ? styles.active : ''}`} onClick={() => { setTab('run-delete'); runTests('DELETE'); }}>
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
                             <span>DELETE Suite</span>
                         </div>
@@ -571,98 +726,12 @@ export default function Home() {
 
                                             <button 
                                                 className={styles.runAllButton}
-                                                onClick={async () => {
-                                                    setLoading(true);
-                                                    // Clear results for the filtered suite
-                                                    setResults(prev => prev.filter(r => !filtered.some(f => f.path === r.endpoint && f.method === r.method)));
-                                                    
-                                                    // 1. Sort: Producers (no vars) first, Consumers (vars) last
-                                                    const sortedEndpoints = [...filtered].sort((a, b) => {
-                                                        const aHasVars = a.path.includes('{');
-                                                        const bHasVars = b.path.includes('{');
-                                                        if (aHasVars === bHasVars) return 0;
-                                                        return aHasVars ? 1 : -1;
-                                                    });
-
-                                                    // 2. Local Context Accumulator
-                                                    let currentContext = { ...autoParams };
-
-                                                    // 3. Sequential Execution Strategy
-                                                    for (const ep of sortedEndpoints) {
-                                                        try {
-                                                            // a. Smart Resolve
-                                                            let resolvedPath = ep.path;
-                                                            const placeholders = ep.path.match(/\{([^}]+)\}/g) || [];
-                                                            
-                                                            placeholders.forEach(p => {
-                                                                const key = p.slice(1, -1);
-                                                                // Resolution Priority: Exact Match -> 'id' Fallback (only for ID fields)
-                                                                const fallback = key.toLowerCase().includes('id') ? (currentContext['id'] || currentContext['uuid']) : null;
-                                                                const val = currentContext[key] || fallback;
-                                                                if (val) {
-                                                                    resolvedPath = resolvedPath.replace(p, val);
-                                                                }
-                                                            });
-
-                                                            // b. Execute Single
-                                                            const resolvedEp = { ...ep, path: resolvedPath };
-                                                            const res = await fetch('http://localhost:8000/run', {
-                                                                method: 'POST', 
-                                                                headers: { 'Content-Type': 'application/json' },
-                                                                body: JSON.stringify({ 
-                                                                    baseUrl: config.baseUrl, 
-                                                                    endpoints: [resolvedEp], // Array of 1
-                                                                    testData: JSON.parse(testData), 
-                                                                    variables: {} 
-                                                                })
-                                                            });
-                                                            
-                                                            const data = await res.json();
-                                                            
-                                                            // c. Learning Phase (Extract IDs)
-                                                            if (data.results && data.results.length > 0) {
-                                                                const resultItem = data.results[0];
-                                                                
-                                                                // Map back to original parameterized path for UI
-                                                                if (resolvedPath !== ep.path) {
-                                                                    resultItem.endpoint = ep.path; 
-                                                                }
-
-                                                                setResults(prev => [...prev, resultItem]);
-
-                                                                if (resultItem.response) {
-                                                                    const learned = extractIdentifiers(resultItem.response);
-
-                                                                    // Contextual Aliasing: Map 'id' to specific aliases (e.g. driver_id)
-                                                                    const pathSegments = ep.path.split('/').filter(Boolean);
-                                                                    const lastSegment = pathSegments[pathSegments.length - 1];
-                                                                    if (lastSegment && !lastSegment.includes('{')) {
-                                                                        const singular = lastSegment.endsWith('s') ? lastSegment.slice(0, -1) : lastSegment;
-                                                                        
-                                                                        ['id', 'uuid', '_id', 'userId'].forEach(idKey => {
-                                                                            if (learned[idKey]) {
-                                                                                learned[`${singular}_id`] = learned[idKey];
-                                                                                learned[`${singular}Id`] = learned[idKey];
-                                                                                learned[`${singular}Of`] = learned[idKey];
-                                                                            }
-                                                                        });
-                                                                    }
-
-                                                                    currentContext = { ...currentContext, ...learned };
-                                                                }
-                                                            }
-
-                                                            // Small delay for UI smoothness
-                                                            await new Promise(r => setTimeout(r, 20));
-
-                                                        } catch (e) {
-                                                            console.error("Execution error:", e);
-                                                        }
-                                                    }
-
-                                                    // 4. Sync Global Knowledge
-                                                    setAutoParams(currentContext);
-                                                    setLoading(false);
+                                                onClick={() => {
+                                                    const methodMap: Record<string, string> = {
+                                                        'run-get': 'GET', 'run-post': 'POST', 'run-put': 'PUT', 
+                                                        'run-patch': 'PATCH', 'run-delete': 'DELETE'
+                                                    };
+                                                    runTests(methodMap[tab]);
                                                 }}
                                                 disabled={loading}
                                             >
@@ -723,97 +792,14 @@ export default function Home() {
                                                             disabled={loading}
                                                             onClick={async () => {
                                                                 setLoading(true);
-                                                                // Clear results for these endpoints
                                                                 setResults(prev => prev.filter(r => !categoryEndpoints.some(f => f.path === r.endpoint && f.method === r.method)));
-                                                                
-                                                                // 1. Sort: Producers (no vars) first, Consumers (vars) last
-                                                                const sortedEndpoints = [...categoryEndpoints].sort((a, b) => {
-                                                                    const aHasVars = a.path.includes('{');
-                                                                    const bHasVars = b.path.includes('{');
-                                                                    if (aHasVars === bHasVars) return 0;
-                                                                    return aHasVars ? 1 : -1;
-                                                                });
-
-                                                                // 2. Local Context Accumulator
-                                                                let currentContext = { ...autoParams };
-
-                                                                // 3. Sequential Execution Strategy
-                                                                for (const ep of sortedEndpoints) {
-                                                                    try {
-                                                                        // a. Smart Resolve
-                                                                        let resolvedPath = ep.path;
-                                                                        const placeholders = ep.path.match(/\{([^}]+)\}/g) || [];
-                                                                        
-                                                                        placeholders.forEach(p => {
-                                                                            const key = p.slice(1, -1);
-                                                                            // Resolution Priority: Exact Match -> 'id' Fallback (only for ID fields)
-                                                                            const fallback = key.toLowerCase().includes('id') ? (currentContext['id'] || currentContext['uuid']) : null;
-                                                                            const val = currentContext[key] || fallback;
-                                                                            if (val) {
-                                                                                resolvedPath = resolvedPath.replace(p, val);
-                                                                            }
-                                                                        });
-
-                                                                        // b. Execute Single
-                                                                        const resolvedEp = { ...ep, path: resolvedPath };
-                                                                        const res = await fetch('http://localhost:8000/run', {
-                                                                            method: 'POST', 
-                                                                            headers: { 'Content-Type': 'application/json' },
-                                                                            body: JSON.stringify({ 
-                                                                                baseUrl: config.baseUrl, 
-                                                                                endpoints: [resolvedEp], // Array of 1
-                                                                                testData: JSON.parse(testData), 
-                                                                                variables: {} 
-                                                                            })
-                                                                        });
-                                                                        
-                                                                        const data = await res.json();
-                                                                        
-                                                                        // c. Learning Phase (Extract IDs)
-                                                                        if (data.results && data.results.length > 0) {
-                                                                            const resultItem = data.results[0];
-                                                                            
-                                                                            // Fix: Ensure the result maps back to the original parameterized path for UI matching
-                                                                            if (resolvedPath !== ep.path) {
-                                                                                resultItem.endpoint = ep.path; 
-                                                                            }
-
-                                                                            setResults(prev => [...prev, resultItem]);
-
-                                                                            if (resultItem.response) {
-                                                                                const learned = extractIdentifiers(resultItem.response);
-                                                                                
-                                                                                // Contextual Aliasing: Map 'id' to specific aliases (e.g. driver_id, driverId)
-                                                                                const pathSegments = ep.path.split('/').filter(Boolean);
-                                                                                const lastSegment = pathSegments[pathSegments.length - 1];
-                                                                                if (lastSegment && !lastSegment.includes('{')) {
-                                                                                    // Drivers -> driver
-                                                                                    const singular = lastSegment.endsWith('s') ? lastSegment.slice(0, -1) : lastSegment;
-                                                                                    
-                                                                                    // Map common ID keys to specific aliases
-                                                                                    ['id', 'uuid', '_id', 'userId'].forEach(idKey => {
-                                                                                        if (learned[idKey]) {
-                                                                                            learned[`${singular}_id`] = learned[idKey]; // vehicle_id
-                                                                                            learned[`${singular}Id`] = learned[idKey];  // vehicleId
-                                                                                            learned[`${singular}Of`] = learned[idKey];  // vehicleOf
-                                                                                        }
-                                                                                    });
-                                                                                }
-                                                                                
-                                                                                currentContext = { ...currentContext, ...learned };
-                                                                            }
-                                                                        }
-
-                                                                        // Small delay for UI smoothness
-                                                                        await new Promise(r => setTimeout(r, 50));
-
-                                                                    } catch (e) {
-                                                                        console.error("Execution error:", e);
-                                                                    }
+                                                                const sorted = [...categoryEndpoints].sort((a,b) => (a.path.includes('{')?1:b.path.includes('{')?-1:0));
+                                                                let ctx = { ...autoParams };
+                                                                for(const ep of sorted) {
+                                                                    ctx = await executeStep(ep, ctx);
+                                                                    await new Promise(r => setTimeout(r, 100));
                                                                 }
-
-                                                                // 4. Sync Global Knowledge
-                                                                setAutoParams(currentContext);
+                                                                setAutoParams(ctx);
                                                                 setLoading(false);
                                                             }}
                                                         >
@@ -833,25 +819,19 @@ export default function Home() {
                                                                 let resolved = path;
                                                                 placeholders.forEach(p => {
                                                                     const key = p.slice(1, -1);
-                                                                    // Strict mapping first. Only fallback to generic 'id' if the placeholder looks like an ID.
                                                                     const fallback = key.toLowerCase().includes('id') ? (autoParams['id'] || autoParams['uuid']) : null;
                                                                     const val = autoParams[key] || fallback;
-                                                                    if (val) {
-                                                                        resolved = resolved.replace(p, val);
-                                                                    }
+                                                                    if (val) resolved = resolved.replace(p, val);
                                                                 });
                                                                 return resolved;
                                                             };
 
                                                             const updateAutoParams = (responseData: any) => {
                                                                 const learned = extractIdentifiers(responseData);
-                                                                
-                                                                // Contextual Aliasing: Map 'id' to specific aliases (e.g. driver_id, driverId)
                                                                 const pathSegments = ep.path.split('/').filter(Boolean);
                                                                 const lastSegment = pathSegments[pathSegments.length - 1];
                                                                 if (lastSegment && !lastSegment.includes('{')) {
                                                                     const singular = lastSegment.endsWith('s') ? lastSegment.slice(0, -1) : lastSegment;
-                                                                    
                                                                     ['id', 'uuid', '_id', 'userId'].forEach(idKey => {
                                                                         if (learned[idKey]) {
                                                                             learned[`${singular}_id`] = learned[idKey];
@@ -860,74 +840,26 @@ export default function Home() {
                                                                         }
                                                                     });
                                                                 }
-
                                                                 setAutoParams(prev => ({ ...prev, ...learned }));
                                                             };
 
                                                             const runEndpoint = async (singleEp: typeof ep) => {
                                                                 setLoading(true);
-                                                                setResults(prev => prev.filter(r => !(r.endpoint === singleEp.path && r.method === singleEp.method)));
-                                                                try {
-                                                                    const resolvedEp = { ...singleEp, path: resolvePath(singleEp.path) };
-                                                                    const opId = singleEp.operationId || `${singleEp.method.toUpperCase()}_${singleEp.path}`;
-                                                                    let finalBody = {};
-                                                                    
-                                                                    // Priority 1: Manual Edit from current tile
-                                                                    if (manualBodies[opId]) {
-                                                                        try { finalBody = JSON.parse(manualBodies[opId]); } catch(e) {}
-                                                                    } else {
-                                                                        // Priority 2: Global Configuration/AI Data
-                                                                        const globalData = JSON.parse(testData);
-                                                                        finalBody = globalData[opId]?.body || globalData[singleEp.path]?.body || {};
-                                                                        
-                                                                        // Priority 3: Fresh Schema Generation if still empty
-                                                                        if (Object.keys(finalBody).length === 0) {
-                                                                            const content = singleEp.requestBody?.content?.["application/json"] || 
-                                                                                           singleEp.requestBody?.content?.["multipart/form-data"];
-                                                                            if (content?.schema) {
-                                                                                finalBody = generateFromSchema(content.schema);
-                                                                            }
-                                                                        }
-                                                                    }
-
-                                                                    const r = await fetch('http://localhost:8000/run', {
-                                                                        method: 'POST', headers: { 'Content-Type': 'application/json' },
-                                                                        body: JSON.stringify({ 
-                                                                            baseUrl: config.baseUrl, 
-                                                                            endpoints: [resolvedEp], 
-                                                                            testData: { [opId]: { body: finalBody } }, 
-                                                                            variables: {} 
-                                                                        })
-                                                                    });
-                                                                    const data = await r.json();
-                                                                    setResults(prev => [...prev, ...data.results]);
-                                                                    if (data.results?.[0]?.response) {
-                                                                        updateAutoParams(data.results[0].response);
-                                                                    }
-                                                                } catch (e) { console.error(e); }
-                                                                finally { setLoading(false); }
+                                                                const nextCtx = await executeStep(singleEp, autoParams);
+                                                                setAutoParams(nextCtx);
+                                                                setLoading(false);
                                                             };
 
                                                             return (
                                                                 <div key={i} className={styles.endpointTile}>
                                                                     <div className={styles.tileHeader}>
                                                                         <div className={styles.tilePath}>{ep.path}</div>
-                                                                        <button 
-                                                                            className={styles.tileMethod}
-                                                                            disabled={loading}
-                                                                            onClick={() => runEndpoint(ep)}
-                                                                        >
-                                                                            {loading ? (
-                                                                                <svg className="animate-spin" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
-                                                                            ) : (
-                                                                                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M5 3l14 9-14 9V3z"/></svg>
-                                                                            )}
+                                                                        <button className={styles.tileMethod} disabled={loading} onClick={() => runEndpoint(ep)}>
+                                                                            {loading ? <svg className="animate-spin" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg> : <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M5 3l14 9-14 9V3z"/></svg>}
                                                                             {ep.method}
                                                                         </button>
                                                                     </div>
-                                                                    
                                                                     {ep.summary && <p className="text-xs text-muted leading-relaxed line-clamp-2">{ep.summary}</p>}
-                                                                    {/* Request Body Preview for Mutations */}
                                                                     {['POST', 'PUT', 'PATCH'].includes(ep.method.toUpperCase()) && (
                                                                         <div className={styles.paramSection}>
                                                                             <span className={styles.paramLabel}>Request Body (Editable)</span>
@@ -937,15 +869,11 @@ export default function Home() {
                                                                                 value={(() => {
                                                                                     const opId = ep.operationId || `${ep.method.toUpperCase()}_${ep.path}`;
                                                                                     if (manualBodies[opId] !== undefined) return manualBodies[opId];
-                                                                                    
-                                                                                    // Initial Generation
                                                                                     try {
                                                                                         const data = JSON.parse(testData);
                                                                                         let body = data[opId]?.body || data[ep.path]?.body;
-                                                                                        
                                                                                         if (!body || Object.keys(body).length === 0) {
-                                                                                            const content = ep.requestBody?.content?.["application/json"] || 
-                                                                                                           ep.requestBody?.content?.["multipart/form-data"];
+                                                                                            const content = ep.requestBody?.content?.["application/json"] || ep.requestBody?.content?.["multipart/form-data"];
                                                                                             if (content?.schema) body = generateFromSchema(content.schema);
                                                                                         }
                                                                                         return JSON.stringify(body || {}, null, 2);
@@ -957,20 +885,39 @@ export default function Home() {
                                                                                 }}
                                                                             />
                                                                         </div>
-
+                                                                    )}
                                                                     {res && (
                                                                         <div className="animate-in fade-in duration-500">
                                                                             <div className={styles.tileInfo}>
                                                                                 <div className={styles.tileTime}>{res.time.toFixed(0)} MS</div>
                                                                                 <div className={`${styles.status} ${res.passed ? styles.pass : styles.fail}`}>
                                                                                     <div className={`w-1.5 h-1.5 rounded-full ${res.passed ? 'bg-success' : 'bg-error'}`}></div>
-                                                                                    {res.passed ? 'Passed' : 'Failed'}
+                                                                                    {res.passed ? (res.healed ? 'AI HEALED' : 'Passed') : 'Failed'}
                                                                                 </div>
                                                                             </div>
-
                                                                             <div className={styles.inspectorBox}>
                                                                                 <pre>{JSON.stringify(res.response, null, 2)}</pre>
                                                                             </div>
+                                                                            {(() => {
+                                                                                const opId = ep.operationId || `${ep.method.toUpperCase()}_${ep.path}`;
+                                                                                const diag = aiDiagnoses[opId];
+                                                                                if (!diag) return null;
+                                                                                return (
+                                                                                    <div className={styles.aiBox} style={{ border: diag.diagnosis === 'INPUT_ISSUE' ? '1px solid #64ffda44' : '1px solid #f43f5e44' }}>
+                                                                                        <div className={styles.aiHeader}>
+                                                                                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8z"/><path d="M12 6v6l4 2"/></svg>
+                                                                                            <span className={styles.aiLabel} style={{ color: diag.diagnosis === 'INPUT_ISSUE' ? '#64ffda' : '#f43f5e' }}>{diag.diagnosis === 'INPUT_ISSUE' ? 'INPUT GUIDANCE' : 'API LOGIC ISSUE'}</span>
+                                                                                        </div>
+                                                                                        <p className={styles.aiMessage}>{diag.explanation}</p>
+                                                                                        {diag.diagnosis === 'INPUT_ISSUE' && diag.suggested_fix && (
+                                                                                            <div className={styles.autoHealingStatus}>
+                                                                                                <div className={styles.pulseDot}></div>
+                                                                                                <span>{res.healed ? 'Auto-Fix Applied' : 'AI Auto-Healing Active...'}</span>
+                                                                                            </div>
+                                                                                        )}
+                                                                                    </div>
+                                                                                );
+                                                                            })()}
                                                                             {res.error && <div className="text-[10px] text-error mt-2 font-mono">{res.error}</div>}
                                                                         </div>
                                                                     )}

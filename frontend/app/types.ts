@@ -18,6 +18,7 @@ export interface TestExecutionResult {
     passed: boolean;
     response: any;
     error?: string;
+    healed?: boolean;
 }
 
 export interface GlobalState {
