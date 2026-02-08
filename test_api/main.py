@@ -9,7 +9,7 @@ from fastapi.responses import RedirectResponse
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
-app = FastAPI(title="Ride Hailing Automation Test API", version="1.0.0")
+app = FastAPI(title="Ride Hailing Automation Test API", version="3.0.0")
 
 app.add_middleware(
     CORSMiddleware,
@@ -53,51 +53,101 @@ def get_next_id(list_data, id_field):
     return max(item[id_field] for item in list_data) + 1
 
 # ==========================================
-# 1. DRIVERS API
+# 1. DRIVERS API (/api/drivers)
 # ==========================================
+
+class CheckPhoneRequest(BaseModel):
+    phone_number: str
+
+class CheckPhoneResponse(BaseModel):
+    exists: bool
+    status: str
+    message: str
+    driver_id: Optional[str] = None
+    name: Optional[str] = None
 
 class CreateDriverRequest(BaseModel):
     name: str
     phone_number: str
     email: str
     primary_location: str
-    licence_number: str
-    aadhar_number: str
-    licence_expiry: str
-    device_id: str
 
 class CreateDriverResponse(BaseModel):
     driver_id: str
     name: str
-    phone_number: str
-    email: str
     message: str
+
+class Location(BaseModel):
+    driver_id: str
+    latitude: float
+    longitude: float
+    driver_name: str
+    current_status: str
 
 class DriverResponse(BaseModel):
     driver_id: str
     name: str
     phone_number: str
     email: str
-    kyc_verified: bool
+    kyc_verified: str
     primary_location: str
     wallet_balance: float
+    fcm_token: Optional[str] = None
     is_available: bool
     is_approved: bool
-    created_at: str
-    updated_at: str
 
 class UpdateDriverRequest(BaseModel):
     name: Optional[str] = None
-    email: Optional[str] = None
-    primary_location: Optional[str] = None
     is_available: Optional[bool] = None
 
-@app.get("/api/v1/drivers", response_model=List[DriverResponse], tags=["Drivers"])
+@app.post("/api/drivers/check-phone", response_model=CheckPhoneResponse, tags=["Drivers"])
+def check_phone_exists(request: CheckPhoneRequest):
+    db = load_db()
+    driver = next((d for d in db["drivers"] if d["phone_number"] == request.phone_number), None)
+    if driver:
+        return {
+            "exists": True,
+            "status": "existing_user",
+            "message": "User already exists",
+            "driver_id": driver["driver_id"],
+            "name": driver["name"]
+        }
+    else:
+        # Implicit failure response structure if not found? 
+        # Doc only shows 200 existing user. I'll mock non-existing too.
+        return {
+             "exists": False,
+             "status": "new_user",
+             "message": "User does not exist"
+        }
+
+@app.get("/api/drivers/", response_model=List[DriverResponse], tags=["Drivers"])
 def get_drivers(skip: int = 0, limit: int = 100):
     db = load_db()
     return db["drivers"][skip : skip + limit]
 
-@app.get("/api/v1/drivers/{driver_id}", response_model=DriverResponse, tags=["Drivers"])
+@app.get("/api/drivers/locations", response_model=List[Location], tags=["Drivers"])
+def get_driver_locations():
+    db = load_db()
+    # Mocking location data based on existing drivers
+    locations = []
+    for d in db["drivers"]:
+        if d["is_available"]:
+            locations.append({
+                "driver_id": d["driver_id"],
+                "latitude": 19.0760, # Mock lat
+                "longitude": 72.8777, # Mock long
+                "driver_name": d["name"],
+                "current_status": "AVAILABLE"
+            })
+    return locations
+
+@app.get("/api/drivers/locations/map", response_model=List[Location], tags=["Drivers"])
+def get_driver_locations_map():
+    # Helper alias
+    return get_driver_locations()
+
+@app.get("/api/drivers/{driver_id}", response_model=DriverResponse, tags=["Drivers"])
 def get_driver_by_id(driver_id: str):
     db = load_db()
     driver = next((d for d in db["drivers"] if d["driver_id"] == driver_id), None)
@@ -105,7 +155,7 @@ def get_driver_by_id(driver_id: str):
         raise HTTPException(status_code=404, detail="Driver not found")
     return driver
 
-@app.post("/api/v1/drivers", response_model=CreateDriverResponse, status_code=201, tags=["Drivers"])
+@app.post("/api/drivers/", response_model=CreateDriverResponse, status_code=201, tags=["Drivers"])
 def create_driver(request: CreateDriverRequest):
     db = load_db()
     
@@ -114,10 +164,11 @@ def create_driver(request: CreateDriverRequest):
 
     new_driver = request.dict()
     new_driver["driver_id"] = str(uuid.uuid4())
-    new_driver["kyc_verified"] = False  # Default
+    new_driver["kyc_verified"] = "pending" # Default based on doc implying "approved" later
     new_driver["wallet_balance"] = 0.0
     new_driver["is_available"] = True
     new_driver["is_approved"] = False
+    new_driver["fcm_token"] = None
     new_driver["created_at"] = datetime.now().isoformat()
     new_driver["updated_at"] = new_driver["created_at"]
     
@@ -127,12 +178,10 @@ def create_driver(request: CreateDriverRequest):
     return {
         "driver_id": new_driver["driver_id"],
         "name": new_driver["name"],
-        "phone_number": new_driver["phone_number"],
-        "email": new_driver["email"],
         "message": "Driver created successfully"
     }
 
-@app.put("/api/v1/drivers/{driver_id}", response_model=DriverResponse, tags=["Drivers"])
+@app.put("/api/drivers/{driver_id}", response_model=DriverResponse, tags=["Drivers"])
 def update_driver(driver_id: str, request: UpdateDriverRequest):
     db = load_db()
     driver = next((d for d in db["drivers"] if d["driver_id"] == driver_id), None)
@@ -146,9 +195,8 @@ def update_driver(driver_id: str, request: UpdateDriverRequest):
     save_db(db)
     return driver
 
-@app.patch("/api/v1/drivers/{driver_id}/availability", tags=["Drivers"])
-def update_driver_availability(driver_id: str, is_available: bool = Body(..., embed=False)):
-    # Note: embed=False because doc says raw "true" body
+@app.patch("/api/drivers/{driver_id}/availability", tags=["Drivers"])
+def update_driver_availability(driver_id: str, is_available: bool = Query(...)):
     db = load_db()
     driver = next((d for d in db["drivers"] if d["driver_id"] == driver_id), None)
     if not driver:
@@ -162,19 +210,32 @@ def update_driver_availability(driver_id: str, is_available: bool = Body(..., em
         "is_available": is_available
     }
 
-@app.get("/api/v1/drivers/{driver_id}/wallet-balance", tags=["Drivers"])
-def get_driver_wallet_balance(driver_id: str):
+@app.patch("/api/drivers/{driver_id}/kyc-status", tags=["Drivers"])
+def update_kyc_status(driver_id: str, kyc_status: str = Query(...)):
     db = load_db()
     driver = next((d for d in db["drivers"] if d["driver_id"] == driver_id), None)
     if not driver:
         raise HTTPException(status_code=404, detail="Driver not found")
-    return {
-        "driver_id": driver_id,
-        "wallet_balance": driver["wallet_balance"],
-        "name": driver["name"]
-    }
+    
+    if kyc_status not in ["pending", "approved", "rejected"]:
+        raise HTTPException(status_code=400, detail="Invalid status")
+        
+    driver["kyc_verified"] = kyc_status
+    save_db(db)
+    return {"message": "KYC status updated", "driver_id": driver_id, "kyc_status": kyc_status}
 
-@app.delete("/api/v1/drivers/{driver_id}", tags=["Drivers"])
+@app.patch("/api/drivers/{driver_id}/approve", tags=["Drivers"])
+def approve_driver(driver_id: str, is_approved: bool = Query(...)):
+    db = load_db()
+    driver = next((d for d in db["drivers"] if d["driver_id"] == driver_id), None)
+    if not driver:
+        raise HTTPException(status_code=404, detail="Driver not found")
+    
+    driver["is_approved"] = is_approved
+    save_db(db)
+    return {"message": "Driver approval status updated", "driver_id": driver_id, "is_approved": is_approved}
+
+@app.delete("/api/drivers/{driver_id}", tags=["Drivers"])
 def delete_driver(driver_id: str):
     db = load_db()
     initial_len = len(db["drivers"])
@@ -186,7 +247,7 @@ def delete_driver(driver_id: str):
 
 
 # ==========================================
-# 2. VEHICLES API
+# 2. VEHICLES API (/api/vehicles)
 # ==========================================
 
 class CreateVehicleRequest(BaseModel):
@@ -198,58 +259,48 @@ class CreateVehicleRequest(BaseModel):
     vehicle_color: str
     seating_capacity: int
     rc_expiry_date: str
-    fc_expiry_date: str
 
 class CreateVehicleResponse(BaseModel):
-    vehicle_id: int
+    vehicle_id: str
     driver_id: str
     vehicle_number: str
     message: str
 
 class VehicleResponse(BaseModel):
-    vehicle_id: int
+    vehicle_id: str
     driver_id: str
     vehicle_type: str
     vehicle_brand: str
     vehicle_model: str
     vehicle_number: str
-    vehicle_color: str
-    seating_capacity: int
     vehicle_approved: bool
-    created_at: str
-    updated_at: str
-
-class UpdateVehicleRequest(BaseModel):
     vehicle_color: Optional[str] = None
     seating_capacity: Optional[int] = None
     rc_expiry_date: Optional[str] = None
 
-@app.get("/api/v1/vehicles", response_model=List[VehicleResponse], tags=["Vehicles"])
+class UpdateVehicleRequest(BaseModel):
+    vehicle_color: Optional[str] = None
+    seating_capacity: Optional[int] = None
+
+@app.get("/api/vehicles/", response_model=List[VehicleResponse], tags=["Vehicles"])
 def get_vehicles(skip: int = 0, limit: int = 100):
     db = load_db()
     return db["vehicles"][skip : skip + limit]
 
-@app.get("/api/v1/vehicles/{vehicle_id}", response_model=VehicleResponse, tags=["Vehicles"])
-def get_vehicle(vehicle_id: int):
+@app.get("/api/vehicles/{vehicle_id}", response_model=VehicleResponse, tags=["Vehicles"])
+def get_vehicle(vehicle_id: str):
     db = load_db()
     vehicle = next((v for v in db["vehicles"] if v["vehicle_id"] == vehicle_id), None)
     if not vehicle:
         raise HTTPException(status_code=404, detail="Vehicle not found")
     return vehicle
 
-@app.get("/api/v1/vehicles/driver/{driver_id}", response_model=List[VehicleResponse], tags=["Vehicles"])
+@app.get("/api/vehicles/driver/{driver_id}", response_model=List[VehicleResponse], tags=["Vehicles"])
 def get_vehicles_by_driver(driver_id: str):
     db = load_db()
-    # Simplified response model used in DOC is slightly different? 
-    # Doc 3. Get Vehicles by Driver -> Response has fewer fields?
-    # Doc says: vehicle_id, driver_id, vehicle_type, vehicle_brand, vehicle_model, vehicle_number, vehicle_approved
-    # The full VehicleResponse has more. I'll stick to full for consistency unless strict strict.
-    # User said "Response (200) taht only in that docs".
-    # Ok, I should make a specific model for this if it differs.
-    # Docs Example 3: returns WITHOUT color, seating, timestamps.
     return [v for v in db["vehicles"] if v["driver_id"] == driver_id]
 
-@app.post("/api/v1/vehicles", response_model=CreateVehicleResponse, status_code=201, tags=["Vehicles"])
+@app.post("/api/vehicles/", response_model=CreateVehicleResponse, status_code=201, tags=["Vehicles"])
 def create_vehicle(request: CreateVehicleRequest):
     db = load_db()
     if any(v["vehicle_number"] == request.vehicle_number for v in db["vehicles"]):
@@ -259,7 +310,7 @@ def create_vehicle(request: CreateVehicleRequest):
         raise HTTPException(status_code=404, detail="Driver not found")
 
     new_vehicle = request.dict()
-    new_vehicle["vehicle_id"] = get_next_id(db["vehicles"], "vehicle_id")
+    new_vehicle["vehicle_id"] = str(uuid.uuid4())
     new_vehicle["vehicle_approved"] = False
     new_vehicle["created_at"] = datetime.now().isoformat()
     new_vehicle["updated_at"] = new_vehicle["created_at"]
@@ -274,8 +325,8 @@ def create_vehicle(request: CreateVehicleRequest):
         "message": "Vehicle created successfully"
     }
 
-@app.put("/api/v1/vehicles/{vehicle_id}", tags=["Vehicles"])
-def update_vehicle(vehicle_id: int, request: UpdateVehicleRequest):
+@app.put("/api/vehicles/{vehicle_id}", tags=["Vehicles"])
+def update_vehicle(vehicle_id: str, request: UpdateVehicleRequest):
     db = load_db()
     vehicle = next((v for v in db["vehicles"] if v["vehicle_id"] == vehicle_id), None)
     if not vehicle:
@@ -288,35 +339,35 @@ def update_vehicle(vehicle_id: int, request: UpdateVehicleRequest):
     save_db(db)
     return {"vehicle_id": vehicle_id, "message": "Vehicle updated successfully"}
 
-@app.patch("/api/v1/vehicles/{vehicle_id}/approve", tags=["Vehicles"])
-def approve_vehicle(vehicle_id: int):
+@app.patch("/api/vehicles/{vehicle_id}/approve", tags=["Vehicles"])
+def approve_vehicle(vehicle_id: str, is_approved: bool = Query(...)):
     db = load_db()
     vehicle = next((v for v in db["vehicles"] if v["vehicle_id"] == vehicle_id), None)
     if not vehicle:
         raise HTTPException(status_code=404, detail="Vehicle not found")
     
-    vehicle["vehicle_approved"] = True
+    vehicle["vehicle_approved"] = is_approved
     save_db(db)
     return {
-        "message": "Vehicle approved successfully", 
+        "message": "Vehicle approval status updated", 
         "vehicle_id": vehicle_id, 
         "vehicle_number": vehicle["vehicle_number"], 
-        "approved": True
+        "approved": is_approved
     }
 
-@app.delete("/api/v1/vehicles/{vehicle_id}", tags=["Vehicles"])
-def delete_vehicle(vehicle_id: int):
+@app.delete("/api/vehicles/{vehicle_id}", tags=["Vehicles"])
+def delete_vehicle(vehicle_id: str):
     db = load_db()
     initial_len = len(db["vehicles"])
     db["vehicles"] = [v for v in db["vehicles"] if v["vehicle_id"] != vehicle_id]
     if len(db["vehicles"]) == initial_len:
          raise HTTPException(status_code=404, detail="Vehicle not found")
     save_db(db)
-    return {"message": "Vehicle deleted successfully", "vehicle_id": vehicle_id, "vehicle_number": "MH01CD5678"} # Hardcoded number in doc example, but dynamic here is better? User said STRICT. Doc example has specific number. I will return dynamic number if possible or generic. I'll return dynamic.
+    return {"message": "Vehicle deleted successfully", "vehicle_id": vehicle_id}
 
 
 # ==========================================
-# 3. TRIPS API
+# 3. TRIPS API (/api/trips)
 # ==========================================
 
 class CreateTripRequest(BaseModel):
@@ -328,37 +379,47 @@ class CreateTripRequest(BaseModel):
     vehicle_type: Literal["sedan", "suv", "hatchback", "bike", "auto"]
     passenger_count: int
     planned_start_at: str
-    planned_end_at: str
 
 class CreateTripResponse(BaseModel):
-    trip_id: int
+    trip_id: str
     customer_name: str
     trip_status: str
-    fare: float
     message: str
 
+class DriverInfo(BaseModel):
+    driver_id: str
+    name: str 
+    phone_number: str
+    is_available: bool
+
 class TripResponse(BaseModel):
-    trip_id: int
+    trip_id: str
     customer_name: str
-    customer_phone: str
+    customer_phone: Optional[str] = None
     pickup_address: str
     drop_address: str
-    trip_type: str
-    vehicle_type: str
-    assigned_driver_id: Optional[Union[int, str]] = None
+    trip_type: Optional[str] = None
+    vehicle_type: Optional[str] = None
     trip_status: str
-    fare: float
-    created_at: str
+    assigned_driver_id: Optional[str] = None
+    fare: Optional[float] = None
+    total_amount: Optional[float] = None
+    created_at: Optional[str] = None
+    distance_km: Optional[float] = None
+    waiting_charges: Optional[float] = None
+    driver: Optional[DriverInfo] = None
 
 class UpdateTripRequest(BaseModel):
     trip_status: Optional[str] = None
-    distance_km: Optional[float] = None
     fare: Optional[float] = None
-    odo_start: Optional[float] = None
-    odo_end: Optional[float] = None
-    started_at: Optional[str] = None
+    waiting_charges: Optional[float] = None
 
-@app.get("/api/v1/trips", response_model=List[TripResponse], tags=["Trips"])
+@app.get("/api/trips/available", response_model=List[TripResponse], tags=["Trips"])
+def get_available_trips():
+    db = load_db()
+    return [t for t in db["trips"] if t["trip_status"] == "OPEN"]
+
+@app.get("/api/trips/", response_model=List[TripResponse], tags=["Trips"])
 def get_trips(skip: int = 0, limit: int = 100, status_filter: Optional[str] = None):
     db = load_db()
     trips = db["trips"]
@@ -366,28 +427,41 @@ def get_trips(skip: int = 0, limit: int = 100, status_filter: Optional[str] = No
         trips = [t for t in trips if t["trip_status"] == status_filter]
     return trips[skip : skip + limit]
 
-@app.get("/api/v1/trips/{trip_id}", response_model=TripResponse, tags=["Trips"])
-def get_trip_by_id(trip_id: int):
+@app.get("/api/trips/{trip_id}", response_model=TripResponse, tags=["Trips"])
+def get_trip_by_id(trip_id: str):
     db = load_db()
     trip = next((t for t in db["trips"] if t["trip_id"] == trip_id), None)
     if not trip:
         raise HTTPException(status_code=404, detail="Trip not found")
+    
+    # Enrich with driver info if assigned
+    if trip.get("assigned_driver_id"):
+        driver = next((d for d in db["drivers"] if d["driver_id"] == trip["assigned_driver_id"]), None)
+        if driver:
+            trip["driver"] = {
+                "driver_id": driver["driver_id"],
+                "name": driver["name"],
+                "phone_number": driver["phone_number"],
+                "is_available": driver["is_available"]
+            }
+            
     return trip
 
-@app.post("/api/v1/trips", response_model=CreateTripResponse, status_code=201, tags=["Trips"])
+@app.post("/api/trips/", response_model=CreateTripResponse, status_code=201, tags=["Trips"])
 def create_trip(request: CreateTripRequest):
     db = load_db()
+    # Fare estimation
     tariff = next((t for t in db["tariff_configs"] if t["vehicle_type"] == request.vehicle_type and t["is_active"]), None)
     estimated_fare = 100.0 
     if tariff:
-        dist = 10
+        dist = 10 # Default dummy distance
         per_km = tariff["one_way_per_km"] if request.trip_type == "one_way" else tariff["round_trip_per_km"]
         estimated_fare = (per_km * dist) + tariff["driver_allowance"]
     
     new_trip = request.dict()
-    new_trip["trip_id"] = get_next_id(db["trips"], "trip_id")
+    new_trip["trip_id"] = str(uuid.uuid4())
     new_trip["fare"] = estimated_fare
-    new_trip["trip_status"] = "pending"
+    new_trip["trip_status"] = "OPEN"
     new_trip["created_at"] = datetime.now().isoformat()
     new_trip["assigned_driver_id"] = None
     
@@ -398,12 +472,11 @@ def create_trip(request: CreateTripRequest):
         "trip_id": new_trip["trip_id"],
         "customer_name": new_trip["customer_name"],
         "trip_status": new_trip["trip_status"],
-        "fare": new_trip["fare"],
         "message": "Trip created successfully"
     }
 
-@app.put("/api/v1/trips/{trip_id}", tags=["Trips"])
-def update_trip(trip_id: int, request: UpdateTripRequest):
+@app.put("/api/trips/{trip_id}", tags=["Trips"])
+def update_trip(trip_id: str, request: UpdateTripRequest):
     db = load_db()
     trip = next((t for t in db["trips"] if t["trip_id"] == trip_id), None)
     if not trip:
@@ -412,17 +485,11 @@ def update_trip(trip_id: int, request: UpdateTripRequest):
     update_data = request.dict(exclude_unset=True)
     for k, v in update_data.items():
         trip[k] = v
-    
-    if trip["trip_status"] in ["completed", "cancelled"] and trip.get("assigned_driver_id"):
-        driver = next((d for d in db["drivers"] if d["driver_id"] == trip["assigned_driver_id"]), None)
-        if driver:
-            driver["is_available"] = True
-            
     save_db(db)
-    return {"trip_id": trip_id, "message": "Trip updated successfully"}
+    return trip
 
-@app.patch("/api/v1/trips/{trip_id}/assign-driver/{driver_id}", tags=["Trips"])
-def assign_driver(trip_id: int, driver_id: str):
+@app.patch("/api/trips/{trip_id}/assign-driver/{driver_id}", tags=["Trips"])
+def assign_driver(trip_id: str, driver_id: str):
     db = load_db()
     trip = next((t for t in db["trips"] if t["trip_id"] == trip_id), None)
     if not trip:
@@ -432,74 +499,112 @@ def assign_driver(trip_id: int, driver_id: str):
     if not driver:
          raise HTTPException(status_code=404, detail="Driver not found")
          
-    if not driver["is_available"]:
-        raise HTTPException(status_code=400, detail="Driver is not available")
-    
     trip["assigned_driver_id"] = driver_id
-    trip["trip_status"] = "assigned"
+    trip["trip_status"] = "ASSIGNED"
     driver["is_available"] = False
     
     save_db(db)
     return {
-        "message": "Driver assigned to trip successfully",
+        "message": "Driver assigned successfully",
         "trip_id": trip_id,
         "driver_id": driver_id,
-        "driver_name": driver["name"],
-        "trip_status": "assigned"
+        "trip_status": "ASSIGNED"
     }
 
-@app.patch("/api/v1/trips/{trip_id}/status", tags=["Trips"])
-def update_trip_status(trip_id: int, status: str = Body(..., embed=False)):
+@app.patch("/api/trips/{trip_id}/unassign", tags=["Trips"])
+def unassign_driver(trip_id: str):
+    db = load_db()
+    trip = next((t for t in db["trips"] if t["trip_id"] == trip_id), None)
+    if not trip:
+        raise HTTPException(status_code=404, detail="Trip not found")
+    
+    prev_driver_id = trip.get("assigned_driver_id")
+    if prev_driver_id:
+        driver = next((d for d in db["drivers"] if d["driver_id"] == prev_driver_id), None)
+        if driver:
+            driver["is_available"] = True
+            
+    trip["assigned_driver_id"] = None
+    trip["trip_status"] = "OPEN"
+    save_db(db)
+    return {
+        "message": "Driver unassigned successfully",
+        "trip_id": trip_id,
+        "previous_driver_id": prev_driver_id,
+        "trip_status": "OPEN"
+    }
+
+@app.patch("/api/trips/{trip_id}/status", tags=["Trips"])
+def update_trip_status(trip_id: str, new_status: str = Query(...)):
+    db = load_db()
+    trip = next((t for t in db["trips"] if t["trip_id"] == trip_id), None)
+    if not trip:
+        raise HTTPException(status_code=404, detail="Trip not found")
+
+    trip["trip_status"] = new_status
+    
+    if new_status in ["COMPLETED", "CANCELLED"] and trip.get("assigned_driver_id"):
+        driver = next((d for d in db["drivers"] if d["driver_id"] == trip["assigned_driver_id"]), None)
+        if driver:
+            driver["is_available"] = True
+            
+    save_db(db)
+    return {
+        "message": f"Trip status updated to {new_status}",
+        "trip_id": trip_id,
+        "trip_status": new_status,
+        "fare": trip.get("fare")
+    }
+
+@app.patch("/api/trips/{trip_id}/odometer/start", tags=["Trips"])
+def update_odometer_start(trip_id: str, odo_start: int = Query(...)):
     db = load_db()
     trip = next((t for t in db["trips"] if t["trip_id"] == trip_id), None)
     if not trip:
         raise HTTPException(status_code=404, detail="Trip not found")
         
-    valid_statuses = ["pending", "assigned", "started", "completed", "cancelled"]
-    if status not in valid_statuses:
-         raise HTTPException(status_code=400, detail=f"Invalid status. Valid statuses: {', '.join(valid_statuses)}")
+    trip["odo_start"] = odo_start
+    trip["trip_status"] = "STARTED"
+    save_db(db)
+    return {
+        "message": "Odometer start updated",
+        "trip_id": trip_id,
+        "odo_start": odo_start,
+        "trip_status": "STARTED"
+    }
 
-    old_status = trip["trip_status"]
-    trip["trip_status"] = status
+@app.patch("/api/trips/{trip_id}/odometer/end", tags=["Trips"])
+def update_odometer_end(trip_id: str, odo_end: int = Query(...)):
+    db = load_db()
+    trip = next((t for t in db["trips"] if t["trip_id"] == trip_id), None)
+    if not trip:
+        raise HTTPException(status_code=404, detail="Trip not found")
+        
+    trip["odo_end"] = odo_end
+    trip["trip_status"] = "COMPLETED"
     
-    if status in ["completed", "cancelled"] and trip.get("assigned_driver_id"):
+    # Make driver available
+    if trip.get("assigned_driver_id"):
         driver = next((d for d in db["drivers"] if d["driver_id"] == trip["assigned_driver_id"]), None)
         if driver:
             driver["is_available"] = True
+            
+    # Mock totals
+    trip["total_amount"] = (trip.get("fare") or 0) + 50 # Adding random charges
     
     save_db(db)
     return {
-        "message": f"Trip status updated from {old_status} to {status}",
+        "message": "Trip completed successfully",
         "trip_id": trip_id,
-        "old_status": old_status,
-        "new_status": status
+        "odo_end": odo_end,
+        "fare": trip.get("fare"),
+        "total_amount": trip.get("total_amount"),
+        "trip_status": "COMPLETED",
+        "commission_deducted": 50.00
     }
 
-class DriverReqBody(BaseModel):
-    driver_id: Union[int, str]
-
-@app.post("/api/v1/trips/{trip_id}/driver-requests", status_code=201, tags=["Trips"])
-def create_driver_request(trip_id: int, request: DriverReqBody):
-    db = load_db()
-    req_id = get_next_id(db["driver_requests"], "request_id")
-    new_req = {
-        "request_id": req_id,
-        "trip_id": trip_id,
-        "driver_id": str(request.driver_id),
-        "status": "pending"
-    }
-    db["driver_requests"].append(new_req)
-    save_db(db)
-    return {
-        "message": "Driver request created successfully",
-        "request_id": req_id,
-        "trip_id": trip_id,
-        "driver_id": request.driver_id,
-        "status": "pending"
-    }
-
-@app.delete("/api/v1/trips/{trip_id}", tags=["Trips"])
-def delete_trip(trip_id: int):
+@app.delete("/api/trips/{trip_id}", tags=["Trips"])
+def delete_trip(trip_id: str):
     db = load_db()
     initial_len = len(db["trips"])
     db["trips"] = [t for t in db["trips"] if t["trip_id"] != trip_id]
@@ -510,81 +615,54 @@ def delete_trip(trip_id: int):
 
 
 # ==========================================
-# 4. PAYMENTS API
+# 4. PAYMENTS API (/api/payments)
 # ==========================================
 
 class CreatePaymentRequest(BaseModel):
-    trip_id: int
+    driver_id: str
     amount: float
-    payment_method: Literal["cash", "upi", "card", "wallet", "bank_transfer"]
-    payment_status: Literal["pending", "processing", "completed", "failed", "refunded", "cancelled"]
-    transaction_reference: str
-    payment_gateway: Literal["razorpay", "phonepe", "paytm", "gpay", "cashfree"]
-    gateway_transaction_id: str
+    transaction_type: Literal["CREDIT", "DEBIT"]
+    status: Literal["PENDING", "COMPLETED", "FAILED"]
+    razorpay_payment_id: str
 
 class PaymentResponse(BaseModel):
-    payment_id: int
-    trip_id: int
+    payment_id: str
+    driver_id: Optional[str] = None
     amount: float
-    payment_method: str
-    payment_status: str
-    transaction_reference: str
-    payment_gateway: str
-    gateway_transaction_id: str
-    created_at: str
-    updated_at: Optional[str] = None
+    transaction_type: Optional[str] = None
+    status: str
+    razorpay_payment_id: Optional[str] = None
+    created_at: Optional[str] = None
 
 class UpdatePaymentRequest(BaseModel):
-    payment_status: Optional[str] = None
-    gateway_transaction_id: Optional[str] = None
-    gateway_response: Optional[str] = None
+    pass # Doc has generic "Update payment info" but no body spec. Assuming status or typical fields.
 
-@app.get("/api/v1/payments", response_model=List[PaymentResponse], tags=["Payments"])
+@app.get("/api/payments/", response_model=List[PaymentResponse], tags=["Payments"])
 def get_payments(skip: int = 0, limit: int = 100):
     db = load_db()
     return db["payments"][skip : skip + limit]
 
-@app.get("/api/v1/payments/{payment_id}", response_model=PaymentResponse, tags=["Payments"])
-def get_payment(payment_id: int):
+@app.get("/api/payments/{payment_id}", response_model=PaymentResponse, tags=["Payments"])
+def get_payment(payment_id: str):
     db = load_db()
     payment = next((p for p in db["payments"] if p["payment_id"] == payment_id), None)
     if not payment:
          raise HTTPException(status_code=404, detail="Payment not found")
     return payment
 
-@app.post("/api/v1/payments", response_model=PaymentResponse, status_code=201, tags=["Payments"])
+@app.post("/api/payments/", response_model=PaymentResponse, status_code=201, tags=["Payments"])
 def create_payment(request: CreatePaymentRequest):
     db = load_db()
-    if not any(t["trip_id"] == request.trip_id for t in db["trips"]):
-         raise HTTPException(status_code=404, detail="Trip not found")
-         
     new_payment = request.dict()
-    new_payment["payment_id"] = get_next_id(db["payments"], "payment_id")
+    new_payment["payment_id"] = str(uuid.uuid4())
     new_payment["created_at"] = datetime.now().isoformat()
-    new_payment["updated_at"] = None
     
     db["payments"].append(new_payment)
     save_db(db)
     return new_payment
 
-@app.put("/api/v1/payments/{payment_id}", response_model=PaymentResponse, tags=["Payments"])
-def update_payment(payment_id: int, request: UpdatePaymentRequest):
-    db = load_db()
-    payment = next((p for p in db["payments"] if p["payment_id"] == payment_id), None)
-    if not payment:
-         raise HTTPException(status_code=404, detail="Payment not found")
-    
-    update_data = request.dict(exclude_unset=True)
-    for k, v in update_data.items():
-        if k != "gateway_response": 
-            payment[k] = v
-            
-    payment["updated_at"] = datetime.now().isoformat()
-    save_db(db)
-    return payment
-
-@app.delete("/api/v1/payments/{payment_id}", tags=["Payments"])
-def delete_payment(payment_id: int):
+@app.delete("/api/payments/{payment_id}", tags=["Payments"])
+def delete_payment(payment_id: str):
     db = load_db()
     initial_len = len(db["payments"])
     db["payments"] = [p for p in db["payments"] if p["payment_id"] != payment_id]
@@ -595,11 +673,12 @@ def delete_payment(payment_id: int):
 
 
 # ==========================================
-# 5. WALLET TRANSACTIONS API
+# 5. WALLET TRANSACTIONS API (/api/v1/wallet-transactions)
 # ==========================================
+# NOTE: User docs maintained 'v1' here specifically.
 
 class CreateWalletTxnRequest(BaseModel):
-    driver_id: Union[int, str]
+    driver_id: int # Doc says integer here!
     transaction_type: Literal["credit", "debit"]
     amount: float
     description: str
@@ -607,7 +686,7 @@ class CreateWalletTxnRequest(BaseModel):
 
 class WalletTxnResponse(BaseModel):
     transaction_id: int
-    driver_id: Union[int, str]
+    driver_id: int
     transaction_type: str
     amount: float
     description: str
@@ -636,30 +715,33 @@ def get_transaction(transaction_id: int):
 def create_transaction(request: CreateWalletTxnRequest):
     db = load_db()
     
-    # Doc uses Int ID for wallet examples but UUID for Driver. Supporting both.
-    driver = next((d for d in db["drivers"] if d["driver_id"] == str(request.driver_id)), None)
-    # If not found by string, maybe int?
-    if not driver and isinstance(request.driver_id, int):
-         # Try matching stringified
-         driver = next((d for d in db["drivers"] if d["driver_id"] == str(request.driver_id)), None)
-
-    # For safety, allow transaction even if driver strictly not in DB if simple test? 
-    # No, automation logic usually requires strict. 
-    # But user wants STRICT doc adherence. Doc says "Driver not found" error possible.
-    if not driver:
-         raise HTTPException(status_code=404, detail="Driver not found")
-
-    current_balance = driver.get("wallet_balance", 0.0)
+    # Try to find driver. CAREFUL: Driver ID in main system is UUID String.
+    # Wallet System uses INT ID in docs.
+    # If the user strictly follows the docs, they will send an INT ID.
+    # But our drivers have STRING UUIDs.
+    # I will allow the transaction to proceed by casting or just storing the ID as provided.
+    # However, balance update logic will FAIL if IDs don't match.
+    # I'll check if any driver has this ID (maybe cast string to int if digits?)
+    # Or just skip balance update if driver not found, to be safe for Mocking.
     
-    if request.transaction_type == "debit":
-        if current_balance < request.amount:
-            raise HTTPException(status_code=400, detail="Insufficient wallet balance")
-        new_balance = current_balance - request.amount
-    else:
-        new_balance = current_balance + request.amount
-        
-    driver["wallet_balance"] = new_balance
-    
+    # For robust testing: "Driver wallet balances are maintained in the drivers table"
+    # So I *attempt* to find a driver.
+    found_driver = None
+    for d in db["drivers"]:
+        # Loose match logic
+        if str(d["driver_id"]) == str(request.driver_id):
+            found_driver = d
+            break
+            
+    if found_driver:
+        current = found_driver.get("wallet_balance", 0.0)
+        if request.transaction_type == "debit":
+            if current < request.amount:
+                 raise HTTPException(status_code=400, detail="Insufficient wallet balance")
+            found_driver["wallet_balance"] = current - request.amount
+        else:
+            found_driver["wallet_balance"] = current + request.amount
+
     new_txn = request.dict()
     new_txn["transaction_id"] = get_next_id(db["wallet_transactions"], "transaction_id")
     new_txn["created_at"] = datetime.now().isoformat()
@@ -696,112 +778,35 @@ def delete_transaction(transaction_id: int):
 
 
 # ==========================================
-# 6. TARIFF CONFIG API
+# 6. TARIFF CONFIG API (/api/v1/tariff-config)
 # ==========================================
 
-class CreateTariffRequest(BaseModel):
+class TariffConfig(BaseModel):
+    config_id: Optional[int] = None
     vehicle_type: Literal["sedan", "suv", "hatchback", "bike", "auto"]
     one_way_per_km: float
     one_way_min_km: float
     round_trip_per_km: float
     round_trip_min_km: float
     driver_allowance: float
-    is_active: bool
-
-class TariffResponse(BaseModel):
-    config_id: int
-    vehicle_type: str
-    one_way_per_km: float
-    one_way_min_km: float
-    round_trip_per_km: float
-    round_trip_min_km: float
-    driver_allowance: float
-    is_active: bool
-    created_at: str
+    is_active: bool = True
+    created_at: Optional[str] = None
     updated_at: Optional[str] = None
 
-class UpdateTariffRequest(BaseModel):
-    one_way_per_km: Optional[float] = None
-    driver_allowance: Optional[float] = None
-    is_active: Optional[bool] = None
-
-@app.get("/api/v1/tariff-config/", response_model=List[TariffResponse], tags=["Tariff Config"])
+@app.get("/api/v1/tariff-config/", response_model=List[TariffConfig], tags=["Tariff Config"])
 def get_tariffs(skip: int = 0, limit: int = 100):
     db = load_db()
     return db["tariff_configs"][skip : skip + limit]
 
-@app.get("/api/v1/tariff-config/{config_id}", response_model=TariffResponse, tags=["Tariff Config"])
-def get_tariff(config_id: int):
+@app.post("/api/v1/tariff-config/", response_model=TariffConfig, status_code=201, tags=["Tariff Config"])
+def create_tariff(tariff: TariffConfig):
     db = load_db()
-    tariff = next((t for t in db["tariff_configs"] if t["config_id"] == config_id), None)
-    if not tariff:
-        raise HTTPException(status_code=404, detail="Tariff configuration not found")
-    return tariff
-
-@app.post("/api/v1/tariff-config/", response_model=TariffResponse, status_code=201, tags=["Tariff Config"])
-def create_tariff(request: CreateTariffRequest):
-    db = load_db()
-    if request.is_active:
-        for t in db["tariff_configs"]:
-            if t["vehicle_type"] == request.vehicle_type and t["is_active"]:
-                t["is_active"] = False
-    
-    new_tariff = request.dict()
+    new_tariff = tariff.dict()
     new_tariff["config_id"] = get_next_id(db["tariff_configs"], "config_id")
     new_tariff["created_at"] = datetime.now().isoformat()
-    new_tariff["updated_at"] = None
-    
     db["tariff_configs"].append(new_tariff)
     save_db(db)
     return new_tariff
-
-@app.put("/api/v1/tariff-config/{config_id}", response_model=TariffResponse, tags=["Tariff Config"])
-def update_tariff(config_id: int, request: UpdateTariffRequest):
-    db = load_db()
-    tariff = next((t for t in db["tariff_configs"] if t["config_id"] == config_id), None)
-    if not tariff:
-        raise HTTPException(status_code=404, detail="Tariff configuration not found")
-    
-    update_data = request.dict(exclude_unset=True)
-    if update_data.get("is_active"):
-         for t in db["tariff_configs"]:
-            if t["vehicle_type"] == tariff["vehicle_type"] and t["is_active"] and t["config_id"] != config_id:
-                t["is_active"] = False
-
-    for k, v in update_data.items():
-        tariff[k] = v
-    tariff["updated_at"] = datetime.now().isoformat()
-    save_db(db)
-    return tariff
-
-@app.delete("/api/v1/tariff-config/{config_id}", tags=["Tariff Config"])
-def delete_tariff(config_id: int):
-    db = load_db()
-    initial_len = len(db["tariff_configs"])
-    db["tariff_configs"] = [t for t in db["tariff_configs"] if t["config_id"] != config_id]
-    if len(db["tariff_configs"]) == initial_len:
-         raise HTTPException(status_code=404, detail="Tariff configuration not found")
-    save_db(db)
-    return {"message": "Tariff configuration deleted successfully", "config_id": config_id}
-
-
-# ==========================================
-# 7. RAW DATA API
-# ==========================================
-@app.get("/api/v1/raw/drivers", tags=["Raw Data"])
-def get_raw_drivers():
-    db = load_db()
-    return db["drivers"][:10]
-
-@app.get("/api/v1/raw/vehicles", tags=["Raw Data"])
-def get_raw_vehicles():
-    db = load_db()
-    return db["vehicles"][:10]
-
-@app.get("/api/v1/raw/trips", tags=["Raw Data"])
-def get_raw_trips():
-    db = load_db()
-    return db["trips"][:10]
 
 
 if __name__ == "__main__":

@@ -1,26 +1,92 @@
 {
-  "users": [],
-  "posts": [],
   "drivers": [
     {
-      "driver_id": "f34a0def-53fc-4130-a3ba-838d6e66367a",
-      "name": "name 403",
-      "phone_number": "9816894212",
-      "email": "email752@gmail.com",
+      "name": "name 680",
+      "phone_number": "8770417380",
+      "email": "email71@gmail.com",
       "primary_location": "string",
-      "licence_number": "DL123456789",
-      "aadhar_number": "123456789012",
-      "licence_expiry": "2025-12-31",
-      "device_id": "{{device_id}}",
-      "kyc_verified": true,
+      "driver_id": "7594eede-bb87-4db0-ae6f-e06061ae8431",
+      "kyc_verified": "pending",
       "wallet_balance": 0.0,
       "is_available": true,
-      "is_approved": true,
-      "created_at": "2026-02-09T00:30:00.226960",
-      "updated_at": "2026-02-09T00:30:00.226960"
+      "is_approved": false,
+      "fcm_token": null,
+      "created_at": "2026-02-09T01:29:11.784301",
+      "updated_at": "2026-02-09T01:29:11.784301"
+    },
+    {
+      "name": "John Doe",
+      "phone_number": "123-456-7890",
+      "email": "johndoe@example.com",
+      "primary_location": "New York",
+      "driver_id": "582865aa-58de-4be7-a6d9-be05f0026f33",
+      "kyc_verified": "pending",
+      "wallet_balance": 0.0,
+      "is_available": true,
+      "is_approved": false,
+      "fcm_token": null,
+      "created_at": "2026-02-09T01:42:29.192566",
+      "updated_at": "2026-02-09T01:42:29.192566"
+    },
+    {
+      "name": "Jane Doe",
+      "phone_number": "987-654-3210",
+      "email": "janedoe@example.com",
+      "primary_location": "New York",
+      "driver_id": "e5d06178-6452-4e59-a721-79043a252340",
+      "kyc_verified": "pending",
+      "wallet_balance": 0.0,
+      "is_available": true,
+      "is_approved": false,
+      "fcm_token": null,
+      "created_at": "2026-02-09T01:49:18.486956",
+      "updated_at": "2026-02-09T01:49:18.486956"
+    },
+    {
+      "name": "name 835",
+      "phone_number": "9587210503",
+      "email": "email336@gmail.com",
+      "primary_location": "string",
+      "driver_id": "af5c7e41-b1d4-4ed2-bae9-2ff28f2a4826",
+      "kyc_verified": "pending",
+      "wallet_balance": 0.0,
+      "is_available": true,
+      "is_approved": false,
+      "fcm_token": null,
+      "created_at": "2026-02-09T01:52:49.912825",
+      "updated_at": "2026-02-09T01:52:49.912825"
     }
   ],
-  "vehicles": [],
+  "vehicles": [
+    {
+      "driver_id": "7594eede-bb87-4db0-ae6f-e06061ae8431",
+      "vehicle_type": "sedan",
+      "vehicle_brand": "string",
+      "vehicle_model": "string",
+      "vehicle_number": "string",
+      "vehicle_color": "string",
+      "seating_capacity": 0,
+      "rc_expiry_date": "string",
+      "vehicle_id": "bb1cd08c-0667-4ebd-b7bf-0b5701f390f0",
+      "vehicle_approved": false,
+      "created_at": "2026-02-09T01:29:11.924503",
+      "updated_at": "2026-02-09T01:30:15.791064"
+    },
+    {
+      "driver_id": "af5c7e41-b1d4-4ed2-bae9-2ff28f2a4826",
+      "vehicle_type": "sedan",
+      "vehicle_brand": "string",
+      "vehicle_model": "string",
+      "vehicle_number": "new_unique_vehicle_number",
+      "vehicle_color": "string",
+      "seating_capacity": 5,
+      "rc_expiry_date": "2025-01-01",
+      "vehicle_id": "babd815c-bc8c-4f8f-9d3e-d34b691b7134",
+      "vehicle_approved": false,
+      "created_at": "2026-02-09T01:53:05.988106",
+      "updated_at": "2026-02-09T01:53:05.988106"
+    }
+  ],
   "tariff_configs": [
     {
       "config_id": 1,
@@ -31,12 +97,108 @@
       "round_trip_min_km": 0.0,
       "driver_allowance": 0.0,
       "is_active": true,
-      "created_at": "2026-02-09T00:30:19.870276",
-      "updated_at": "2024-01-01T00:00:00"
+      "created_at": "2026-02-09T00:41:33.412006",
+      "updated_at": "string"
+    },
+    {
+      "config_id": 2,
+      "vehicle_type": "sedan",
+      "one_way_per_km": 0.0,
+      "one_way_min_km": 0.0,
+      "round_trip_per_km": 0.0,
+      "round_trip_min_km": 0.0,
+      "driver_allowance": 0.0,
+      "is_active": true,
+      "created_at": "2026-02-09T01:29:15.695049",
+      "updated_at": "string"
+    },
+    {
+      "config_id": 3,
+      "vehicle_type": "sedan",
+      "one_way_per_km": 0.0,
+      "one_way_min_km": 0.0,
+      "round_trip_per_km": 0.0,
+      "round_trip_min_km": 0.0,
+      "driver_allowance": 0.0,
+      "is_active": true,
+      "created_at": "2026-02-09T01:42:37.965534",
+      "updated_at": "2026-02-09T01:30:16.177865"
     }
   ],
-  "trips": [],
-  "payments": [],
-  "wallet_transactions": [],
+  "trips": [
+    {
+      "customer_name": "customer_name 697",
+      "customer_phone": "9693007276",
+      "pickup_address": "string",
+      "drop_address": "string",
+      "trip_type": "one_way",
+      "vehicle_type": "sedan",
+      "passenger_count": 7,
+      "planned_start_at": "string",
+      "trip_id": "8ab90151-8fd2-4fce-aa4e-7040efe93ec0",
+      "fare": 0.0,
+      "trip_status": "OPEN",
+      "created_at": "2026-02-09T01:29:12.069336",
+      "assigned_driver_id": null,
+      "waiting_charges": 0.0
+    },
+    {
+      "customer_name": "customer_name 697",
+      "customer_phone": "9693007276",
+      "pickup_address": "string",
+      "drop_address": "string",
+      "trip_type": "one_way",
+      "vehicle_type": "sedan",
+      "passenger_count": 4,
+      "planned_start_at": "string",
+      "trip_id": "1d324d3e-4290-4ab9-93ac-d2ef04a89039",
+      "fare": 0.0,
+      "trip_status": "OPEN",
+      "created_at": "2026-02-09T01:42:32.616776",
+      "assigned_driver_id": null
+    }
+  ],
+  "payments": [
+    {
+      "driver_id": "7594eede-bb87-4db0-ae6f-e06061ae8431",
+      "amount": 0.0,
+      "transaction_type": "CREDIT",
+      "status": "PENDING",
+      "razorpay_payment_id": "{{razorpay_payment_id}}",
+      "payment_id": "1b0df0b1-368a-43a9-b3fa-362cf35c5632",
+      "created_at": "2026-02-09T01:29:12.329860"
+    },
+    {
+      "driver_id": "582865aa-58de-4be7-a6d9-be05f0026f33",
+      "amount": 0.0,
+      "transaction_type": "CREDIT",
+      "status": "PENDING",
+      "razorpay_payment_id": "{{razorpay_payment_id}}",
+      "payment_id": "b47ae117-f3c0-4180-8f3a-289711bf2654",
+      "created_at": "2026-02-09T01:42:35.506608"
+    }
+  ],
+  "wallet_transactions": [
+    {
+      "driver_id": 12345,
+      "transaction_type": "credit",
+      "amount": 0.0,
+      "description": "string",
+      "reference_id": "67890",
+      "transaction_id": 1,
+      "created_at": "2026-02-09T01:29:46.433248",
+      "updated_at": "2026-02-09T01:30:16.177865"
+    },
+    {
+      "driver_id": 12345,
+      "transaction_type": "credit",
+      "amount": 10.99,
+      "description": "Test transaction",
+      "reference_id": "582865aa-58de-4be7-a6d9-be05f0026f33",
+      "transaction_id": 2,
+      "created_at": "2026-02-09T01:42:37.802916",
+      "updated_at": null
+    }
+  ],
   "driver_requests": []
 }

@@ -370,3 +370,2189 @@ INFO:     127.0.0.1:49454 - "POST /run-step HTTP/1.1" 200 OK
 INFO:main:Diagnosing API failure using AI
 INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
 INFO:     127.0.0.1:49454 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49710 - "OPTIONS /parse HTTP/1.1" 200 OK
+INFO:main:Parsing Swagger from: http://127.0.0.1:8001/docs
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/openapi.json "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/docs "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/openapi.json "HTTP/1.1 404 Not Found"
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/v1/openapi.json "HTTP/1.1 404 Not Found"
+Checking: http://127.0.0.1:8001/openapi.json
+Checking: http://127.0.0.1:8001/docs
+Checking: http://127.0.0.1:8001/api/openapi.json
+Checking: http://127.0.0.1:8001/api/v1/openapi.json
+Checking: http://127.0.0.1:8001/v1/openapi.json
+INFO:     127.0.0.1:49710 - "POST /parse HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49724 - "OPTIONS /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: POST http://127.0.0.1:8001/api/drivers/ "HTTP/1.1 201 Created"
+INFO:     127.0.0.1:49724 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:49728 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: POST http://127.0.0.1:8001/api/drivers/check-phone "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:49731 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: POST http://127.0.0.1:8001/api/drivers/ "HTTP/1.1 400 Bad Request"
+INFO:     127.0.0.1:49731 - "POST /run-step HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49731 - "OPTIONS /diagnose HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:49731 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: POST http://127.0.0.1:8001/api/drivers/ "HTTP/1.1 201 Created"
+INFO:     127.0.0.1:49731 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: POST http://127.0.0.1:8001/api/vehicles/ "HTTP/1.1 201 Created"
+INFO:     127.0.0.1:49731 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: POST http://127.0.0.1:8001/api/trips/ "HTTP/1.1 201 Created"
+INFO:     127.0.0.1:49731 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: POST http://127.0.0.1:8001/api/payments/ "HTTP/1.1 201 Created"
+INFO:     127.0.0.1:49731 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: POST http://127.0.0.1:8001/api/v1/wallet-transactions "HTTP/1.1 422 Unprocessable Entity"
+INFO:     127.0.0.1:49731 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:49731 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: POST http://127.0.0.1:8001/api/v1/wallet-transactions "HTTP/1.1 422 Unprocessable Entity"
+INFO:     127.0.0.1:49731 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:49731 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: POST http://127.0.0.1:8001/api/v1/tariff-config/ "HTTP/1.1 422 Unprocessable Entity"
+INFO:     127.0.0.1:49731 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:49731 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: POST http://127.0.0.1:8001/api/v1/tariff-config/ "HTTP/1.1 201 Created"
+INFO:     127.0.0.1:49731 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: POST http://127.0.0.1:8001/api/v1/wallet-transactions "HTTP/1.1 422 Unprocessable Entity"
+INFO:     127.0.0.1:49766 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:49766 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: POST http://127.0.0.1:8001/api/v1/wallet-transactions "HTTP/1.1 201 Created"
+INFO:     127.0.0.1:49766 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:49781 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/locations "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:49781 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/locations/map "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:49781 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/vehicles/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:49781 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/trips/available "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:49781 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/trips/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:49781 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/payments/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:49781 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/v1/wallet-transactions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:49781 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/v1/tariff-config/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:49781 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/12345 "HTTP/1.1 404 Not Found"
+INFO:     127.0.0.1:49781 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:49781 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/12345 "HTTP/1.1 404 Not Found"
+INFO:     127.0.0.1:49781 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:49781 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/vehicles/bbe57a32-c272-4e25-b808-4687a238f4c1 "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:49781 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/vehicles/driver/50316f0a-b110-4a3c-8db8-8a6ae8ee6e5f "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:49781 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/trips/9719656d-fa7b-4f36-af55-f6d426ba9842 "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:49781 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/payments/bbcb4a06-7ed3-4add-b801-371b475dad77 "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:49781 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/v1/wallet-transactions/1 "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:49781 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Parsing Swagger from: http://127.0.0.1:8001/docs
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/openapi.json "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/docs "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/openapi.json "HTTP/1.1 404 Not Found"
+Checking: http://127.0.0.1:8001/openapi.json
+Checking: http://127.0.0.1:8001/docs
+Checking: http://127.0.0.1:8001/api/openapi.json
+Checking: http://127.0.0.1:8001/api/v1/openapi.json
+Checking: http://127.0.0.1:8001/v1/openapi.json
+INFO:     127.0.0.1:49958 - "POST /parse HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:49958 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/locations "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:49958 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/locations/map "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:49958 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/vehicles/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:49958 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/trips/available "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:49958 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/trips/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:49958 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/payments/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:49958 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/v1/wallet-transactions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:49958 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/v1/tariff-config/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:49958 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/12345 "HTTP/1.1 404 Not Found"
+INFO:     127.0.0.1:49958 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:49958 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/12345 "HTTP/1.1 404 Not Found"
+INFO:     127.0.0.1:49958 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:49958 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/vehicles/bbe57a32-c272-4e25-b808-4687a238f4c1 "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:49958 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/vehicles/driver/50316f0a-b110-4a3c-8db8-8a6ae8ee6e5f "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:49958 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/trips/9719656d-fa7b-4f36-af55-f6d426ba9842 "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:49958 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/payments/bbcb4a06-7ed3-4add-b801-371b475dad77 "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:49958 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/v1/wallet-transactions/1 "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:49958 - "POST /run-step HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50074 - "OPTIONS /parse HTTP/1.1" 200 OK
+INFO:main:Parsing Swagger from: http://127.0.0.1:8001/docs
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/openapi.json "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/docs "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/openapi.json "HTTP/1.1 404 Not Found"
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/v1/openapi.json "HTTP/1.1 404 Not Found"
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/v1/openapi.json "HTTP/1.1 404 Not Found"
+Checking: http://127.0.0.1:8001/openapi.json
+Checking: http://127.0.0.1:8001/docs
+Checking: http://127.0.0.1:8001/api/openapi.json
+Checking: http://127.0.0.1:8001/api/v1/openapi.json
+Checking: http://127.0.0.1:8001/v1/openapi.json
+INFO:     127.0.0.1:50074 - "POST /parse HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50083 - "OPTIONS /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50083 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/locations "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50083 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/locations/map "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50083 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/vehicles/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50083 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/trips/available "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50083 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/trips/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50083 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/payments/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50083 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/v1/wallet-transactions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50083 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/v1/tariff-config/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50083 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/12345 "HTTP/1.1 404 Not Found"
+INFO:     127.0.0.1:50083 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/vehicles/bbe57a32-c272-4e25-b808-4687a238f4c1 "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50083 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/vehicles/driver/50316f0a-b110-4a3c-8db8-8a6ae8ee6e5f "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50083 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/trips/9719656d-fa7b-4f36-af55-f6d426ba9842 "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50083 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/payments/bbcb4a06-7ed3-4add-b801-371b475dad77 "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50083 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/v1/wallet-transactions/1 "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50083 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/12345 "HTTP/1.1 404 Not Found"
+INFO:     127.0.0.1:50138 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/12345 "HTTP/1.1 404 Not Found"
+INFO:     127.0.0.1:50138 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50177 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/locations "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50177 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/locations/map "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50177 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/vehicles/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50177 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/trips/available "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50177 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/trips/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50177 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/payments/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50177 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/v1/wallet-transactions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50177 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/v1/tariff-config/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50177 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/12345 "HTTP/1.1 404 Not Found"
+INFO:     127.0.0.1:50177 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/vehicles/bbe57a32-c272-4e25-b808-4687a238f4c1 "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50177 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/vehicles/driver/50316f0a-b110-4a3c-8db8-8a6ae8ee6e5f "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50177 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/trips/9719656d-fa7b-4f36-af55-f6d426ba9842 "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50177 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/payments/bbcb4a06-7ed3-4add-b801-371b475dad77 "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50177 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/v1/wallet-transactions/1 "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50177 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: PUT http://127.0.0.1:8001/api/drivers/12345 "HTTP/1.1 404 Not Found"
+INFO:     127.0.0.1:50207 - "POST /run-step HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50207 - "OPTIONS /diagnose HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50207 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: PUT http://127.0.0.1:8001/api/drivers/12345 "HTTP/1.1 404 Not Found"
+INFO:     127.0.0.1:50207 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50207 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Parsing Swagger from: http://127.0.0.1:8001/docs
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/openapi.json "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/docs "HTTP/1.1 200 OK"
+Checking: http://127.0.0.1:8001/openapi.json
+Checking: http://127.0.0.1:8001/docs
+Checking: http://127.0.0.1:8001/api/openapi.json
+Checking: http://127.0.0.1:8001/api/v1/openapi.json
+Checking: http://127.0.0.1:8001/v1/openapi.json
+INFO:     127.0.0.1:50271 - "POST /parse HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50271 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: PUT http://127.0.0.1:8001/api/drivers/53945155-833a-45d4-bd25-30b7e9c79f0c "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50271 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/vehicles/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50271 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: PUT http://127.0.0.1:8001/api/vehicles/bbe57a32-c272-4e25-b808-4687a238f4c1 "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50271 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: PUT http://127.0.0.1:8001/api/drivers/50316f0a-b110-4a3c-8db8-8a6ae8ee6e5f "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50292 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: PUT http://127.0.0.1:8001/api/vehicles/bbe57a32-c272-4e25-b808-4687a238f4c1 "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50292 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/trips/available "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50292 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: PUT http://127.0.0.1:8001/api/trips/9719656d-fa7b-4f36-af55-f6d426ba9842 "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50292 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/v1/wallet-transactions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50292 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: PUT http://127.0.0.1:8001/api/v1/wallet-transactions/1 "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50292 - "POST /run-step HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50365 - "OPTIONS /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: PATCH http://127.0.0.1:8001/api/drivers/12345/availability "HTTP/1.1 422 Unprocessable Entity"
+INFO:     127.0.0.1:50365 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50365 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: PATCH http://127.0.0.1:8001/api/drivers/12345/availability "HTTP/1.1 422 Unprocessable Entity"
+INFO:     127.0.0.1:50365 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50365 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: PATCH http://127.0.0.1:8001/api/drivers/12345/availability "HTTP/1.1 422 Unprocessable Entity"
+INFO:     127.0.0.1:50399 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50399 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: PATCH http://127.0.0.1:8001/api/drivers/12345/kyc-status "HTTP/1.1 422 Unprocessable Entity"
+INFO:     127.0.0.1:50399 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50399 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: PATCH http://127.0.0.1:8001/api/drivers/12345/kyc-status "HTTP/1.1 422 Unprocessable Entity"
+INFO:     127.0.0.1:50399 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50399 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: PATCH http://127.0.0.1:8001/api/drivers/12345/approve "HTTP/1.1 422 Unprocessable Entity"
+INFO:     127.0.0.1:50409 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50409 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: PATCH http://127.0.0.1:8001/api/drivers/12345/approve "HTTP/1.1 422 Unprocessable Entity"
+INFO:     127.0.0.1:50409 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50409 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: PATCH http://127.0.0.1:8001/api/vehicles/bbe57a32-c272-4e25-b808-4687a238f4c1/approve "HTTP/1.1 422 Unprocessable Entity"
+INFO:     127.0.0.1:50432 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50432 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: PATCH http://127.0.0.1:8001/api/vehicles/bbe57a32-c272-4e25-b808-4687a238f4c1/approve "HTTP/1.1 422 Unprocessable Entity"
+INFO:     127.0.0.1:50432 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50432 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50464 - "OPTIONS /parse HTTP/1.1" 200 OK
+INFO:main:Parsing Swagger from: http://127.0.0.1:8001/docs
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/openapi.json "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/docs "HTTP/1.1 200 OK"
+Checking: http://127.0.0.1:8001/openapi.json
+Checking: http://127.0.0.1:8001/docs
+Checking: http://127.0.0.1:8001/api/openapi.json
+Checking: http://127.0.0.1:8001/api/v1/openapi.json
+Checking: http://127.0.0.1:8001/v1/openapi.json
+INFO:     127.0.0.1:50464 - "POST /parse HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/trips/available "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50472 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50472 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: PATCH http://127.0.0.1:8001/api/trips/%7Btrip_id%7D/assign-driver/53945155-833a-45d4-bd25-30b7e9c79f0c "HTTP/1.1 404 Not Found"
+INFO:     127.0.0.1:50472 - "POST /run-step HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50472 - "OPTIONS /diagnose HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50472 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: PATCH http://127.0.0.1:8001/api/drivers/53945155-833a-45d4-bd25-30b7e9c79f0c/availability "HTTP/1.1 422 Unprocessable Entity"
+INFO:     127.0.0.1:50512 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50512 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: PATCH http://127.0.0.1:8001/api/drivers/53945155-833a-45d4-bd25-30b7e9c79f0c/availability "HTTP/1.1 422 Unprocessable Entity"
+INFO:     127.0.0.1:50512 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50512 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Parsing Swagger from: http://127.0.0.1:8001/docs
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/openapi.json "HTTP/1.1 200 OK"
+Checking: http://127.0.0.1:8001/openapi.json
+Checking: http://127.0.0.1:8001/docs
+Checking: http://127.0.0.1:8001/api/openapi.json
+Checking: http://127.0.0.1:8001/api/v1/openapi.json
+Checking: http://127.0.0.1:8001/v1/openapi.json
+INFO:     127.0.0.1:50611 - "POST /parse HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50611 - "OPTIONS /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50611 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: PATCH http://127.0.0.1:8001/api/drivers/53945155-833a-45d4-bd25-30b7e9c79f0c/availability "HTTP/1.1 422 Unprocessable Entity"
+INFO:     127.0.0.1:50611 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50611 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: PATCH http://127.0.0.1:8001/api/drivers/53945155-833a-45d4-bd25-30b7e9c79f0c/availability "HTTP/1.1 422 Unprocessable Entity"
+INFO:     127.0.0.1:50611 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50611 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: DELETE http://127.0.0.1:8001/api/drivers/53945155-833a-45d4-bd25-30b7e9c79f0c "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50637 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/vehicles/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50637 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: DELETE http://127.0.0.1:8001/api/vehicles/bbe57a32-c272-4e25-b808-4687a238f4c1 "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50637 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/trips/available "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50637 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: DELETE http://127.0.0.1:8001/api/trips/%7Btrip_id%7D "HTTP/1.1 404 Not Found"
+INFO:     127.0.0.1:50637 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50637 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/trips/available "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50637 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: DELETE http://127.0.0.1:8001/api/trips/%7Btrip_id%7D "HTTP/1.1 404 Not Found"
+INFO:     127.0.0.1:50637 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50637 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/payments/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50637 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: DELETE http://127.0.0.1:8001/api/payments/bbcb4a06-7ed3-4add-b801-371b475dad77 "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50637 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/v1/wallet-transactions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50637 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: DELETE http://127.0.0.1:8001/api/v1/wallet-transactions/1 "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50637 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: POST http://127.0.0.1:8001/api/trips/ "HTTP/1.1 201 Created"
+INFO:     127.0.0.1:50661 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Parsing Swagger from: http://127.0.0.1:8001/docs
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/openapi.json "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/docs "HTTP/1.1 200 OK"
+Checking: http://127.0.0.1:8001/openapi.json
+Checking: http://127.0.0.1:8001/docs
+Checking: http://127.0.0.1:8001/api/openapi.json
+Checking: http://127.0.0.1:8001/api/v1/openapi.json
+Checking: http://127.0.0.1:8001/v1/openapi.json
+INFO:     127.0.0.1:50677 - "POST /parse HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50677 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/locations "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50677 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/locations/map "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50677 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/vehicles/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50677 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/trips/available "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50677 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/trips/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50677 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/payments/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50677 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/v1/wallet-transactions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50677 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/v1/tariff-config/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50677 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/50316f0a-b110-4a3c-8db8-8a6ae8ee6e5f "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50677 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/vehicles/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50677 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/vehicles/%7Bvehicle_id%7D "HTTP/1.1 404 Not Found"
+INFO:     127.0.0.1:50677 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50677 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/vehicles/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50677 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/vehicles/%7Bvehicle_id%7D "HTTP/1.1 404 Not Found"
+INFO:     127.0.0.1:50677 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50677 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/vehicles/driver/50316f0a-b110-4a3c-8db8-8a6ae8ee6e5f "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50677 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/trips/9719656d-fa7b-4f36-af55-f6d426ba9842 "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50677 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/payments/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50677 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/payments/%7Bpayment_id%7D "HTTP/1.1 404 Not Found"
+INFO:     127.0.0.1:50677 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50677 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/payments/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50677 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/payments/%7Bpayment_id%7D "HTTP/1.1 404 Not Found"
+INFO:     127.0.0.1:50677 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50677 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/v1/wallet-transactions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50677 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/v1/wallet-transactions/%7Btransaction_id%7D "HTTP/1.1 422 Unprocessable Entity"
+INFO:     127.0.0.1:50677 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50677 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/v1/wallet-transactions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50677 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/v1/wallet-transactions/%7Btransaction_id%7D "HTTP/1.1 422 Unprocessable Entity"
+INFO:     127.0.0.1:50677 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50677 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: DELETE http://127.0.0.1:8001/api/drivers/50316f0a-b110-4a3c-8db8-8a6ae8ee6e5f "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50717 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/vehicles/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50717 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: DELETE http://127.0.0.1:8001/api/vehicles/%7Bvehicle_id%7D "HTTP/1.1 404 Not Found"
+INFO:     127.0.0.1:50717 - "POST /run-step HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50717 - "OPTIONS /diagnose HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50717 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/vehicles/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50717 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: DELETE http://127.0.0.1:8001/api/vehicles/%7Bvehicle_id%7D "HTTP/1.1 404 Not Found"
+INFO:     127.0.0.1:50717 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50717 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: DELETE http://127.0.0.1:8001/api/trips/9719656d-fa7b-4f36-af55-f6d426ba9842 "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50717 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/payments/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50717 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: DELETE http://127.0.0.1:8001/api/payments/%7Bpayment_id%7D "HTTP/1.1 404 Not Found"
+INFO:     127.0.0.1:50717 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50717 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/payments/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50717 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: DELETE http://127.0.0.1:8001/api/payments/%7Bpayment_id%7D "HTTP/1.1 404 Not Found"
+INFO:     127.0.0.1:50717 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50717 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/v1/wallet-transactions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50717 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: DELETE http://127.0.0.1:8001/api/v1/wallet-transactions/%7Btransaction_id%7D "HTTP/1.1 422 Unprocessable Entity"
+INFO:     127.0.0.1:50717 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50717 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/v1/wallet-transactions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50717 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: DELETE http://127.0.0.1:8001/api/v1/wallet-transactions/%7Btransaction_id%7D "HTTP/1.1 422 Unprocessable Entity"
+INFO:     127.0.0.1:50717 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50717 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/v1/wallet-transactions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50748 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: DELETE http://127.0.0.1:8001/api/v1/wallet-transactions/%7Btransaction_id%7D "HTTP/1.1 422 Unprocessable Entity"
+INFO:     127.0.0.1:50748 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50748 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/v1/wallet-transactions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50748 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: DELETE http://127.0.0.1:8001/api/v1/wallet-transactions/%7Btransaction_id%7D "HTTP/1.1 422 Unprocessable Entity"
+INFO:     127.0.0.1:50748 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50748 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/vehicles/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50748 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: DELETE http://127.0.0.1:8001/api/vehicles/%7Bvehicle_id%7D "HTTP/1.1 404 Not Found"
+INFO:     127.0.0.1:50748 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50748 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/vehicles/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50748 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: DELETE http://127.0.0.1:8001/api/vehicles/%7Bvehicle_id%7D "HTTP/1.1 404 Not Found"
+INFO:     127.0.0.1:50748 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50748 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50854 - "OPTIONS /parse HTTP/1.1" 200 OK
+INFO:main:Parsing Swagger from: http://127.0.0.1:8001/docs
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/openapi.json "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/docs "HTTP/1.1 200 OK"
+Checking: http://127.0.0.1:8001/openapi.json
+Checking: http://127.0.0.1:8001/docs
+Checking: http://127.0.0.1:8001/api/openapi.json
+Checking: http://127.0.0.1:8001/api/v1/openapi.json
+Checking: http://127.0.0.1:8001/v1/openapi.json
+INFO:     127.0.0.1:50854 - "POST /parse HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50854 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/locations "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50854 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/locations/map "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50854 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/vehicles/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50854 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/trips/available "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50854 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/trips/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50854 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/payments/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50854 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/v1/wallet-transactions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50854 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/v1/tariff-config/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50854 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50854 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/%7Bdriver_id%7D "HTTP/1.1 404 Not Found"
+INFO:     127.0.0.1:50854 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50854 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50854 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/%7Bdriver_id%7D "HTTP/1.1 404 Not Found"
+INFO:     127.0.0.1:50854 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50854 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/vehicles/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50854 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/vehicles/%7Bvehicle_id%7D "HTTP/1.1 404 Not Found"
+INFO:     127.0.0.1:50854 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50854 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/vehicles/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50854 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/vehicles/%7Bvehicle_id%7D "HTTP/1.1 404 Not Found"
+INFO:     127.0.0.1:50854 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50854 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50854 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/vehicles/driver/%7Bdriver_id%7D "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50854 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/trips/6ba02bfd-dbde-4597-a68a-5302a935271c "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50854 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/payments/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50854 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/payments/%7Bpayment_id%7D "HTTP/1.1 404 Not Found"
+INFO:     127.0.0.1:50854 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50854 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/payments/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50854 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/payments/%7Bpayment_id%7D "HTTP/1.1 404 Not Found"
+INFO:     127.0.0.1:50854 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50854 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/v1/wallet-transactions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50854 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/v1/wallet-transactions/%7Btransaction_id%7D "HTTP/1.1 422 Unprocessable Entity"
+INFO:     127.0.0.1:50854 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50854 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/v1/wallet-transactions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50854 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/v1/wallet-transactions/%7Btransaction_id%7D "HTTP/1.1 422 Unprocessable Entity"
+INFO:     127.0.0.1:50854 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50854 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50901 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: DELETE http://127.0.0.1:8001/api/drivers/%7Bdriver_id%7D "HTTP/1.1 404 Not Found"
+INFO:     127.0.0.1:50901 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50901 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50901 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: DELETE http://127.0.0.1:8001/api/drivers/%7Bdriver_id%7D "HTTP/1.1 404 Not Found"
+INFO:     127.0.0.1:50901 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50901 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/vehicles/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50901 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: DELETE http://127.0.0.1:8001/api/vehicles/%7Bvehicle_id%7D "HTTP/1.1 404 Not Found"
+INFO:     127.0.0.1:50901 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50901 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/vehicles/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50901 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: DELETE http://127.0.0.1:8001/api/vehicles/%7Bvehicle_id%7D "HTTP/1.1 404 Not Found"
+INFO:     127.0.0.1:50901 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50901 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: DELETE http://127.0.0.1:8001/api/trips/6ba02bfd-dbde-4597-a68a-5302a935271c "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50901 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/payments/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50901 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: DELETE http://127.0.0.1:8001/api/payments/%7Bpayment_id%7D "HTTP/1.1 404 Not Found"
+INFO:     127.0.0.1:50901 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50901 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/payments/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50901 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: DELETE http://127.0.0.1:8001/api/payments/%7Bpayment_id%7D "HTTP/1.1 404 Not Found"
+INFO:     127.0.0.1:50901 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50901 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/v1/wallet-transactions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50901 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: DELETE http://127.0.0.1:8001/api/v1/wallet-transactions/%7Btransaction_id%7D "HTTP/1.1 422 Unprocessable Entity"
+INFO:     127.0.0.1:50901 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50901 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/v1/wallet-transactions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50901 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: DELETE http://127.0.0.1:8001/api/v1/wallet-transactions/%7Btransaction_id%7D "HTTP/1.1 422 Unprocessable Entity"
+INFO:     127.0.0.1:50901 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50901 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Parsing Swagger from: http://127.0.0.1:8001/docs
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/openapi.json "HTTP/1.1 200 OK"
+Checking: http://127.0.0.1:8001/openapi.json
+Checking: http://127.0.0.1:8001/docs
+Checking: http://127.0.0.1:8001/api/openapi.json
+Checking: http://127.0.0.1:8001/api/v1/openapi.json
+Checking: http://127.0.0.1:8001/v1/openapi.json
+INFO:     127.0.0.1:50992 - "POST /parse HTTP/1.1" 200 OK
+INFO:main:Parsing Swagger from: http://127.0.0.1:8001/docs
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/openapi.json "HTTP/1.1 200 OK"
+Checking: http://127.0.0.1:8001/openapi.json
+Checking: http://127.0.0.1:8001/docs
+Checking: http://127.0.0.1:8001/api/openapi.json
+Checking: http://127.0.0.1:8001/api/v1/openapi.json
+Checking: http://127.0.0.1:8001/v1/openapi.json
+INFO:     127.0.0.1:50992 - "POST /parse HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50992 - "OPTIONS /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50992 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/locations "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50992 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/locations/map "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50992 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/vehicles/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50992 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/trips/available "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50992 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/trips/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50992 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/payments/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50992 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/v1/wallet-transactions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50992 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/v1/tariff-config/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50992 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50992 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/%7Bdriver_id%7D "HTTP/1.1 404 Not Found"
+INFO:     127.0.0.1:50992 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50992 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50992 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/%7Bdriver_id%7D "HTTP/1.1 404 Not Found"
+INFO:     127.0.0.1:50992 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50992 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/vehicles/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50992 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/vehicles/%7Bvehicle_id%7D "HTTP/1.1 404 Not Found"
+INFO:     127.0.0.1:50992 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50992 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/vehicles/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50992 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/vehicles/%7Bvehicle_id%7D "HTTP/1.1 404 Not Found"
+INFO:     127.0.0.1:50992 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50992 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50992 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/vehicles/driver/%7Bdriver_id%7D "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50992 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/trips/available "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50992 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/trips/%7Btrip_id%7D "HTTP/1.1 404 Not Found"
+INFO:     127.0.0.1:50992 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50992 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/trips/available "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50992 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/trips/%7Btrip_id%7D "HTTP/1.1 404 Not Found"
+INFO:     127.0.0.1:50992 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50992 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/payments/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50992 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/payments/%7Bpayment_id%7D "HTTP/1.1 404 Not Found"
+INFO:     127.0.0.1:50992 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50992 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/payments/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50992 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/payments/%7Bpayment_id%7D "HTTP/1.1 404 Not Found"
+INFO:     127.0.0.1:50992 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50992 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/v1/wallet-transactions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50992 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/v1/wallet-transactions/%7Btransaction_id%7D "HTTP/1.1 422 Unprocessable Entity"
+INFO:     127.0.0.1:50992 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50992 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/v1/wallet-transactions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50992 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/v1/wallet-transactions/%7Btransaction_id%7D "HTTP/1.1 422 Unprocessable Entity"
+INFO:     127.0.0.1:50992 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:50992 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/vehicles/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51067 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: POST http://127.0.0.1:8001/api/drivers/check-phone "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51071 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: POST http://127.0.0.1:8001/api/drivers/ "HTTP/1.1 201 Created"
+INFO:     127.0.0.1:51071 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: POST http://127.0.0.1:8001/api/vehicles/ "HTTP/1.1 201 Created"
+INFO:     127.0.0.1:51071 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: POST http://127.0.0.1:8001/api/trips/ "HTTP/1.1 201 Created"
+INFO:     127.0.0.1:51071 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: POST http://127.0.0.1:8001/api/payments/ "HTTP/1.1 201 Created"
+INFO:     127.0.0.1:51071 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: POST http://127.0.0.1:8001/api/v1/wallet-transactions "HTTP/1.1 422 Unprocessable Entity"
+INFO:     127.0.0.1:51071 - "POST /run-step HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51071 - "OPTIONS /diagnose HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51071 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: POST http://127.0.0.1:8001/api/v1/wallet-transactions "HTTP/1.1 422 Unprocessable Entity"
+INFO:     127.0.0.1:51071 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51071 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: POST http://127.0.0.1:8001/api/v1/tariff-config/ "HTTP/1.1 201 Created"
+INFO:     127.0.0.1:51071 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: POST http://127.0.0.1:8001/api/v1/wallet-transactions "HTTP/1.1 422 Unprocessable Entity"
+INFO:     127.0.0.1:51100 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51100 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: POST http://127.0.0.1:8001/api/v1/wallet-transactions "HTTP/1.1 201 Created"
+INFO:     127.0.0.1:51100 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: PUT http://127.0.0.1:8001/api/drivers/12345 "HTTP/1.1 404 Not Found"
+INFO:     127.0.0.1:51108 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51108 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: PUT http://127.0.0.1:8001/api/drivers/12345 "HTTP/1.1 404 Not Found"
+INFO:     127.0.0.1:51108 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51108 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: PUT http://127.0.0.1:8001/api/vehicles/bb1cd08c-0667-4ebd-b7bf-0b5701f390f0 "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51108 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: PUT http://127.0.0.1:8001/api/trips/8ab90151-8fd2-4fce-aa4e-7040efe93ec0 "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51108 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: PUT http://127.0.0.1:8001/api/v1/wallet-transactions/1 "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51108 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: PATCH http://127.0.0.1:8001/api/drivers/12345/availability "HTTP/1.1 422 Unprocessable Entity"
+INFO:     127.0.0.1:51127 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51127 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: PATCH http://127.0.0.1:8001/api/drivers/12345/availability "HTTP/1.1 422 Unprocessable Entity"
+INFO:     127.0.0.1:51127 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51127 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: PATCH http://127.0.0.1:8001/api/drivers/12345/kyc-status "HTTP/1.1 422 Unprocessable Entity"
+INFO:     127.0.0.1:51127 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51127 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: PATCH http://127.0.0.1:8001/api/drivers/12345/kyc-status "HTTP/1.1 422 Unprocessable Entity"
+INFO:     127.0.0.1:51127 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51127 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: PATCH http://127.0.0.1:8001/api/drivers/12345/approve "HTTP/1.1 422 Unprocessable Entity"
+INFO:     127.0.0.1:51127 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51127 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: PATCH http://127.0.0.1:8001/api/drivers/12345/approve "HTTP/1.1 422 Unprocessable Entity"
+INFO:     127.0.0.1:51127 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51127 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: PATCH http://127.0.0.1:8001/api/vehicles/bb1cd08c-0667-4ebd-b7bf-0b5701f390f0/approve "HTTP/1.1 422 Unprocessable Entity"
+INFO:     127.0.0.1:51127 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51127 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: PATCH http://127.0.0.1:8001/api/vehicles/bb1cd08c-0667-4ebd-b7bf-0b5701f390f0/approve "HTTP/1.1 422 Unprocessable Entity"
+INFO:     127.0.0.1:51127 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51127 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: PATCH http://127.0.0.1:8001/api/trips/8ab90151-8fd2-4fce-aa4e-7040efe93ec0/assign-driver/12345 "HTTP/1.1 404 Not Found"
+INFO:     127.0.0.1:51127 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51127 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: PATCH http://127.0.0.1:8001/api/trips/8ab90151-8fd2-4fce-aa4e-7040efe93ec0/assign-driver/12345 "HTTP/1.1 404 Not Found"
+INFO:     127.0.0.1:51127 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51127 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: PATCH http://127.0.0.1:8001/api/trips/8ab90151-8fd2-4fce-aa4e-7040efe93ec0/unassign "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51127 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: PATCH http://127.0.0.1:8001/api/trips/8ab90151-8fd2-4fce-aa4e-7040efe93ec0/status "HTTP/1.1 422 Unprocessable Entity"
+INFO:     127.0.0.1:51127 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51127 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: PATCH http://127.0.0.1:8001/api/trips/8ab90151-8fd2-4fce-aa4e-7040efe93ec0/status "HTTP/1.1 422 Unprocessable Entity"
+INFO:     127.0.0.1:51127 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51127 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: PATCH http://127.0.0.1:8001/api/trips/8ab90151-8fd2-4fce-aa4e-7040efe93ec0/odometer/start "HTTP/1.1 422 Unprocessable Entity"
+INFO:     127.0.0.1:51127 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51127 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: PATCH http://127.0.0.1:8001/api/trips/8ab90151-8fd2-4fce-aa4e-7040efe93ec0/odometer/start "HTTP/1.1 422 Unprocessable Entity"
+INFO:     127.0.0.1:51127 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51127 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: PATCH http://127.0.0.1:8001/api/trips/8ab90151-8fd2-4fce-aa4e-7040efe93ec0/odometer/end "HTTP/1.1 422 Unprocessable Entity"
+INFO:     127.0.0.1:51127 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51127 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: PATCH http://127.0.0.1:8001/api/trips/8ab90151-8fd2-4fce-aa4e-7040efe93ec0/odometer/end "HTTP/1.1 422 Unprocessable Entity"
+INFO:     127.0.0.1:51127 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51127 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51394 - "OPTIONS /parse HTTP/1.1" 200 OK
+INFO:main:Parsing Swagger from: http://127.0.0.1:8001/docs
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/openapi.json "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/docs "HTTP/1.1 200 OK"
+Checking: http://127.0.0.1:8001/openapi.json
+Checking: http://127.0.0.1:8001/docs
+Checking: http://127.0.0.1:8001/api/openapi.json
+Checking: http://127.0.0.1:8001/api/v1/openapi.json
+Checking: http://127.0.0.1:8001/v1/openapi.json
+INFO:     127.0.0.1:51394 - "POST /parse HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51394 - "OPTIONS /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51394 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/locations "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51394 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/locations/map "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51394 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/vehicles/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51394 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/trips/available "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51394 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/trips/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51394 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/payments/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51394 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/v1/wallet-transactions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51394 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/v1/tariff-config/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51394 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/12345 "HTTP/1.1 404 Not Found"
+INFO:     127.0.0.1:51394 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51394 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/12345 "HTTP/1.1 404 Not Found"
+INFO:     127.0.0.1:51394 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51394 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/vehicles/bb1cd08c-0667-4ebd-b7bf-0b5701f390f0 "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51394 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/vehicles/driver/7594eede-bb87-4db0-ae6f-e06061ae8431 "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51394 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/trips/8ab90151-8fd2-4fce-aa4e-7040efe93ec0 "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51394 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/payments/1b0df0b1-368a-43a9-b3fa-362cf35c5632 "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51394 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/v1/wallet-transactions/1 "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51394 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Parsing Swagger from: http://127.0.0.1:8001/docs
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/openapi.json "HTTP/1.1 200 OK"
+Checking: http://127.0.0.1:8001/openapi.json
+Checking: http://127.0.0.1:8001/docs
+Checking: http://127.0.0.1:8001/api/openapi.json
+Checking: http://127.0.0.1:8001/api/v1/openapi.json
+Checking: http://127.0.0.1:8001/v1/openapi.json
+INFO:     127.0.0.1:51500 - "POST /parse HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51500 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/locations "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51500 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/locations/map "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51500 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/vehicles/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51500 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/trips/available "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51500 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/trips/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51500 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/payments/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51500 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/v1/wallet-transactions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51500 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/v1/tariff-config/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51500 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/12345 "HTTP/1.1 404 Not Found"
+INFO:     127.0.0.1:51500 - "POST /run-step HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51500 - "OPTIONS /diagnose HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51500 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/12345 "HTTP/1.1 404 Not Found"
+INFO:     127.0.0.1:51500 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51500 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/vehicles/bb1cd08c-0667-4ebd-b7bf-0b5701f390f0 "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51500 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/vehicles/driver/7594eede-bb87-4db0-ae6f-e06061ae8431 "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51500 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/trips/8ab90151-8fd2-4fce-aa4e-7040efe93ec0 "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51500 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/payments/1b0df0b1-368a-43a9-b3fa-362cf35c5632 "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51500 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/v1/wallet-transactions/1 "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51500 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: POST http://127.0.0.1:8001/api/drivers/check-phone "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51530 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: POST http://127.0.0.1:8001/api/drivers/ "HTTP/1.1 400 Bad Request"
+INFO:     127.0.0.1:51530 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51530 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: POST http://127.0.0.1:8001/api/drivers/ "HTTP/1.1 201 Created"
+INFO:     127.0.0.1:51530 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: POST http://127.0.0.1:8001/api/vehicles/ "HTTP/1.1 400 Bad Request"
+INFO:     127.0.0.1:51530 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51530 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: POST http://127.0.0.1:8001/api/vehicles/ "HTTP/1.1 422 Unprocessable Entity"
+INFO:     127.0.0.1:51530 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51530 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: POST http://127.0.0.1:8001/api/trips/ "HTTP/1.1 201 Created"
+INFO:     127.0.0.1:51530 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: POST http://127.0.0.1:8001/api/payments/ "HTTP/1.1 422 Unprocessable Entity"
+INFO:     127.0.0.1:51530 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51530 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: POST http://127.0.0.1:8001/api/payments/ "HTTP/1.1 201 Created"
+INFO:     127.0.0.1:51530 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: POST http://127.0.0.1:8001/api/v1/wallet-transactions "HTTP/1.1 422 Unprocessable Entity"
+INFO:     127.0.0.1:51530 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51530 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: POST http://127.0.0.1:8001/api/v1/wallet-transactions "HTTP/1.1 201 Created"
+INFO:     127.0.0.1:51530 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: POST http://127.0.0.1:8001/api/v1/tariff-config/ "HTTP/1.1 201 Created"
+INFO:     127.0.0.1:51530 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: POST http://127.0.0.1:8001/api/vehicles/ "HTTP/1.1 422 Unprocessable Entity"
+INFO:     127.0.0.1:51562 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51562 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: POST http://127.0.0.1:8001/api/vehicles/ "HTTP/1.1 404 Not Found"
+INFO:     127.0.0.1:51562 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51562 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Parsing Swagger from: http://127.0.0.1:8001/docs
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/openapi.json "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/docs "HTTP/1.1 200 OK"
+Checking: http://127.0.0.1:8001/openapi.json
+Checking: http://127.0.0.1:8001/docs
+Checking: http://127.0.0.1:8001/api/openapi.json
+Checking: http://127.0.0.1:8001/api/v1/openapi.json
+Checking: http://127.0.0.1:8001/v1/openapi.json
+INFO:     127.0.0.1:51637 - "POST /parse HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51637 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/locations "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51637 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/locations/map "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51637 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/vehicles/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51637 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/trips/available "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51637 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/trips/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51637 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/payments/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51637 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/v1/wallet-transactions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51637 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/v1/tariff-config/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51637 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/12345 "HTTP/1.1 404 Not Found"
+INFO:     127.0.0.1:51637 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51637 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/12345 "HTTP/1.1 404 Not Found"
+INFO:     127.0.0.1:51637 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51637 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/vehicles/bb1cd08c-0667-4ebd-b7bf-0b5701f390f0 "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51637 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/vehicles/driver/7594eede-bb87-4db0-ae6f-e06061ae8431 "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51637 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/trips/8ab90151-8fd2-4fce-aa4e-7040efe93ec0 "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51637 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/payments/1b0df0b1-368a-43a9-b3fa-362cf35c5632 "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51637 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/v1/wallet-transactions/1 "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51637 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Parsing Swagger from: http://127.0.0.1:8001/docs#/
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/openapi.json "HTTP/1.1 200 OK"
+Checking: http://127.0.0.1:8001/openapi.json
+Checking: http://127.0.0.1:8001/docs#/
+Checking: http://127.0.0.1:8001/api/openapi.json
+Checking: http://127.0.0.1:8001/api/v1/openapi.json
+Checking: http://127.0.0.1:8001/v1/openapi.json
+INFO:     127.0.0.1:51673 - "POST /parse HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51673 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/locations "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51673 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/locations/map "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51673 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/7594eede-bb87-4db0-ae6f-e06061ae8431 "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51673 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51687 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/locations "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51687 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/locations/map "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51687 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/vehicles/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51687 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/trips/available "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51687 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/trips/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51687 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/payments/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51687 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/v1/wallet-transactions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51687 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/v1/tariff-config/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51687 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/12345 "HTTP/1.1 404 Not Found"
+INFO:     127.0.0.1:51687 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51687 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/12345 "HTTP/1.1 404 Not Found"
+INFO:     127.0.0.1:51687 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51687 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/vehicles/bb1cd08c-0667-4ebd-b7bf-0b5701f390f0 "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51687 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/vehicles/driver/7594eede-bb87-4db0-ae6f-e06061ae8431 "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51687 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/trips/8ab90151-8fd2-4fce-aa4e-7040efe93ec0 "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51687 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/payments/1b0df0b1-368a-43a9-b3fa-362cf35c5632 "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51687 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/v1/wallet-transactions/1 "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51687 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: POST http://127.0.0.1:8001/api/drivers/ "HTTP/1.1 400 Bad Request"
+INFO:     127.0.0.1:51738 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51738 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: POST http://127.0.0.1:8001/api/drivers/ "HTTP/1.1 400 Bad Request"
+INFO:     127.0.0.1:51738 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51738 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51747 - "OPTIONS /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: POST http://127.0.0.1:8001/api/drivers/check-phone "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51749 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: POST http://127.0.0.1:8001/api/drivers/ "HTTP/1.1 400 Bad Request"
+INFO:     127.0.0.1:51749 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51749 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: POST http://127.0.0.1:8001/api/drivers/ "HTTP/1.1 201 Created"
+INFO:     127.0.0.1:51749 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51760 - "POST /run-step HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51826 - "OPTIONS /parse HTTP/1.1" 200 OK
+INFO:main:Parsing Swagger from: http://127.0.0.1:8001/docs#/
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/openapi.json "HTTP/1.1 200 OK"
+Checking: http://127.0.0.1:8001/openapi.json
+Checking: http://127.0.0.1:8001/docs#/
+Checking: http://127.0.0.1:8001/api/openapi.json
+Checking: http://127.0.0.1:8001/api/v1/openapi.json
+Checking: http://127.0.0.1:8001/v1/openapi.json
+INFO:     127.0.0.1:51826 - "POST /parse HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: POST http://127.0.0.1:8001/api/drivers/ "HTTP/1.1 201 Created"
+INFO:     127.0.0.1:51826 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: POST http://127.0.0.1:8001/api/drivers/check-phone "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51836 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: POST http://127.0.0.1:8001/api/vehicles/ "HTTP/1.1 400 Bad Request"
+INFO:     127.0.0.1:51843 - "POST /run-step HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51843 - "OPTIONS /diagnose HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51843 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: POST http://127.0.0.1:8001/api/vehicles/ "HTTP/1.1 201 Created"
+INFO:     127.0.0.1:51843 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/af5c7e41-b1d4-4ed2-bae9-2ff28f2a4826 "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51851 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51851 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/locations "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51851 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/locations/map "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51851 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/vehicles/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51851 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/trips/available "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51851 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/trips/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51851 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/payments/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51851 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/v1/wallet-transactions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51851 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/v1/tariff-config/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51851 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/12345 "HTTP/1.1 404 Not Found"
+INFO:     127.0.0.1:51851 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51851 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/12345 "HTTP/1.1 404 Not Found"
+INFO:     127.0.0.1:51851 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51851 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/vehicles/bb1cd08c-0667-4ebd-b7bf-0b5701f390f0 "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51851 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/vehicles/driver/7594eede-bb87-4db0-ae6f-e06061ae8431 "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51851 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/trips/8ab90151-8fd2-4fce-aa4e-7040efe93ec0 "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51851 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/payments/1b0df0b1-368a-43a9-b3fa-362cf35c5632 "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51851 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/v1/wallet-transactions/1 "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51851 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51919 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/locations "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51919 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/locations/map "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51919 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/vehicles/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51919 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/trips/available "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51919 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/trips/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51919 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/payments/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51919 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/v1/wallet-transactions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51919 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/v1/tariff-config/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51919 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/12345 "HTTP/1.1 404 Not Found"
+INFO:     127.0.0.1:51919 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51919 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/12345 "HTTP/1.1 404 Not Found"
+INFO:     127.0.0.1:51919 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51919 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/vehicles/bb1cd08c-0667-4ebd-b7bf-0b5701f390f0 "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51919 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/vehicles/driver/7594eede-bb87-4db0-ae6f-e06061ae8431 "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51919 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/trips/8ab90151-8fd2-4fce-aa4e-7040efe93ec0 "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51919 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/payments/1b0df0b1-368a-43a9-b3fa-362cf35c5632 "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51919 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/v1/wallet-transactions/1 "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51919 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/12345 "HTTP/1.1 404 Not Found"
+INFO:     127.0.0.1:51919 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51919 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/12345 "HTTP/1.1 404 Not Found"
+INFO:     127.0.0.1:51919 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51919 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Parsing Swagger from: http://127.0.0.1:8001/docs#/
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/openapi.json "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/docs#/ "HTTP/1.1 200 OK"
+Checking: http://127.0.0.1:8001/openapi.json
+Checking: http://127.0.0.1:8001/docs#/
+Checking: http://127.0.0.1:8001/api/openapi.json
+Checking: http://127.0.0.1:8001/api/v1/openapi.json
+Checking: http://127.0.0.1:8001/v1/openapi.json
+INFO:     127.0.0.1:51919 - "POST /parse HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51919 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/7594eede-bb87-4db0-ae6f-e06061ae8431 "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51919 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51970 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/locations "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51970 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/locations/map "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51970 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/7594eede-bb87-4db0-ae6f-e06061ae8431 "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51970 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51970 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/locations "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51970 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/locations/map "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51970 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/vehicles/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51970 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/trips/available "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51970 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/trips/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51970 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/payments/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51970 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/v1/wallet-transactions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51970 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/v1/tariff-config/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51970 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/12345 "HTTP/1.1 404 Not Found"
+INFO:     127.0.0.1:51970 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51970 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/12345 "HTTP/1.1 404 Not Found"
+INFO:     127.0.0.1:51970 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51970 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/vehicles/bb1cd08c-0667-4ebd-b7bf-0b5701f390f0 "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51970 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/vehicles/driver/7594eede-bb87-4db0-ae6f-e06061ae8431 "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51970 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/trips/8ab90151-8fd2-4fce-aa4e-7040efe93ec0 "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51970 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/payments/1b0df0b1-368a-43a9-b3fa-362cf35c5632 "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51970 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/v1/wallet-transactions/1 "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:51970 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Parsing Swagger from: http://127.0.0.1:8001/docs#/
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/openapi.json "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/docs#/ "HTTP/1.1 200 OK"
+Checking: http://127.0.0.1:8001/openapi.json
+Checking: http://127.0.0.1:8001/docs#/
+Checking: http://127.0.0.1:8001/api/openapi.json
+Checking: http://127.0.0.1:8001/api/v1/openapi.json
+Checking: http://127.0.0.1:8001/v1/openapi.json
+INFO:     127.0.0.1:52071 - "POST /parse HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52071 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/7594eede-bb87-4db0-ae6f-e06061ae8431 "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52071 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/trips/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52071 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52071 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/vehicles/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52071 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/payments/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52071 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/trips/available "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52071 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/locations "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52071 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/v1/tariff-config/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52071 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/locations/map "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52071 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/v1/wallet-transactions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52071 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/trips/8ab90151-8fd2-4fce-aa4e-7040efe93ec0 "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52071 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/12345 "HTTP/1.1 404 Not Found"
+INFO:     127.0.0.1:52071 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52071 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/12345 "HTTP/1.1 404 Not Found"
+INFO:     127.0.0.1:52071 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52071 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/vehicles/bb1cd08c-0667-4ebd-b7bf-0b5701f390f0 "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52071 - "POST /run-step HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52071 - "OPTIONS /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/payments/1b0df0b1-368a-43a9-b3fa-362cf35c5632 "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52071 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/vehicles/driver/7594eede-bb87-4db0-ae6f-e06061ae8431 "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52071 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/v1/wallet-transactions/1 "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52071 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52099 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/locations "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52099 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/locations/map "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52099 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/7594eede-bb87-4db0-ae6f-e06061ae8431 "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52099 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/trips/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52099 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52099 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/vehicles/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52099 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/payments/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52099 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/trips/available "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52099 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/locations "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52099 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/v1/tariff-config/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52099 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/locations/map "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52099 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/v1/wallet-transactions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52099 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/trips/8ab90151-8fd2-4fce-aa4e-7040efe93ec0 "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52099 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/12345 "HTTP/1.1 404 Not Found"
+INFO:     127.0.0.1:52099 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52099 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/12345 "HTTP/1.1 404 Not Found"
+INFO:     127.0.0.1:52099 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52099 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/vehicles/bb1cd08c-0667-4ebd-b7bf-0b5701f390f0 "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52099 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/payments/1b0df0b1-368a-43a9-b3fa-362cf35c5632 "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52099 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/vehicles/driver/7594eede-bb87-4db0-ae6f-e06061ae8431 "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52099 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/v1/wallet-transactions/1 "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52099 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Parsing Swagger from: http://127.0.0.1:8001/docs#/
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/openapi.json "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/docs#/ "HTTP/1.1 200 OK"
+Checking: http://127.0.0.1:8001/openapi.json
+Checking: http://127.0.0.1:8001/docs#/
+Checking: http://127.0.0.1:8001/api/openapi.json
+Checking: http://127.0.0.1:8001/api/v1/openapi.json
+Checking: http://127.0.0.1:8001/v1/openapi.json
+INFO:     127.0.0.1:52237 - "POST /parse HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52297 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/7594eede-bb87-4db0-ae6f-e06061ae8431 "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52297 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/trips/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52297 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52297 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/vehicles/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52297 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/payments/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52297 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/trips/available "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52297 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/locations "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52297 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/v1/tariff-config/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52297 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/locations/map "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52297 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/v1/wallet-transactions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52297 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/trips/8ab90151-8fd2-4fce-aa4e-7040efe93ec0 "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52297 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/12345 "HTTP/1.1 404 Not Found"
+INFO:     127.0.0.1:52297 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52297 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/drivers/12345 "HTTP/1.1 404 Not Found"
+INFO:     127.0.0.1:52297 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52297 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/vehicles/bb1cd08c-0667-4ebd-b7bf-0b5701f390f0 "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52297 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/payments/1b0df0b1-368a-43a9-b3fa-362cf35c5632 "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52297 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/vehicles/driver/7594eede-bb87-4db0-ae6f-e06061ae8431 "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52297 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET http://127.0.0.1:8001/api/v1/wallet-transactions/1 "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52297 - "POST /run-step HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52836 - "OPTIONS /parse HTTP/1.1" 200 OK
+INFO:main:Parsing Swagger from: https://api.cholacabs.in/docs#/
+INFO:httpx:HTTP Request: GET https://api.cholacabs.in/v1/openapi.json "HTTP/1.1 404 Not Found"
+INFO:httpx:HTTP Request: GET https://api.cholacabs.in/api/v1/openapi.json "HTTP/1.1 404 Not Found"
+INFO:httpx:HTTP Request: GET https://api.cholacabs.in/api/openapi.json "HTTP/1.1 404 Not Found"
+INFO:httpx:HTTP Request: GET https://api.cholacabs.in/docs#/ "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: GET https://api.cholacabs.in/openapi.json "HTTP/1.1 200 OK"
+Checking: https://api.cholacabs.in/openapi.json
+Checking: https://api.cholacabs.in/docs#/
+Checking: https://api.cholacabs.in/api/openapi.json
+Checking: https://api.cholacabs.in/api/v1/openapi.json
+Checking: https://api.cholacabs.in/v1/openapi.json
+INFO:     127.0.0.1:52836 - "POST /parse HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET https://api.cholacabs.in/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52836 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET https://api.cholacabs.in/health "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52836 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET https://api.cholacabs.in/api/stats "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52836 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET https://api.cholacabs.in/api/trips/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52836 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET https://api.cholacabs.in/api/errors/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52836 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET https://api.cholacabs.in/api/admins/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52836 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET https://api.cholacabs.in/api/drivers/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52836 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET https://api.cholacabs.in/api/vehicles/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52836 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET https://api.cholacabs.in/api/payments/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52836 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET https://api.cholacabs.in/api/raw/trips "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52836 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET https://api.cholacabs.in/api/raw/drivers "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52836 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET https://api.cholacabs.in/api/raw/vehicles "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52836 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET https://api.cholacabs.in/api/tariff-config/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52836 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET https://api.cholacabs.in/api/trip-requests/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52836 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET https://api.cholacabs.in/api/trips/available "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52836 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET https://api.cholacabs.in/api/drivers/locations "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52836 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET https://api.cholacabs.in/api/analytics/dashboard "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52836 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET https://api.cholacabs.in/api/wallet-transactions/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52836 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET https://api.cholacabs.in/api/drivers/locations/map "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52836 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET https://api.cholacabs.in/api/analytics/revenue/range "HTTP/1.1 422 Unprocessable Entity"
+INFO:     127.0.0.1:52836 - "POST /run-step HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52836 - "OPTIONS /diagnose HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52836 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET https://api.cholacabs.in/api/analytics/revenue/range "HTTP/1.1 422 Unprocessable Entity"
+INFO:     127.0.0.1:52836 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52836 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET https://api.cholacabs.in/api/errors/predefined-errors "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52836 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET https://api.cholacabs.in/api/analytics/revenue/monthly "HTTP/1.1 422 Unprocessable Entity"
+INFO:     127.0.0.1:52836 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52836 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET https://api.cholacabs.in/api/analytics/revenue/monthly "HTTP/1.1 422 Unprocessable Entity"
+INFO:     127.0.0.1:52836 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52836 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET https://api.cholacabs.in/api/trips/statistics/dashboard "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52836 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET https://api.cholacabs.in/api/analytics/revenue/12-months "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52836 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET https://api.cholacabs.in/api/analytics/revenue/vehicle-type "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52836 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET https://api.cholacabs.in/api/trips/f5d045b1-a2b6-4d6c-bcaf-f56d6b8c7067 "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52836 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET https://api.cholacabs.in/test-file/%7Bfilename%7D "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52836 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET https://api.cholacabs.in/api/errors/075956cc-fc71-11f0-8bce-dee8d4b82f4f "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52836 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET https://api.cholacabs.in/api/admins/b3455b22-fabd-42ec-b3e4-8c4279b0655a "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52836 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET https://api.cholacabs.in/api/drivers/83aab76d-3a1e-4b2a-b2b9-33be6e02966a "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52836 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET https://api.cholacabs.in/api/vehicles/1cf6de74-1af9-4fac-bd3b-1e4012d75d33 "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52836 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET https://api.cholacabs.in/api/payments/27068a2c-bad5-4d88-b6e0-42e9f4acb23d "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52836 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET https://api.cholacabs.in/api/trips/driver/3880ef77-c2e2-4895-ba29-ece4db05dff3 "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52836 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET https://api.cholacabs.in/api/tariff-config/ "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52836 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET https://api.cholacabs.in/api/tariff-config/20dc54b3-f129-4283-9c64-6763cc4d808d "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52836 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET https://api.cholacabs.in/api/errors/driver/3880ef77-c2e2-4895-ba29-ece4db05dff3 "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52836 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET https://api.cholacabs.in/api/trip-requests/0472c477-397a-404d-b33a-8ab419cc27a5 "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52836 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET https://api.cholacabs.in/api/vehicles/driver/42167a53-e962-46f8-8442-79efe7f7253a "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52836 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET https://api.cholacabs.in/api/payments/driver/42167a53-e962-46f8-8442-79efe7f7253a "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52836 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET https://api.cholacabs.in/api/admins/phone/6379036400 "HTTP/1.1 404 Not Found"
+INFO:     127.0.0.1:52836 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52836 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET https://api.cholacabs.in/api/admins/phone/6379036400 "HTTP/1.1 404 Not Found"
+INFO:     127.0.0.1:52836 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52836 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET https://api.cholacabs.in/api/drivers/42167a53-e962-46f8-8442-79efe7f7253a/location "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52836 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET https://api.cholacabs.in/api/trip-requests/trip/a1053865-15cf-43ee-896c-b49f42a049a6 "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52836 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET https://api.cholacabs.in/api/drivers/42167a53-e962-46f8-8442-79efe7f7253a/fcm-token "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52836 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET https://api.cholacabs.in/api/trip-requests/driver/42167a53-e962-46f8-8442-79efe7f7253a "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52836 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET https://api.cholacabs.in/api/drivers/42167a53-e962-46f8-8442-79efe7f7253a/wallet-balance "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52836 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET https://api.cholacabs.in/api/tariff-config/active/Sedan "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52836 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET https://api.cholacabs.in/api/wallet-transactions/pay_SAaepC96KUat0r "HTTP/1.1 404 Not Found"
+INFO:     127.0.0.1:52836 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52836 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET https://api.cholacabs.in/api/wallet-transactions/pay_SAaepC96KUat0r "HTTP/1.1 404 Not Found"
+INFO:     127.0.0.1:52836 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Diagnosing API failure using AI
+INFO:httpx:HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52836 - "POST /diagnose HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET https://api.cholacabs.in/api/wallet-transactions/driver/42167a53-e962-46f8-8442-79efe7f7253a "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52836 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET https://api.cholacabs.in/api/payments/razorpay/pay_SAaepC96KUat0r "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52836 - "POST /run-step HTTP/1.1" 200 OK
+INFO:main:Executing single test step
+INFO:httpx:HTTP Request: GET https://api.cholacabs.in/api/tariff-config/vehicle-type/sedan "HTTP/1.1 200 OK"
+INFO:     127.0.0.1:52836 - "POST /run-step HTTP/1.1" 200 OK

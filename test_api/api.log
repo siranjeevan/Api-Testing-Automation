@@ -1,4 +1,616 @@
-INFO:     Started server process [31062]
+INFO:     Started server process [32153]
 INFO:     Waiting for application startup.
 INFO:     Application startup complete.
 INFO:     Uvicorn running on http://0.0.0.0:8001 (Press CTRL+C to quit)
+INFO:     127.0.0.1:49692 - "GET / HTTP/1.1" 307 Temporary Redirect
+INFO:     127.0.0.1:49692 - "GET /docs HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49692 - "GET /openapi.json HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49693 - "GET /api/drivers/?skip=0&limit=100 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49711 - "GET /openapi.json HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49712 - "GET /docs HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49713 - "GET /api/openapi.json HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:49714 - "GET /api/v1/openapi.json HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:49715 - "GET /v1/openapi.json HTTP/1.1" 404 Not Found
+/Users/Jeevith/Downloads/React/Api-Testing-Automation/test_api/main.py:165: PydanticDeprecatedSince20: The `dict` method is deprecated; use `model_dump` instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.12/migration/
+  new_driver = request.dict()
+INFO:     127.0.0.1:49725 - "POST /api/drivers/ HTTP/1.1" 201 Created
+INFO:     127.0.0.1:49729 - "GET /api/drivers/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49732 - "POST /api/drivers/check-phone HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49733 - "POST /api/drivers/ HTTP/1.1" 400 Bad Request
+INFO:     127.0.0.1:49735 - "POST /api/drivers/ HTTP/1.1" 201 Created
+/Users/Jeevith/Downloads/React/Api-Testing-Automation/test_api/main.py:312: PydanticDeprecatedSince20: The `dict` method is deprecated; use `model_dump` instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.12/migration/
+  new_vehicle = request.dict()
+INFO:     127.0.0.1:49736 - "POST /api/vehicles/ HTTP/1.1" 201 Created
+/Users/Jeevith/Downloads/React/Api-Testing-Automation/test_api/main.py:461: PydanticDeprecatedSince20: The `dict` method is deprecated; use `model_dump` instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.12/migration/
+  new_trip = request.dict()
+INFO:     127.0.0.1:49737 - "POST /api/trips/ HTTP/1.1" 201 Created
+/Users/Jeevith/Downloads/React/Api-Testing-Automation/test_api/main.py:656: PydanticDeprecatedSince20: The `dict` method is deprecated; use `model_dump` instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.12/migration/
+  new_payment = request.dict()
+INFO:     127.0.0.1:49738 - "POST /api/payments/ HTTP/1.1" 201 Created
+INFO:     127.0.0.1:49739 - "POST /api/v1/wallet-transactions HTTP/1.1" 422 Unprocessable Entity
+INFO:     127.0.0.1:49741 - "POST /api/v1/wallet-transactions HTTP/1.1" 422 Unprocessable Entity
+INFO:     127.0.0.1:49743 - "POST /api/v1/tariff-config/ HTTP/1.1" 422 Unprocessable Entity
+/Users/Jeevith/Downloads/React/Api-Testing-Automation/test_api/main.py:804: PydanticDeprecatedSince20: The `dict` method is deprecated; use `model_dump` instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.12/migration/
+  new_tariff = tariff.dict()
+INFO:     127.0.0.1:49745 - "POST /api/v1/tariff-config/ HTTP/1.1" 201 Created
+INFO:     127.0.0.1:49756 - "GET /docs HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49756 - "GET /openapi.json HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49767 - "POST /api/v1/wallet-transactions HTTP/1.1" 422 Unprocessable Entity
+/Users/Jeevith/Downloads/React/Api-Testing-Automation/test_api/main.py:745: PydanticDeprecatedSince20: The `dict` method is deprecated; use `model_dump` instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.12/migration/
+  new_txn = request.dict()
+INFO:     127.0.0.1:49769 - "POST /api/v1/wallet-transactions HTTP/1.1" 201 Created
+INFO:     127.0.0.1:49782 - "GET /api/drivers/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49783 - "GET /api/drivers/locations HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49784 - "GET /api/drivers/locations/map HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49785 - "GET /api/vehicles/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49786 - "GET /api/trips/available HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49787 - "GET /api/trips/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49788 - "GET /api/payments/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49789 - "GET /api/v1/wallet-transactions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49790 - "GET /api/v1/tariff-config/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49791 - "GET /api/drivers/12345 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:49793 - "GET /api/drivers/12345 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:49795 - "GET /api/vehicles/bbe57a32-c272-4e25-b808-4687a238f4c1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49797 - "GET /api/vehicles/driver/50316f0a-b110-4a3c-8db8-8a6ae8ee6e5f HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49798 - "GET /api/trips/9719656d-fa7b-4f36-af55-f6d426ba9842 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49799 - "GET /api/payments/bbcb4a06-7ed3-4add-b801-371b475dad77 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49800 - "GET /api/v1/wallet-transactions/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49959 - "GET /openapi.json HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49960 - "GET /docs HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49961 - "GET /api/openapi.json HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:49962 - "GET /api/v1/openapi.json HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:49963 - "GET /v1/openapi.json HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:49966 - "GET /api/drivers/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49967 - "GET /api/drivers/locations HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49968 - "GET /api/drivers/locations/map HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49969 - "GET /api/vehicles/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49970 - "GET /api/trips/available HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49971 - "GET /api/trips/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49972 - "GET /api/payments/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49973 - "GET /api/v1/wallet-transactions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49974 - "GET /api/v1/tariff-config/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49975 - "GET /api/drivers/12345 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:49977 - "GET /api/drivers/12345 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:49979 - "GET /api/vehicles/bbe57a32-c272-4e25-b808-4687a238f4c1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49980 - "GET /api/vehicles/driver/50316f0a-b110-4a3c-8db8-8a6ae8ee6e5f HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49981 - "GET /api/trips/9719656d-fa7b-4f36-af55-f6d426ba9842 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49982 - "GET /api/payments/bbcb4a06-7ed3-4add-b801-371b475dad77 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49983 - "GET /api/v1/wallet-transactions/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50075 - "GET /openapi.json HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50076 - "GET /docs HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50077 - "GET /api/openapi.json HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50078 - "GET /api/v1/openapi.json HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50079 - "GET /v1/openapi.json HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50084 - "GET /api/drivers/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50085 - "GET /api/drivers/locations HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50086 - "GET /api/drivers/locations/map HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50087 - "GET /api/vehicles/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50088 - "GET /api/trips/available HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50089 - "GET /api/trips/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50090 - "GET /api/payments/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50091 - "GET /api/v1/wallet-transactions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50092 - "GET /api/v1/tariff-config/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50093 - "GET /api/drivers/12345 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50094 - "GET /api/vehicles/bbe57a32-c272-4e25-b808-4687a238f4c1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50096 - "GET /api/vehicles/driver/50316f0a-b110-4a3c-8db8-8a6ae8ee6e5f HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50097 - "GET /api/trips/9719656d-fa7b-4f36-af55-f6d426ba9842 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50098 - "GET /api/payments/bbcb4a06-7ed3-4add-b801-371b475dad77 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50099 - "GET /api/v1/wallet-transactions/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50129 - "GET /api/drivers/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50130 - "GET /api/drivers/53945155-833a-45d4-bd25-30b7e9c79f0c HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50139 - "GET /api/drivers/12345 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50142 - "GET /api/drivers/12345 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50178 - "GET /api/drivers/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50179 - "GET /api/drivers/locations HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50180 - "GET /api/drivers/locations/map HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50181 - "GET /api/vehicles/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50182 - "GET /api/trips/available HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50183 - "GET /api/trips/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50184 - "GET /api/payments/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50185 - "GET /api/v1/wallet-transactions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50186 - "GET /api/v1/tariff-config/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50187 - "GET /api/drivers/12345 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50188 - "GET /api/vehicles/bbe57a32-c272-4e25-b808-4687a238f4c1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50189 - "GET /api/vehicles/driver/50316f0a-b110-4a3c-8db8-8a6ae8ee6e5f HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50190 - "GET /api/trips/9719656d-fa7b-4f36-af55-f6d426ba9842 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50191 - "GET /api/payments/bbcb4a06-7ed3-4add-b801-371b475dad77 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50192 - "GET /api/v1/wallet-transactions/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50208 - "PUT /api/drivers/12345 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50210 - "PUT /api/drivers/12345 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50272 - "GET /openapi.json HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50273 - "GET /docs HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50274 - "GET /api/openapi.json HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50275 - "GET /api/v1/openapi.json HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50276 - "GET /v1/openapi.json HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50277 - "GET /api/drivers/ HTTP/1.1" 200 OK
+/Users/Jeevith/Downloads/React/Api-Testing-Automation/test_api/main.py:191: PydanticDeprecatedSince20: The `dict` method is deprecated; use `model_dump` instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.12/migration/
+  update_data = request.dict(exclude_unset=True)
+INFO:     127.0.0.1:50278 - "PUT /api/drivers/53945155-833a-45d4-bd25-30b7e9c79f0c HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50281 - "GET /api/vehicles/ HTTP/1.1" 200 OK
+/Users/Jeevith/Downloads/React/Api-Testing-Automation/test_api/main.py:335: PydanticDeprecatedSince20: The `dict` method is deprecated; use `model_dump` instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.12/migration/
+  update_data = request.dict(exclude_unset=True)
+INFO:     127.0.0.1:50282 - "PUT /api/vehicles/bbe57a32-c272-4e25-b808-4687a238f4c1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50293 - "PUT /api/drivers/50316f0a-b110-4a3c-8db8-8a6ae8ee6e5f HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50294 - "PUT /api/vehicles/bbe57a32-c272-4e25-b808-4687a238f4c1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50295 - "GET /api/trips/available HTTP/1.1" 200 OK
+/Users/Jeevith/Downloads/React/Api-Testing-Automation/test_api/main.py:485: PydanticDeprecatedSince20: The `dict` method is deprecated; use `model_dump` instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.12/migration/
+  update_data = request.dict(exclude_unset=True)
+INFO:     127.0.0.1:50296 - "PUT /api/trips/9719656d-fa7b-4f36-af55-f6d426ba9842 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50297 - "GET /api/v1/wallet-transactions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50298 - "PUT /api/v1/wallet-transactions/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50366 - "PATCH /api/drivers/12345/availability HTTP/1.1" 422 Unprocessable Entity
+INFO:     127.0.0.1:50368 - "PATCH /api/drivers/12345/availability HTTP/1.1" 422 Unprocessable Entity
+INFO:     127.0.0.1:50379 - "GET /api/drivers/?skip=0&limit=100 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50391 - "PATCH /api/drivers/53945155-833a-45d4-bd25-30b7e9c79f0c/availability?is_available=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50400 - "PATCH /api/drivers/12345/availability HTTP/1.1" 422 Unprocessable Entity
+INFO:     127.0.0.1:50402 - "PATCH /api/drivers/12345/kyc-status HTTP/1.1" 422 Unprocessable Entity
+INFO:     127.0.0.1:50404 - "PATCH /api/drivers/12345/kyc-status HTTP/1.1" 422 Unprocessable Entity
+INFO:     127.0.0.1:50410 - "PATCH /api/drivers/12345/approve HTTP/1.1" 422 Unprocessable Entity
+INFO:     127.0.0.1:50412 - "PATCH /api/drivers/12345/approve HTTP/1.1" 422 Unprocessable Entity
+INFO:     127.0.0.1:50433 - "PATCH /api/vehicles/bbe57a32-c272-4e25-b808-4687a238f4c1/approve HTTP/1.1" 422 Unprocessable Entity
+INFO:     127.0.0.1:50438 - "PATCH /api/vehicles/bbe57a32-c272-4e25-b808-4687a238f4c1/approve HTTP/1.1" 422 Unprocessable Entity
+INFO:     127.0.0.1:50465 - "GET /openapi.json HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50466 - "GET /docs HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50467 - "GET /api/openapi.json HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50468 - "GET /api/v1/openapi.json HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50469 - "GET /v1/openapi.json HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50473 - "GET /api/trips/available HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50474 - "GET /api/drivers/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50475 - "PATCH /api/trips/%7Btrip_id%7D/assign-driver/53945155-833a-45d4-bd25-30b7e9c79f0c HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50493 - "PATCH /api/drivers/53945155-833a-45d4-bd25-30b7e9c79f0c/kyc-status?kyc_status=dsds HTTP/1.1" 400 Bad Request
+INFO:     127.0.0.1:50513 - "PATCH /api/drivers/53945155-833a-45d4-bd25-30b7e9c79f0c/availability HTTP/1.1" 422 Unprocessable Entity
+INFO:     127.0.0.1:50515 - "PATCH /api/drivers/53945155-833a-45d4-bd25-30b7e9c79f0c/availability HTTP/1.1" 422 Unprocessable Entity
+INFO:     127.0.0.1:50612 - "GET /openapi.json HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50613 - "GET /docs HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50614 - "GET /api/openapi.json HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50615 - "GET /api/v1/openapi.json HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50616 - "GET /v1/openapi.json HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50617 - "GET /api/drivers/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50618 - "PATCH /api/drivers/53945155-833a-45d4-bd25-30b7e9c79f0c/availability HTTP/1.1" 422 Unprocessable Entity
+INFO:     127.0.0.1:50620 - "PATCH /api/drivers/53945155-833a-45d4-bd25-30b7e9c79f0c/availability HTTP/1.1" 422 Unprocessable Entity
+INFO:     127.0.0.1:50638 - "DELETE /api/drivers/53945155-833a-45d4-bd25-30b7e9c79f0c HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50639 - "GET /api/vehicles/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50640 - "DELETE /api/vehicles/bbe57a32-c272-4e25-b808-4687a238f4c1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50641 - "GET /api/trips/available HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50642 - "DELETE /api/trips/%7Btrip_id%7D HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50646 - "GET /api/trips/available HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50647 - "DELETE /api/trips/%7Btrip_id%7D HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50650 - "GET /api/payments/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50651 - "DELETE /api/payments/bbcb4a06-7ed3-4add-b801-371b475dad77 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50652 - "GET /api/v1/wallet-transactions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50653 - "DELETE /api/v1/wallet-transactions/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50662 - "POST /api/trips/ HTTP/1.1" 201 Created
+INFO:     127.0.0.1:50678 - "GET /openapi.json HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50679 - "GET /docs HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50680 - "GET /api/openapi.json HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50681 - "GET /api/v1/openapi.json HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50682 - "GET /v1/openapi.json HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50683 - "GET /api/drivers/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50684 - "GET /api/drivers/locations HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50685 - "GET /api/drivers/locations/map HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50686 - "GET /api/vehicles/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50687 - "GET /api/trips/available HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50688 - "GET /api/trips/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50689 - "GET /api/payments/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50690 - "GET /api/v1/wallet-transactions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50691 - "GET /api/v1/tariff-config/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50692 - "GET /api/drivers/50316f0a-b110-4a3c-8db8-8a6ae8ee6e5f HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50693 - "GET /api/vehicles/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50694 - "GET /api/vehicles/%7Bvehicle_id%7D HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50696 - "GET /api/vehicles/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50697 - "GET /api/vehicles/%7Bvehicle_id%7D HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50699 - "GET /api/vehicles/driver/50316f0a-b110-4a3c-8db8-8a6ae8ee6e5f HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50700 - "GET /api/trips/9719656d-fa7b-4f36-af55-f6d426ba9842 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50701 - "GET /api/payments/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50702 - "GET /api/payments/%7Bpayment_id%7D HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50704 - "GET /api/payments/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50705 - "GET /api/payments/%7Bpayment_id%7D HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50707 - "GET /api/v1/wallet-transactions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50708 - "GET /api/v1/wallet-transactions/%7Btransaction_id%7D HTTP/1.1" 422 Unprocessable Entity
+INFO:     127.0.0.1:50711 - "GET /api/v1/wallet-transactions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50712 - "GET /api/v1/wallet-transactions/%7Btransaction_id%7D HTTP/1.1" 422 Unprocessable Entity
+INFO:     127.0.0.1:50718 - "DELETE /api/drivers/50316f0a-b110-4a3c-8db8-8a6ae8ee6e5f HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50719 - "GET /api/vehicles/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50720 - "DELETE /api/vehicles/%7Bvehicle_id%7D HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50723 - "GET /api/vehicles/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50725 - "DELETE /api/vehicles/%7Bvehicle_id%7D HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50733 - "DELETE /api/trips/9719656d-fa7b-4f36-af55-f6d426ba9842 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50734 - "GET /api/payments/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50735 - "DELETE /api/payments/%7Bpayment_id%7D HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50737 - "GET /api/payments/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50738 - "DELETE /api/payments/%7Bpayment_id%7D HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50740 - "GET /api/v1/wallet-transactions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50741 - "DELETE /api/v1/wallet-transactions/%7Btransaction_id%7D HTTP/1.1" 422 Unprocessable Entity
+INFO:     127.0.0.1:50743 - "GET /api/v1/wallet-transactions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50744 - "DELETE /api/v1/wallet-transactions/%7Btransaction_id%7D HTTP/1.1" 422 Unprocessable Entity
+INFO:     127.0.0.1:50749 - "GET /api/v1/wallet-transactions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50750 - "DELETE /api/v1/wallet-transactions/%7Btransaction_id%7D HTTP/1.1" 422 Unprocessable Entity
+INFO:     127.0.0.1:50752 - "GET /api/v1/wallet-transactions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50753 - "DELETE /api/v1/wallet-transactions/%7Btransaction_id%7D HTTP/1.1" 422 Unprocessable Entity
+INFO:     127.0.0.1:50755 - "GET /api/vehicles/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50756 - "DELETE /api/vehicles/%7Bvehicle_id%7D HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50758 - "GET /api/vehicles/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50759 - "DELETE /api/vehicles/%7Bvehicle_id%7D HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50855 - "GET /openapi.json HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50856 - "GET /docs HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50857 - "GET /api/openapi.json HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50858 - "GET /api/v1/openapi.json HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50859 - "GET /v1/openapi.json HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50862 - "GET /api/drivers/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50863 - "GET /api/drivers/locations HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50864 - "GET /api/drivers/locations/map HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50865 - "GET /api/vehicles/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50866 - "GET /api/trips/available HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50867 - "GET /api/trips/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50868 - "GET /api/payments/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50869 - "GET /api/v1/wallet-transactions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50870 - "GET /api/v1/tariff-config/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50871 - "GET /api/drivers/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50872 - "GET /api/drivers/%7Bdriver_id%7D HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50874 - "GET /api/drivers/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50875 - "GET /api/drivers/%7Bdriver_id%7D HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50877 - "GET /api/vehicles/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50878 - "GET /api/vehicles/%7Bvehicle_id%7D HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50880 - "GET /api/vehicles/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50881 - "GET /api/vehicles/%7Bvehicle_id%7D HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50884 - "GET /api/drivers/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50885 - "GET /api/vehicles/driver/%7Bdriver_id%7D HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50886 - "GET /api/trips/6ba02bfd-dbde-4597-a68a-5302a935271c HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50887 - "GET /api/payments/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50888 - "GET /api/payments/%7Bpayment_id%7D HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50890 - "GET /api/payments/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50891 - "GET /api/payments/%7Bpayment_id%7D HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50893 - "GET /api/v1/wallet-transactions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50894 - "GET /api/v1/wallet-transactions/%7Btransaction_id%7D HTTP/1.1" 422 Unprocessable Entity
+INFO:     127.0.0.1:50896 - "GET /api/v1/wallet-transactions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50897 - "GET /api/v1/wallet-transactions/%7Btransaction_id%7D HTTP/1.1" 422 Unprocessable Entity
+INFO:     127.0.0.1:50902 - "GET /api/drivers/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50903 - "DELETE /api/drivers/%7Bdriver_id%7D HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50905 - "GET /api/drivers/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50906 - "DELETE /api/drivers/%7Bdriver_id%7D HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50909 - "GET /api/vehicles/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50910 - "DELETE /api/vehicles/%7Bvehicle_id%7D HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50912 - "GET /api/vehicles/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50913 - "DELETE /api/vehicles/%7Bvehicle_id%7D HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50916 - "DELETE /api/trips/6ba02bfd-dbde-4597-a68a-5302a935271c HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50917 - "GET /api/payments/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50918 - "DELETE /api/payments/%7Bpayment_id%7D HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50923 - "GET /api/payments/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50924 - "DELETE /api/payments/%7Bpayment_id%7D HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50926 - "GET /api/v1/wallet-transactions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50927 - "DELETE /api/v1/wallet-transactions/%7Btransaction_id%7D HTTP/1.1" 422 Unprocessable Entity
+INFO:     127.0.0.1:50931 - "GET /api/v1/wallet-transactions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50932 - "DELETE /api/v1/wallet-transactions/%7Btransaction_id%7D HTTP/1.1" 422 Unprocessable Entity
+INFO:     127.0.0.1:50993 - "GET /openapi.json HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50994 - "GET /docs HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50995 - "GET /api/openapi.json HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50996 - "GET /api/v1/openapi.json HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50997 - "GET /v1/openapi.json HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51006 - "GET /openapi.json HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51007 - "GET /docs HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51008 - "GET /api/openapi.json HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51009 - "GET /api/v1/openapi.json HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51010 - "GET /v1/openapi.json HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51013 - "GET /api/drivers/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51014 - "GET /api/drivers/locations HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51015 - "GET /api/drivers/locations/map HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51016 - "GET /api/vehicles/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51017 - "GET /api/trips/available HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51018 - "GET /api/trips/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51019 - "GET /api/payments/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51020 - "GET /api/v1/wallet-transactions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51021 - "GET /api/v1/tariff-config/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51022 - "GET /api/drivers/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51023 - "GET /api/drivers/%7Bdriver_id%7D HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51025 - "GET /api/drivers/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51026 - "GET /api/drivers/%7Bdriver_id%7D HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51028 - "GET /api/vehicles/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51029 - "GET /api/vehicles/%7Bvehicle_id%7D HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51031 - "GET /api/vehicles/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51032 - "GET /api/vehicles/%7Bvehicle_id%7D HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51034 - "GET /api/drivers/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51035 - "GET /api/vehicles/driver/%7Bdriver_id%7D HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51036 - "GET /api/trips/available HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51038 - "GET /api/trips/%7Btrip_id%7D HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51040 - "GET /api/trips/available HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51041 - "GET /api/trips/%7Btrip_id%7D HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51043 - "GET /api/payments/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51044 - "GET /api/payments/%7Bpayment_id%7D HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51048 - "GET /api/payments/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51049 - "GET /api/payments/%7Bpayment_id%7D HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51051 - "GET /api/v1/wallet-transactions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51053 - "GET /api/v1/wallet-transactions/%7Btransaction_id%7D HTTP/1.1" 422 Unprocessable Entity
+INFO:     127.0.0.1:51057 - "GET /api/v1/wallet-transactions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51058 - "GET /api/v1/wallet-transactions/%7Btransaction_id%7D HTTP/1.1" 422 Unprocessable Entity
+INFO:     127.0.0.1:51065 - "GET /api/drivers/driver_id HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51068 - "GET /api/vehicles/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51072 - "POST /api/drivers/check-phone HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51073 - "POST /api/drivers/ HTTP/1.1" 201 Created
+INFO:     127.0.0.1:51074 - "POST /api/vehicles/ HTTP/1.1" 201 Created
+INFO:     127.0.0.1:51075 - "POST /api/trips/ HTTP/1.1" 201 Created
+INFO:     127.0.0.1:51076 - "POST /api/payments/ HTTP/1.1" 201 Created
+INFO:     127.0.0.1:51077 - "POST /api/v1/wallet-transactions HTTP/1.1" 422 Unprocessable Entity
+INFO:     127.0.0.1:51085 - "POST /api/v1/wallet-transactions HTTP/1.1" 422 Unprocessable Entity
+INFO:     127.0.0.1:51087 - "POST /api/v1/tariff-config/ HTTP/1.1" 201 Created
+INFO:     127.0.0.1:51101 - "POST /api/v1/wallet-transactions HTTP/1.1" 422 Unprocessable Entity
+INFO:     127.0.0.1:51103 - "POST /api/v1/wallet-transactions HTTP/1.1" 201 Created
+INFO:     127.0.0.1:51109 - "PUT /api/drivers/12345 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51114 - "PUT /api/drivers/12345 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51118 - "PUT /api/vehicles/bb1cd08c-0667-4ebd-b7bf-0b5701f390f0 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51119 - "PUT /api/trips/8ab90151-8fd2-4fce-aa4e-7040efe93ec0 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51120 - "PUT /api/v1/wallet-transactions/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51128 - "PATCH /api/drivers/12345/availability HTTP/1.1" 422 Unprocessable Entity
+INFO:     127.0.0.1:51130 - "PATCH /api/drivers/12345/availability HTTP/1.1" 422 Unprocessable Entity
+INFO:     127.0.0.1:51132 - "PATCH /api/drivers/12345/kyc-status HTTP/1.1" 422 Unprocessable Entity
+INFO:     127.0.0.1:51135 - "PATCH /api/drivers/12345/kyc-status HTTP/1.1" 422 Unprocessable Entity
+INFO:     127.0.0.1:51138 - "PATCH /api/drivers/12345/approve HTTP/1.1" 422 Unprocessable Entity
+INFO:     127.0.0.1:51141 - "PATCH /api/drivers/12345/approve HTTP/1.1" 422 Unprocessable Entity
+INFO:     127.0.0.1:51143 - "PATCH /api/vehicles/bb1cd08c-0667-4ebd-b7bf-0b5701f390f0/approve HTTP/1.1" 422 Unprocessable Entity
+INFO:     127.0.0.1:51145 - "PATCH /api/vehicles/bb1cd08c-0667-4ebd-b7bf-0b5701f390f0/approve HTTP/1.1" 422 Unprocessable Entity
+INFO:     127.0.0.1:51147 - "PATCH /api/trips/8ab90151-8fd2-4fce-aa4e-7040efe93ec0/assign-driver/12345 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51154 - "PATCH /api/trips/8ab90151-8fd2-4fce-aa4e-7040efe93ec0/assign-driver/12345 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51156 - "PATCH /api/trips/8ab90151-8fd2-4fce-aa4e-7040efe93ec0/unassign HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51157 - "PATCH /api/trips/8ab90151-8fd2-4fce-aa4e-7040efe93ec0/status HTTP/1.1" 422 Unprocessable Entity
+INFO:     127.0.0.1:51160 - "PATCH /api/trips/8ab90151-8fd2-4fce-aa4e-7040efe93ec0/status HTTP/1.1" 422 Unprocessable Entity
+INFO:     127.0.0.1:51163 - "PATCH /api/trips/8ab90151-8fd2-4fce-aa4e-7040efe93ec0/odometer/start HTTP/1.1" 422 Unprocessable Entity
+INFO:     127.0.0.1:51165 - "PATCH /api/trips/8ab90151-8fd2-4fce-aa4e-7040efe93ec0/odometer/start HTTP/1.1" 422 Unprocessable Entity
+INFO:     127.0.0.1:51167 - "PATCH /api/trips/8ab90151-8fd2-4fce-aa4e-7040efe93ec0/odometer/end HTTP/1.1" 422 Unprocessable Entity
+INFO:     127.0.0.1:51169 - "PATCH /api/trips/8ab90151-8fd2-4fce-aa4e-7040efe93ec0/odometer/end HTTP/1.1" 422 Unprocessable Entity
+INFO:     127.0.0.1:51395 - "GET /openapi.json HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51396 - "GET /docs HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51397 - "GET /api/openapi.json HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51398 - "GET /api/v1/openapi.json HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51399 - "GET /v1/openapi.json HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51401 - "GET /api/drivers/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51402 - "GET /api/drivers/locations HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51403 - "GET /api/drivers/locations/map HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51404 - "GET /api/vehicles/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51405 - "GET /api/trips/available HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51406 - "GET /api/trips/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51407 - "GET /api/payments/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51408 - "GET /api/v1/wallet-transactions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51409 - "GET /api/v1/tariff-config/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51410 - "GET /api/drivers/12345 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51413 - "GET /api/drivers/12345 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51415 - "GET /api/vehicles/bb1cd08c-0667-4ebd-b7bf-0b5701f390f0 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51416 - "GET /api/vehicles/driver/7594eede-bb87-4db0-ae6f-e06061ae8431 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51417 - "GET /api/trips/8ab90151-8fd2-4fce-aa4e-7040efe93ec0 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51418 - "GET /api/payments/1b0df0b1-368a-43a9-b3fa-362cf35c5632 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51419 - "GET /api/v1/wallet-transactions/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51501 - "GET /openapi.json HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51502 - "GET /docs HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51503 - "GET /api/openapi.json HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51504 - "GET /api/v1/openapi.json HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51505 - "GET /v1/openapi.json HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51507 - "GET /api/drivers/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51508 - "GET /api/drivers/locations HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51509 - "GET /api/drivers/locations/map HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51510 - "GET /api/vehicles/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51511 - "GET /api/trips/available HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51512 - "GET /api/trips/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51513 - "GET /api/payments/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51514 - "GET /api/v1/wallet-transactions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51515 - "GET /api/v1/tariff-config/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51516 - "GET /api/drivers/12345 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51518 - "GET /api/drivers/12345 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51520 - "GET /api/vehicles/bb1cd08c-0667-4ebd-b7bf-0b5701f390f0 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51521 - "GET /api/vehicles/driver/7594eede-bb87-4db0-ae6f-e06061ae8431 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51522 - "GET /api/trips/8ab90151-8fd2-4fce-aa4e-7040efe93ec0 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51523 - "GET /api/payments/1b0df0b1-368a-43a9-b3fa-362cf35c5632 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51524 - "GET /api/v1/wallet-transactions/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51531 - "POST /api/drivers/check-phone HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51532 - "POST /api/drivers/ HTTP/1.1" 400 Bad Request
+INFO:     127.0.0.1:51534 - "POST /api/drivers/ HTTP/1.1" 201 Created
+INFO:     127.0.0.1:51535 - "POST /api/vehicles/ HTTP/1.1" 400 Bad Request
+INFO:     127.0.0.1:51539 - "POST /api/vehicles/ HTTP/1.1" 422 Unprocessable Entity
+INFO:     127.0.0.1:51541 - "POST /api/trips/ HTTP/1.1" 201 Created
+INFO:     127.0.0.1:51542 - "POST /api/payments/ HTTP/1.1" 422 Unprocessable Entity
+INFO:     127.0.0.1:51545 - "POST /api/payments/ HTTP/1.1" 201 Created
+INFO:     127.0.0.1:51546 - "POST /api/v1/wallet-transactions HTTP/1.1" 422 Unprocessable Entity
+INFO:     127.0.0.1:51551 - "POST /api/v1/wallet-transactions HTTP/1.1" 201 Created
+INFO:     127.0.0.1:51553 - "POST /api/v1/tariff-config/ HTTP/1.1" 201 Created
+INFO:     127.0.0.1:51563 - "POST /api/vehicles/ HTTP/1.1" 422 Unprocessable Entity
+INFO:     127.0.0.1:51566 - "POST /api/vehicles/ HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51582 - "GET /api/drivers/53945155-833a-45d4-bd25-30b7e9c79f0c HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51607 - "GET /api/drivers/7594eede-bb87-4db0-ae6f-e06061ae8431 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51613 - "GET /api/drivers/?skip=0&limit=100 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51615 - "GET /docs HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51615 - "GET /openapi.json HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51615 - "GET /docs HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51615 - "GET /openapi.json HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51615 - "GET /docs HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51615 - "GET /openapi.json HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51616 - "GET /api/drivers/7594eede-bb87-4db0-ae6f-e06061ae8431 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51624 - "GET /docs HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51624 - "GET /openapi.json HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51638 - "GET /openapi.json HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51639 - "GET /docs HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51640 - "GET /api/openapi.json HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51641 - "GET /api/v1/openapi.json HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51642 - "GET /v1/openapi.json HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51643 - "GET /api/drivers/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51644 - "GET /api/drivers/locations HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51645 - "GET /api/drivers/locations/map HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51646 - "GET /api/vehicles/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51647 - "GET /api/trips/available HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51648 - "GET /api/trips/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51649 - "GET /api/payments/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51650 - "GET /api/v1/wallet-transactions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51651 - "GET /api/v1/tariff-config/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51652 - "GET /api/drivers/12345 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51654 - "GET /api/drivers/12345 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51656 - "GET /api/vehicles/bb1cd08c-0667-4ebd-b7bf-0b5701f390f0 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51657 - "GET /api/vehicles/driver/7594eede-bb87-4db0-ae6f-e06061ae8431 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51658 - "GET /api/trips/8ab90151-8fd2-4fce-aa4e-7040efe93ec0 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51659 - "GET /api/payments/1b0df0b1-368a-43a9-b3fa-362cf35c5632 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51660 - "GET /api/v1/wallet-transactions/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51674 - "GET /openapi.json HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51675 - "GET /docs HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51676 - "GET /api/openapi.json HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51677 - "GET /api/v1/openapi.json HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51678 - "GET /v1/openapi.json HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51681 - "GET /api/drivers/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51682 - "GET /api/drivers/locations HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51683 - "GET /api/drivers/locations/map HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51684 - "GET /api/drivers/7594eede-bb87-4db0-ae6f-e06061ae8431 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51688 - "GET /api/drivers/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51689 - "GET /api/drivers/locations HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51690 - "GET /api/drivers/locations/map HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51691 - "GET /api/vehicles/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51692 - "GET /api/trips/available HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51696 - "GET /api/trips/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51698 - "GET /api/payments/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51699 - "GET /api/v1/wallet-transactions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51700 - "GET /api/v1/tariff-config/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51701 - "GET /api/drivers/12345 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51703 - "GET /api/drivers/12345 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51705 - "GET /api/vehicles/bb1cd08c-0667-4ebd-b7bf-0b5701f390f0 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51706 - "GET /api/vehicles/driver/7594eede-bb87-4db0-ae6f-e06061ae8431 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51707 - "GET /api/trips/8ab90151-8fd2-4fce-aa4e-7040efe93ec0 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51708 - "GET /api/payments/1b0df0b1-368a-43a9-b3fa-362cf35c5632 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51709 - "GET /api/v1/wallet-transactions/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51724 - "GET /api/drivers/?skip=0&limit=100 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51730 - "GET /api/drivers/582865aa-58de-4be7-a6d9-be05f0026f33 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51739 - "POST /api/drivers/ HTTP/1.1" 400 Bad Request
+INFO:     127.0.0.1:51741 - "POST /api/drivers/ HTTP/1.1" 400 Bad Request
+INFO:     127.0.0.1:51750 - "POST /api/drivers/check-phone HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51751 - "POST /api/drivers/ HTTP/1.1" 400 Bad Request
+INFO:     127.0.0.1:51753 - "POST /api/drivers/ HTTP/1.1" 201 Created
+INFO:     127.0.0.1:51761 - "GET /api/drivers/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51827 - "GET /openapi.json HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51828 - "GET /docs HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51829 - "GET /api/openapi.json HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51830 - "GET /api/v1/openapi.json HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51831 - "GET /v1/openapi.json HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51832 - "POST /api/drivers/ HTTP/1.1" 201 Created
+INFO:     127.0.0.1:51837 - "POST /api/drivers/check-phone HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51844 - "POST /api/vehicles/ HTTP/1.1" 400 Bad Request
+INFO:     127.0.0.1:51846 - "POST /api/vehicles/ HTTP/1.1" 201 Created
+INFO:     127.0.0.1:51852 - "GET /api/drivers/af5c7e41-b1d4-4ed2-bae9-2ff28f2a4826 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51854 - "GET /api/drivers/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51855 - "GET /api/drivers/locations HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51856 - "GET /api/drivers/locations/map HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51857 - "GET /api/vehicles/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51858 - "GET /api/trips/available HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51859 - "GET /api/trips/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51860 - "GET /api/payments/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51861 - "GET /api/v1/wallet-transactions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51862 - "GET /api/v1/tariff-config/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51863 - "GET /api/drivers/12345 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51865 - "GET /api/drivers/12345 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51868 - "GET /api/vehicles/bb1cd08c-0667-4ebd-b7bf-0b5701f390f0 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51869 - "GET /api/vehicles/driver/7594eede-bb87-4db0-ae6f-e06061ae8431 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51870 - "GET /api/trips/8ab90151-8fd2-4fce-aa4e-7040efe93ec0 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51871 - "GET /api/payments/1b0df0b1-368a-43a9-b3fa-362cf35c5632 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51872 - "GET /api/v1/wallet-transactions/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51920 - "GET /api/drivers/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51921 - "GET /api/drivers/locations HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51922 - "GET /api/drivers/locations/map HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51923 - "GET /api/vehicles/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51926 - "GET /api/trips/available HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51927 - "GET /api/trips/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51928 - "GET /api/payments/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51929 - "GET /api/v1/wallet-transactions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51930 - "GET /api/v1/tariff-config/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51931 - "GET /api/drivers/12345 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51933 - "GET /api/drivers/12345 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51936 - "GET /api/vehicles/bb1cd08c-0667-4ebd-b7bf-0b5701f390f0 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51937 - "GET /api/vehicles/driver/7594eede-bb87-4db0-ae6f-e06061ae8431 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51938 - "GET /api/trips/8ab90151-8fd2-4fce-aa4e-7040efe93ec0 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51939 - "GET /api/payments/1b0df0b1-368a-43a9-b3fa-362cf35c5632 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51940 - "GET /api/v1/wallet-transactions/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51943 - "GET /api/drivers/12345 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51945 - "GET /api/drivers/12345 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51955 - "GET /openapi.json HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51956 - "GET /docs HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51957 - "GET /api/openapi.json HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51958 - "GET /api/v1/openapi.json HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51959 - "GET /v1/openapi.json HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51960 - "GET /api/drivers/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51961 - "GET /api/drivers/7594eede-bb87-4db0-ae6f-e06061ae8431 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51971 - "GET /api/drivers/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51972 - "GET /api/drivers/locations HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51973 - "GET /api/drivers/locations/map HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51974 - "GET /api/drivers/7594eede-bb87-4db0-ae6f-e06061ae8431 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51976 - "GET /api/drivers/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51978 - "GET /api/drivers/locations HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51979 - "GET /api/drivers/locations/map HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51980 - "GET /api/vehicles/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51981 - "GET /api/trips/available HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51982 - "GET /api/trips/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51983 - "GET /api/payments/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51984 - "GET /api/v1/wallet-transactions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51985 - "GET /api/v1/tariff-config/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51986 - "GET /api/drivers/12345 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51988 - "GET /api/drivers/12345 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51990 - "GET /api/vehicles/bb1cd08c-0667-4ebd-b7bf-0b5701f390f0 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51991 - "GET /api/vehicles/driver/7594eede-bb87-4db0-ae6f-e06061ae8431 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51992 - "GET /api/trips/8ab90151-8fd2-4fce-aa4e-7040efe93ec0 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51993 - "GET /api/payments/1b0df0b1-368a-43a9-b3fa-362cf35c5632 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51994 - "GET /api/v1/wallet-transactions/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52072 - "GET /openapi.json HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52073 - "GET /docs HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52074 - "GET /api/openapi.json HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:52075 - "GET /api/v1/openapi.json HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:52076 - "GET /v1/openapi.json HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:52077 - "GET /api/drivers/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52078 - "GET /api/drivers/7594eede-bb87-4db0-ae6f-e06061ae8431 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52079 - "GET /api/trips/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52080 - "GET /api/drivers/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52081 - "GET /api/vehicles/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52082 - "GET /api/payments/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52083 - "GET /api/trips/available HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52084 - "GET /api/drivers/locations HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52086 - "GET /api/v1/tariff-config/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52087 - "GET /api/drivers/locations/map HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52088 - "GET /api/v1/wallet-transactions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52089 - "GET /api/trips/8ab90151-8fd2-4fce-aa4e-7040efe93ec0 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52090 - "GET /api/drivers/12345 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:52092 - "GET /api/drivers/12345 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:52094 - "GET /api/vehicles/bb1cd08c-0667-4ebd-b7bf-0b5701f390f0 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52095 - "GET /api/payments/1b0df0b1-368a-43a9-b3fa-362cf35c5632 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52096 - "GET /api/vehicles/driver/7594eede-bb87-4db0-ae6f-e06061ae8431 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52097 - "GET /api/v1/wallet-transactions/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52100 - "GET /api/drivers/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52101 - "GET /api/drivers/locations HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52102 - "GET /api/drivers/locations/map HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52103 - "GET /api/drivers/7594eede-bb87-4db0-ae6f-e06061ae8431 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52107 - "GET /api/trips/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52108 - "GET /api/drivers/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52109 - "GET /api/vehicles/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52110 - "GET /api/payments/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52111 - "GET /api/trips/available HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52112 - "GET /api/drivers/locations HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52113 - "GET /api/v1/tariff-config/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52114 - "GET /api/drivers/locations/map HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52115 - "GET /api/v1/wallet-transactions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52116 - "GET /api/trips/8ab90151-8fd2-4fce-aa4e-7040efe93ec0 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52117 - "GET /api/drivers/12345 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:52119 - "GET /api/drivers/12345 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:52121 - "GET /api/vehicles/bb1cd08c-0667-4ebd-b7bf-0b5701f390f0 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52122 - "GET /api/payments/1b0df0b1-368a-43a9-b3fa-362cf35c5632 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52123 - "GET /api/vehicles/driver/7594eede-bb87-4db0-ae6f-e06061ae8431 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52124 - "GET /api/v1/wallet-transactions/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52238 - "GET /openapi.json HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52239 - "GET /docs HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52240 - "GET /api/openapi.json HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:52241 - "GET /api/v1/openapi.json HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:52242 - "GET /v1/openapi.json HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:52298 - "GET /api/drivers/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52299 - "GET /api/drivers/7594eede-bb87-4db0-ae6f-e06061ae8431 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52316 - "GET /api/trips/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52317 - "GET /api/drivers/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52318 - "GET /api/vehicles/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52323 - "GET /api/payments/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52324 - "GET /api/trips/available HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52325 - "GET /api/drivers/locations HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52326 - "GET /api/v1/tariff-config/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52327 - "GET /api/drivers/locations/map HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52328 - "GET /api/v1/wallet-transactions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52333 - "GET /api/trips/8ab90151-8fd2-4fce-aa4e-7040efe93ec0 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52334 - "GET /api/drivers/12345 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:52344 - "GET /api/drivers/12345 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:52350 - "GET /api/vehicles/bb1cd08c-0667-4ebd-b7bf-0b5701f390f0 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52351 - "GET /api/payments/1b0df0b1-368a-43a9-b3fa-362cf35c5632 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52353 - "GET /api/vehicles/driver/7594eede-bb87-4db0-ae6f-e06061ae8431 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52354 - "GET /api/v1/wallet-transactions/1 HTTP/1.1" 200 OK

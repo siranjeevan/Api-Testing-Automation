@@ -221,22 +221,57 @@ export default function Home() {
         }
         
         const bodyString = JSON.stringify(bodyToAnalyze);
+        
+        // Collect needed variables from path and body templates
         const needed = [
             ...(ep.path.match(/\{([^}]+)\}/g) || []),
             ...(bodyString.match(/\{\{([^}]+)\}\}/g) || [])
         ];
+        
+        // ALSO: Scan body for any `_id` fields that have placeholder values
+        // This handles cases like { "driver_id": "string" } which need resolution
+        const scanBodyForIdFields = (obj: any, prefix = ''): string[] => {
+            const foundIds: string[] = [];
+            if (!obj || typeof obj !== 'object') return foundIds;
+            
+            Object.entries(obj).forEach(([key, val]) => {
+                const fullKey = prefix ? `${prefix}.${key}` : key;
+                if (key.toLowerCase().endsWith('_id') || key.toLowerCase().endsWith('id')) {
+                    // Check if value is a placeholder (empty, 'string', null, 0, or looks like a template)
+                    if (val === null || val === '' || val === 'string' || val === 0 || 
+                        (typeof val === 'string' && (val.includes('{{') || val === 'uuid'))) {
+                        foundIds.push(`{${key}}`);
+                    }
+                }
+                if (typeof val === 'object' && val !== null) {
+                    foundIds.push(...scanBodyForIdFields(val, fullKey));
+                }
+            });
+            return foundIds;
+        };
+        
+        needed.push(...scanBodyForIdFields(bodyToAnalyze));
 
         for (const varName of Array.from(new Set(needed))) {
             const cleanVar = varName.replace(/[\{\}]/g, '');
             if (!currentContext[cleanVar]) {
                 const searchKey = cleanVar.replace('_id', '').toLowerCase();
-                const producer = endpoints.find(e => {
+                
+                // Find ALL potential producers, then pick the BEST one (shortest path = base list endpoint)
+                const potentialProducers = endpoints.filter(e => {
                     if (e.method.toUpperCase() !== 'GET' || e.path.includes('{')) return false;
                     const path = e.path.toLowerCase();
                     const opIdDesc = (e.operationId || "").toLowerCase();
                     const tags = (e.tags || []).map(t => t.toLowerCase());
-                    return path.includes(searchKey) || opIdDesc.includes(searchKey) || tags.some(t => t.includes(searchKey));
+                    
+                    const pluralKey = searchKey + 's';
+                    return path.endsWith(`/${pluralKey}`) || path.endsWith(`/${searchKey}`) || 
+                           path.includes(searchKey) || opIdDesc.includes(searchKey) || tags.some(t => t.includes(searchKey));
                 });
+                
+                // Sort by path length (shortest first) - this prioritizes /api/drivers over /api/drivers/check-phone
+                potentialProducers.sort((a, b) => a.path.length - b.path.length);
+                const producer = potentialProducers[0];
 
                 if (producer) {
                     try {
@@ -247,13 +282,28 @@ export default function Home() {
                         const pData = await pRes.json();
                         if (pData.results?.[0]?.response) {
                             const learned = extractIdentifiers(pData.results[0].response);
-                            const pName = producer.path.split('/').filter(Boolean)[0] || 'data';
+                            const parts = producer.path.split('/').filter(Boolean);
+                            const pName = parts[parts.length - 1] || 'data';
                             const pSingular = pName.endsWith('s') ? pName.slice(0, -1) : pName;
                             
                             if (learned['id']) {
                                 if (!learned[cleanVar]) learned[cleanVar] = learned['id'];
                                 learned[`${pSingular}_id`] = learned['id'];
                             }
+
+                            // Fuzzy Logic: If exact key not found, try to find ANY relevant ID from the producer
+                            if (!learned[cleanVar]) {
+                                const candidates = Object.keys(learned).filter(k => 
+                                    k.toLowerCase().endsWith('id') || k.toLowerCase().endsWith('uuid')
+                                );
+                                // Prefer the shortest key usually (id vs transaction_id)? or longest?
+                                // Let's pick the first one that is NOT the cleanVar itself (obviously)
+                                const validCandidate = candidates.find(c => c !== cleanVar);
+                                if (validCandidate) {
+                                    learned[cleanVar] = learned[validCandidate];
+                                }
+                            }
+
                             currentContext = { ...currentContext, ...learned };
                         }
                     } catch(e) {}
@@ -261,13 +311,30 @@ export default function Home() {
             }
         }
 
+        // DEBUG: Log context before path resolution
+        console.log(`[executeStep] ${ep.method} ${ep.path} - Context keys:`, Object.keys(currentContext));
+
         let resolvedPath = ep.path;
         (ep.path.match(/\{([^}]+)\}/g) || []).forEach(p => {
             const key = p.slice(1, -1);
-            const fallback = key.toLowerCase().includes('id') ? (currentContext['id'] || currentContext['uuid']) : null;
-            const val = currentContext[key] || fallback;
-            if (val) resolvedPath = resolvedPath.replace(p, val);
+            const val = currentContext[key];
+            
+            // DEBUG: Log each variable resolution
+            console.log(`[Path Resolve] Looking for '${key}' in context:`, val ? `FOUND (${val})` : 'NOT FOUND');
+            
+            if (val) {
+                resolvedPath = resolvedPath.replace(p, val);
+            } else {
+                // If not found, try fallback to generic 'id' or 'uuid'
+                const fallback = currentContext['id'] || currentContext['uuid'];
+                if (fallback) {
+                    console.log(`[Path Resolve] Using fallback ID:`, fallback);
+                    resolvedPath = resolvedPath.replace(p, fallback);
+                }
+            }
         });
+        
+        console.log(`[executeStep] Resolved path:`, resolvedPath);
 
         if (Object.keys(bodyToAnalyze).length === 0 && ep.requestBody) {
            const content = ep.requestBody?.content?.["application/json"];
@@ -305,6 +372,7 @@ export default function Home() {
                         });
                     }
                 } else if (config.apiKey) {
+                    // Start of AI Diagnosis Logic
                     try {
                         const diagR = await fetch('http://localhost:8000/diagnose', {
                             method: 'POST', headers: { 'Content-Type': 'application/json' },
@@ -333,13 +401,14 @@ export default function Home() {
                                     : r
                                 ));
                                 
-                                return healedCtx;
+                return healedCtx;
                             }
                         }
                     } catch (e) {}
                 }
 
-                if (resultItem.response) {
+                // Learn IDs from successful responses ONLY
+                if (resultItem.passed && resultItem.response) {
                     const learned = extractIdentifiers(resultItem.response);
                     const pathSegments = ep.path.split('/').filter(Boolean);
                     const lastSegment = pathSegments[pathSegments.length - 1];
@@ -352,12 +421,13 @@ export default function Home() {
                             }
                         });
                     }
+                    console.log(`[Context] Learned from ${ep.path}:`, learned);
                     return { ...currentContext, ...learned };
                 }
             }
-        } catch (e) { console.error(e); }
-        return currentContext;
-    };
+    } catch (e) { console.error(e); }
+    return currentContext;
+};
 
     const runTests = async (methodFilter?: string, overrideEndpoints?: ApiEndpoint[]) => {
         if (!config.baseUrl) {
@@ -385,11 +455,18 @@ export default function Home() {
 
         // Intelligent sequential execution
         const sorted = [...targetEndpoints].sort((a,b) => {
-            // Priority: Producers (no path params) before Consumers (with path params)
-            if (a.path.includes('{') && !b.path.includes('{')) return 1;
-            if (!a.path.includes('{') && b.path.includes('{')) return -1;
-            return 0;
+            // Priority 1: Producers (no path params) before Consumers (with path params)
+            const aHasParam = a.path.includes('{');
+            const bHasParam = b.path.includes('{');
+            if (aHasParam && !bHasParam) return 1;
+            if (!aHasParam && bHasParam) return -1;
+            
+            // Priority 2: Among producers, shorter paths first (base list endpoints first)
+            // This ensures /api/drivers runs before /api/drivers/check-phone
+            return a.path.length - b.path.length;
         });
+        
+        console.log('[Full Suite] Execution order:', sorted.map(e => e.path));
 
         let ctx = { ...autoParams };
         for(const ep of sorted) {
@@ -936,20 +1013,31 @@ export default function Home() {
                 setErrorDrawerOpen(false);
             }} />
             
-            {warningCount > 0 && (
-                <>
+            {/* Active Warnings Filtered */}
+            {(() => {
+                const visibleWarnings = results.filter(r => {
+                    if (r.passed || isRealError(r)) return false;
+                    const rTags = endpoints.find(e => e.path === r.endpoint && e.method === r.method)?.tags || ['General'];
+                    return (selectedTag === 'All' || (selectedTag !== null && rTags.includes(selectedTag)));
+                });
+                const count = visibleWarnings.length;
+                
+                if (count === 0) return null;
+
+                return (
+                    <>
                     <button 
                         className={styles.warningToggle} 
                         onClick={() => setWarningDrawerOpen(true)}
                         style={{ bottom: failedCount > 0 ? '90px' : '32px' }}
                     >
-                        <span>{warningCount} No Data</span>
+                        <span>{count} No Data</span>
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
                     </button>
 
                     <div className={`${styles.errorDrawer} ${warningDrawerOpen ? styles.open : ''}`}>
                         <div className={styles.drawerHeader} style={{borderBottom: '1px solid rgba(245, 158, 11, 0.1)'}}>
-                            <div className={styles.drawerTitle} style={{color: '#d97706'}}>Missing Data ({warningCount})</div>
+                            <div className={styles.drawerTitle} style={{color: '#d97706'}}>Missing Data ({count})</div>
                             <button className={styles.closeButton} onClick={() => setWarningDrawerOpen(false)}>
                                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
                             </button>
@@ -957,7 +1045,12 @@ export default function Home() {
                         <div className={styles.drawerContent}>
                             <div className={styles.errorGrid}>
                             {(() => {
-                                const allWarnings = results.filter(r => !r.passed && !isRealError(r));
+                                // Filter warnings based on the ACTIVE TAG (Page)
+                                const allWarnings = results.filter(r => {
+                                    if (r.passed || isRealError(r)) return false;
+                                    const rTags = endpoints.find(e => e.path === r.endpoint && e.method === r.method)?.tags || ['General'];
+                                    return (selectedTag === 'All' || (selectedTag !== null && rTags.includes(selectedTag)));
+                                });
                                 if (allWarnings.length === 0) return null;
                                 
                                 return allWarnings.map((fail, idx) => {
@@ -992,12 +1085,16 @@ export default function Home() {
                                         </div>
                                     );
                                 });
-                            })()}
-                            </div>
-                        </div>
-                    </div>
-                </>
-            )}
+
+            })()}
+            </div>
+            {/* End drawerContent */}
+            </div>
+            </div>
+            </>
+        );
+    })()}
+    {/* End Active Warnings Filtered Block */}
 
             {/* Error Toggle & Drawer */}
             {failedCount > 0 && (
