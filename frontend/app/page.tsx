@@ -187,8 +187,6 @@ export default function Home() {
                 const swaggerSchemas = data.raw?.components?.schemas || data.raw?.definitions || {};
                 setSchemas(swaggerSchemas);
                 setTab('run-get');
-                // Automatically kick off the first suite to establish context
-                setTimeout(() => runTests('GET'), 500);
             }
         } catch (e: any) {
             console.error(e);
@@ -198,7 +196,7 @@ export default function Home() {
         }
     };
 
-    const executeStep = async (ep: ApiEndpoint, passedContext: Record<string, any>, retryCount = 0): Promise<Record<string, any>> => {
+    const executeStep = async (ep: ApiEndpoint, passedContext: Record<string, any>, retryCount = 0, forcedBody?: any): Promise<Record<string, any>> => {
         let currentContext = { ...passedContext };
         const opId = ep.operationId || `${ep.method.toUpperCase()}_${ep.path}`;
         
@@ -210,25 +208,28 @@ export default function Home() {
             });
         }
 
-        let bodyToAnalyze = {};
-        if (manualBodies[opId]) {
-            try { bodyToAnalyze = JSON.parse(manualBodies[opId]); } catch(e) {}
-        } else {
-            try {
-                const globalData = JSON.parse(testData);
-                bodyToAnalyze = globalData[opId]?.body || globalData[ep.path]?.body || {};
-            } catch(e) {}
+        let bodyToAnalyze = forcedBody || {};
+        if (!forcedBody) {
+            if (manualBodies[opId]) {
+                try { bodyToAnalyze = JSON.parse(manualBodies[opId]); } catch(e) {}
+            } else {
+                try {
+                    const globalData = JSON.parse(testData);
+                    bodyToAnalyze = globalData[opId]?.body || bodyToAnalyze;
+                } catch(e) {}
+            }
         }
         
         const bodyString = JSON.stringify(bodyToAnalyze);
         const needed = [
-            ...(ep.path.match(/\{([^}]+)\}/g) || []).map(p => p.slice(1, -1)),
-            ...(bodyString.match(/\{\{([^}]+)\}\}/g) || []).map(p => p.slice(2, -2))
+            ...(ep.path.match(/\{([^}]+)\}/g) || []),
+            ...(bodyString.match(/\{\{([^}]+)\}\}/g) || [])
         ];
 
         for (const varName of Array.from(new Set(needed))) {
-            if (!currentContext[varName]) {
-                const searchKey = varName.replace('_id', '').replace('Id', '').replace('id', '').toLowerCase();
+            const cleanVar = varName.replace(/[\{\}]/g, '');
+            if (!currentContext[cleanVar]) {
+                const searchKey = cleanVar.replace('_id', '').toLowerCase();
                 const producer = endpoints.find(e => {
                     if (e.method.toUpperCase() !== 'GET' || e.path.includes('{')) return false;
                     const path = e.path.toLowerCase();
@@ -239,17 +240,18 @@ export default function Home() {
 
                 if (producer) {
                     try {
-                        const pRes = await fetch('http://localhost:8000/run', {
+                        const pRes = await fetch('http://localhost:8000/run-step', {
                             method: 'POST', headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ baseUrl: config.baseUrl, endpoints: [producer], testData: JSON.parse(testData), variables: currentContext })
+                            body: JSON.stringify({ baseUrl: config.baseUrl, endpoint: producer, variables: currentContext })
                         });
                         const pData = await pRes.json();
                         if (pData.results?.[0]?.response) {
                             const learned = extractIdentifiers(pData.results[0].response);
-                            const pName = producer.path.split('/').filter(Boolean).pop() || "";
+                            const pName = producer.path.split('/').filter(Boolean)[0] || 'data';
                             const pSingular = pName.endsWith('s') ? pName.slice(0, -1) : pName;
+                            
                             if (learned['id']) {
-                                if (!learned[varName]) learned[varName] = learned['id'];
+                                if (!learned[cleanVar]) learned[cleanVar] = learned['id'];
                                 learned[`${pSingular}_id`] = learned['id'];
                             }
                             currentContext = { ...currentContext, ...learned };
@@ -267,17 +269,17 @@ export default function Home() {
             if (val) resolvedPath = resolvedPath.replace(p, val);
         });
 
-        if (Object.keys(bodyToAnalyze).length === 0) {
-           const content = ep.requestBody?.content?.["application/json"] || ep.requestBody?.content?.["multipart/form-data"];
+        if (Object.keys(bodyToAnalyze).length === 0 && ep.requestBody) {
+           const content = ep.requestBody?.content?.["application/json"];
            if (content?.schema) bodyToAnalyze = generateFromSchema(content.schema);
         }
 
         try {
-            const runRes = await fetch('http://localhost:8000/run', {
+            const runRes = await fetch('http://localhost:8000/run-step', {
                 method: 'POST', headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ 
                     baseUrl: config.baseUrl, 
-                    endpoints: [{ ...ep, path: resolvedPath }], 
+                    endpoint: { ...ep, path: resolvedPath }, 
                     testData: { [opId]: { body: bodyToAnalyze } }, 
                     variables: currentContext 
                 })
@@ -323,7 +325,7 @@ export default function Home() {
                                 const fixedContent = JSON.stringify(diagData.suggested_fix, null, 2);
                                 setManualBodies(prev => ({ ...prev, [opId]: fixedContent }));
                                 
-                                const healedCtx = await executeStep(ep, currentContext, retryCount + 1);
+                                const healedCtx = await executeStep(ep, currentContext, retryCount + 1, diagData.suggested_fix);
                                 
                                 setResults(prev => prev.map(r => 
                                     (r.endpoint === ep.path && r.method === ep.method && r.passed) 
@@ -357,19 +359,23 @@ export default function Home() {
         return currentContext;
     };
 
-    const runTests = async (methodFilter?: string) => {
+    const runTests = async (methodFilter?: string, overrideEndpoints?: ApiEndpoint[]) => {
         if (!config.baseUrl) {
             alert("Please set a Target Base URL in the Setup tab.");
             setTab('setup');
             return;
         }
         
+        const source = overrideEndpoints || endpoints;
         const targetEndpoints = methodFilter 
-            ? endpoints.filter(ep => ep.method.toUpperCase() === methodFilter.toUpperCase())
-            : endpoints;
+            ? source.filter(ep => ep.method.toUpperCase() === methodFilter.toUpperCase())
+            : source;
 
         if (targetEndpoints.length === 0) {
-            alert(`No ${methodFilter || ''} endpoints found to run.`);
+            // Only alert if we AREN'T in an automatic trigger mode (like the initial GET run)
+            if (!methodFilter || methodFilter !== 'GET') {
+                console.warn(`No ${methodFilter || ''} endpoints found.`);
+            }
             return;
         }
 
@@ -502,35 +508,35 @@ export default function Home() {
                     {endpoints.length > 0 && <div className="mt-8 mb-2 px-4 text-[10px] uppercase tracking-widest text-dim font-bold opacity-50">Runners</div>}
                     
                     {availableMethods.has('GET') && (
-                        <div className={`${styles.navItem} ${tab === 'run-get' ? styles.active : ''}`} onClick={() => { setTab('run-get'); runTests('GET'); }}>
+                        <div className={`${styles.navItem} ${tab === 'run-get' ? styles.active : ''}`} onClick={() => setTab('run-get')}>
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
                             <span>GET Suite</span>
                         </div>
                     )}
                     
                     {availableMethods.has('POST') && (
-                        <div className={`${styles.navItem} ${tab === 'run-post' ? styles.active : ''}`} onClick={() => { setTab('run-post'); runTests('POST'); }}>
+                        <div className={`${styles.navItem} ${tab === 'run-post' ? styles.active : ''}`} onClick={() => setTab('run-post')}>
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 5v14M5 12h14"/></svg>
                             <span>POST Suite</span>
                         </div>
                     )}
                     
                     {availableMethods.has('PUT') && (
-                        <div className={`${styles.navItem} ${tab === 'run-put' ? styles.active : ''}`} onClick={() => { setTab('run-put'); runTests('PUT'); }}>
+                        <div className={`${styles.navItem} ${tab === 'run-put' ? styles.active : ''}`} onClick={() => setTab('run-put')}>
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
                             <span>PUT Suite</span>
                         </div>
                     )}
                     
                     {availableMethods.has('PATCH') && (
-                        <div className={`${styles.navItem} ${tab === 'run-patch' ? styles.active : ''}`} onClick={() => { setTab('run-patch'); runTests('PATCH'); }}>
+                        <div className={`${styles.navItem} ${tab === 'run-patch' ? styles.active : ''}`} onClick={() => setTab('run-patch')}>
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
                             <span>PATCH Suite</span>
                         </div>
                     )}
                     
                     {availableMethods.has('DELETE') && (
-                        <div className={`${styles.navItem} ${tab === 'run-delete' ? styles.active : ''}`} onClick={() => { setTab('run-delete'); runTests('DELETE'); }}>
+                        <div className={`${styles.navItem} ${tab === 'run-delete' ? styles.active : ''}`} onClick={() => setTab('run-delete')}>
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
                             <span>DELETE Suite</span>
                         </div>
@@ -790,18 +796,7 @@ export default function Home() {
                                                         <button 
                                                             className={styles.catRunButton}
                                                             disabled={loading}
-                                                            onClick={async () => {
-                                                                setLoading(true);
-                                                                setResults(prev => prev.filter(r => !categoryEndpoints.some(f => f.path === r.endpoint && f.method === r.method)));
-                                                                const sorted = [...categoryEndpoints].sort((a,b) => (a.path.includes('{')?1:b.path.includes('{')?-1:0));
-                                                                let ctx = { ...autoParams };
-                                                                for(const ep of sorted) {
-                                                                    ctx = await executeStep(ep, ctx);
-                                                                    await new Promise(r => setTimeout(r, 100));
-                                                                }
-                                                                setAutoParams(ctx);
-                                                                setLoading(false);
-                                                            }}
+                                                            onClick={() => runTests(undefined, categoryEndpoints)}
                                                         >
                                                             {loading ? (
                                                                 <svg className="animate-spin" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>

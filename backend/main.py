@@ -1,7 +1,7 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Optional
 import httpx
 import logging
 
@@ -38,9 +38,10 @@ class GenerateDataRequest(BaseModel):
 
 class RunRequest(BaseModel):
     baseUrl: str
-    endpoints: List[ApiEndpoint]
-    testData: Dict[str, Any]
-    variables: Dict[str, Any]
+    endpoints: Optional[List[ApiEndpoint]] = []
+    endpoint: Optional[ApiEndpoint] = None
+    testData: Optional[Dict[str, Any]] = {}
+    variables: Dict[str, Any] = {}
 
 @app.get("/")
 def health_check():
@@ -91,6 +92,26 @@ async def run_tests(request: RunRequest):
             # Simplified for now.
             
     return {"results": results}
+
+@app.post("/run-step")
+async def run_step(request: RunRequest):
+    logger.info("Executing single test step")
+    async with httpx.AsyncClient() as client:
+        endpoint = request.endpoint
+        if not endpoint and request.endpoints:
+            endpoint = request.endpoints[0]
+            
+        if not endpoint:
+            raise HTTPException(status_code=400, detail="No endpoint provided")
+
+        result = await execute_test_step(
+            client, 
+            endpoint, 
+            request.baseUrl, 
+            request.variables, 
+            request.testData
+        )
+        return {"results": [result]}
 
 @app.post("/diagnose")
 async def diagnose(request: DiagnoseRequest):

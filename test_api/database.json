@@ -1,0 +1,42 @@
+{
+  "users": [],
+  "posts": [],
+  "drivers": [
+    {
+      "driver_id": "f34a0def-53fc-4130-a3ba-838d6e66367a",
+      "name": "name 403",
+      "phone_number": "9816894212",
+      "email": "email752@gmail.com",
+      "primary_location": "string",
+      "licence_number": "DL123456789",
+      "aadhar_number": "123456789012",
+      "licence_expiry": "2025-12-31",
+      "device_id": "{{device_id}}",
+      "kyc_verified": true,
+      "wallet_balance": 0.0,
+      "is_available": true,
+      "is_approved": true,
+      "created_at": "2026-02-09T00:30:00.226960",
+      "updated_at": "2026-02-09T00:30:00.226960"
+    }
+  ],
+  "vehicles": [],
+  "tariff_configs": [
+    {
+      "config_id": 1,
+      "vehicle_type": "sedan",
+      "one_way_per_km": 0.0,
+      "one_way_min_km": 0.0,
+      "round_trip_per_km": 0.0,
+      "round_trip_min_km": 0.0,
+      "driver_allowance": 0.0,
+      "is_active": true,
+      "created_at": "2026-02-09T00:30:19.870276",
+      "updated_at": "2024-01-01T00:00:00"
+    }
+  ],
+  "trips": [],
+  "payments": [],
+  "wallet_transactions": [],
+  "driver_requests": []
+}
