@@ -9,37 +9,145 @@ export default function Home() {
     const [autoParams, setAutoParams] = React.useState<Record<string, string>>({});
     const [errorDrawerOpen, setErrorDrawerOpen] = React.useState(false);
     const [warningDrawerOpen, setWarningDrawerOpen] = React.useState(false);
-    const [config, setConfig] = React.useState(() => {
-        if (typeof window !== 'undefined') {
-            const saved = localStorage.getItem('ag_config');
-            return saved ? JSON.parse(saved) : {
-                baseUrl: 'http://localhost:8000',
-                openapiUrl: 'http://localhost:8000/openapi.json',
-                environment: 'local',
-                apiKey: ''
-            };
+    
+    // START: Payload Configuration State
+    const [showModal, setShowModal] = React.useState(false);
+    const [activeEndpoint, setActiveEndpoint] = React.useState<ApiEndpoint | null>(null);
+    const [requestBodyInput, setRequestBodyInput] = React.useState("{}");
+    const [schemas, setSchemas] = React.useState<Record<string, any>>({});
+    const [manualInputs, setManualInputs] = React.useState<Record<string, Record<string, string>>>({});
+    const [manualBodies, setManualBodies] = React.useState<Record<string, string>>({});
+    
+    // Helper to generate dummy data from schema
+    const generateFromSchema = (schema: any, depth = 0, fieldName = ''): any => {
+        if (!schema || depth > 5) return {};
+
+        // Resolve $ref placeholders
+        if (schema.$ref) {
+            const parts = schema.$ref.split('/');
+            const name = parts[parts.length - 1];
+            const resolved = schemas[name];
+            if (resolved) {
+                return generateFromSchema(resolved, depth + 1, fieldName);
+            }
+            return `<REF:${name}>`;
         }
-        return { baseUrl: '', openapiUrl: '', environment: 'local', apiKey: '' };
+
+        if (schema.example) return schema.example;
+        if (schema.default !== undefined) return schema.default;
+        
+        if (schema.allOf) {
+            let merged: any = {};
+            schema.allOf.forEach((sub: any) => {
+                merged = { ...merged, ...generateFromSchema(sub, depth + 1, fieldName) };
+            });
+            return merged;
+        }
+
+        if (schema.anyOf || schema.oneOf) {
+            const sub = (schema.anyOf || schema.oneOf)[0];
+            return generateFromSchema(sub, depth + 1, fieldName);
+        }
+
+        if (schema.properties) {
+            const obj: any = {};
+            for (const key in schema.properties) {
+                const prop = schema.properties[key];
+                obj[key] = generateFromSchema(prop, depth + 1, key);
+            }
+            return obj;
+        }
+        
+        if (schema.items) {
+            return [generateFromSchema(schema.items, depth + 1, fieldName)];
+        }
+
+        const type = schema.type?.toLowerCase();
+        const lowerName = (fieldName || "").toLowerCase();
+
+        if (type === "string") {
+            if (schema.format === "date-time") return new Date().toISOString();
+            if (schema.format === "date") return new Date().toISOString().split('T')[0];
+            if (schema.enum) return schema.enum[0];
+            
+            // Smart context-aware generation
+            if (lowerName.includes('phone')) {
+                // Generate a random 10-digit phone number starting with a typical regional digit
+                return "" + (Math.floor(Math.random() * 3) + 7) + Math.floor(100000000 + Math.random() * 900000000);
+            }
+            if (lowerName.includes('email')) {
+                const prefixes = ['test', 'user', 'admin', 'contact', 'jeevith'];
+                const rand = Math.floor(Math.random() * 1000);
+                return `${prefixes[Math.floor(Math.random() * prefixes.length)]}${rand}@gmail.com`;
+            }
+            if (lowerName.includes('name')) {
+                const firstNames = ['John', 'Jane', 'Alex', 'Sarah', 'Michael', 'Jeevith'];
+                const lastNames = ['Doe', 'Smith', 'Wilson', 'Brown', 'Kumar'];
+                const first = firstNames[Math.floor(Math.random() * firstNames.length)];
+                const last = lastNames[Math.floor(Math.random() * lastNames.length)];
+                const rand = Math.floor(Math.random() * 1000);
+                return `${first} ${last} ${rand}`;
+            }
+
+            return "string";
+        }
+        if (type === "integer" || type === "number") {
+            if (lowerName.includes('age')) return Math.floor(Math.random() * 50) + 18;
+            if (lowerName.includes('count') || lowerName.includes('quantity')) return Math.floor(Math.random() * 10) + 1;
+            return 0;
+        }
+        if (type === "boolean") return true;
+        
+        return {};
+    };
+    // END: Payload Configuration State
+
+    const [config, setConfig] = React.useState({
+        baseUrl: 'http://localhost:8000',
+        openapiUrl: 'http://localhost:8000/openapi.json',
+        environment: 'local',
+        apiKey: ''
     });
+
     const [endpoints, setEndpoints] = React.useState<ApiEndpoint[]>([]);
-    const [testData, setTestData] = React.useState(() => {
-        if (typeof window !== 'undefined') {
-            const saved = localStorage.getItem('ag_test_data');
-            return saved || '{\n  "users": []\n}';
-        }
-        return '{\n  "users": []\n}';
-    });
+    const [testData, setTestData] = React.useState('{\n  "users": []\n}');
     const [results, setResults] = React.useState<TestExecutionResult[]>([]);
     const [loading, setLoading] = React.useState(false);
     const [tab, setTab] = React.useState('setup');
 
+    // Load persisted state on mount
     React.useEffect(() => {
-        localStorage.setItem('ag_config', JSON.stringify(config));
+        const savedConfig = localStorage.getItem('ag_config');
+        if (savedConfig) {
+            try { setConfig(JSON.parse(savedConfig)); } catch (e) {}
+        }
+        const savedTestData = localStorage.getItem('ag_test_data');
+        if (savedTestData) {
+            setTestData(savedTestData);
+        }
+        const savedSchemas = localStorage.getItem('ag_schemas');
+        if (savedSchemas) {
+            try { setSchemas(JSON.parse(savedSchemas)); } catch (e) {}
+        }
+    }, []);
+
+    React.useEffect(() => {
+        if (config.openapiUrl !== 'http://localhost:8000/openapi.json' || config.baseUrl !== 'http://localhost:8000') {
+             localStorage.setItem('ag_config', JSON.stringify(config));
+        }
     }, [config]);
 
     React.useEffect(() => {
-        localStorage.setItem('ag_test_data', testData);
+        if (testData !== '{\n  "users": []\n}') {
+            localStorage.setItem('ag_test_data', testData);
+        }
     }, [testData]);
+
+    React.useEffect(() => {
+        if (Object.keys(schemas).length > 0) {
+            localStorage.setItem('ag_schemas', JSON.stringify(schemas));
+        }
+    }, [schemas]);
 
     const parseSwagger = async () => {
         setLoading(true);
@@ -77,6 +185,10 @@ export default function Home() {
                 if (detectedUrl) {
                     setConfig((prev: any) => ({ ...prev, baseUrl: detectedUrl }));
                 }
+
+                // Extract schemas for reference resolution
+                const swaggerSchemas = data.raw?.components?.schemas || data.raw?.definitions || {};
+                setSchemas(swaggerSchemas);
 
                 setTab('run-get');
             }
@@ -199,6 +311,13 @@ export default function Home() {
     const failedCount = results.filter(isRealError).length;
     const warningCount = results.filter(r => !r.passed && !isRealError(r)).length;
 
+    // Dynamic Navigation Logic
+    const availableMethods = new Set(endpoints.map(ep => ep.method.toUpperCase()));
+    const hasUploads = endpoints.some(ep => {
+        const path = ep.path.toLowerCase();
+        return path.includes('upload') || path.includes('image') || path.includes('file');
+    });
+
     return (
         <div className={styles.container}>
             <aside className={`${styles.sidebar} ${!sidebarExpanded ? styles.collapsed : ''}`}>
@@ -224,19 +343,50 @@ export default function Home() {
                         <span>Configuration</span>
                     </div>
                     
-                    <div className="mt-8 mb-2 px-4 text-[10px] uppercase tracking-widest text-dim font-bold opacity-50">Runners</div>
-                    <div className={`${styles.navItem} ${tab === 'run-get' ? styles.active : ''}`} onClick={() => setTab('run-get')}>
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
-                        <span>GET Suite</span>
-                    </div>
-                    <div className={`${styles.navItem} ${tab === 'run-post' ? styles.active : ''}`} onClick={() => setTab('run-post')}>
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 5v14M5 12h14"/></svg>
-                        <span>POST Suite</span>
-                    </div>
-                    <div className={`${styles.navItem} ${tab === 'run-upload' ? styles.active : ''}`} onClick={() => setTab('run-upload')}>
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-                        <span>Asset Uploads</span>
-                    </div>
+                    {/* Dynamic Runners Section */}
+                    {endpoints.length > 0 && <div className="mt-8 mb-2 px-4 text-[10px] uppercase tracking-widest text-dim font-bold opacity-50">Runners</div>}
+                    
+                    {availableMethods.has('GET') && (
+                        <div className={`${styles.navItem} ${tab === 'run-get' ? styles.active : ''}`} onClick={() => setTab('run-get')}>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+                            <span>GET Suite</span>
+                        </div>
+                    )}
+                    
+                    {availableMethods.has('POST') && (
+                        <div className={`${styles.navItem} ${tab === 'run-post' ? styles.active : ''}`} onClick={() => setTab('run-post')}>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+                            <span>POST Suite</span>
+                        </div>
+                    )}
+                    
+                    {availableMethods.has('PUT') && (
+                        <div className={`${styles.navItem} ${tab === 'run-put' ? styles.active : ''}`} onClick={() => setTab('run-put')}>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                            <span>PUT Suite</span>
+                        </div>
+                    )}
+                    
+                    {availableMethods.has('PATCH') && (
+                        <div className={`${styles.navItem} ${tab === 'run-patch' ? styles.active : ''}`} onClick={() => setTab('run-patch')}>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                            <span>PATCH Suite</span>
+                        </div>
+                    )}
+                    
+                    {availableMethods.has('DELETE') && (
+                        <div className={`${styles.navItem} ${tab === 'run-delete' ? styles.active : ''}`} onClick={() => setTab('run-delete')}>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+                            <span>DELETE Suite</span>
+                        </div>
+                    )}
+                    
+                    {hasUploads && (
+                        <div className={`${styles.navItem} ${tab === 'run-upload' ? styles.active : ''}`} onClick={() => setTab('run-upload')}>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                            <span>Asset Uploads</span>
+                        </div>
+                    )}
                 </nav>
             </aside>
             <main className={styles.main}>
@@ -338,14 +488,35 @@ export default function Home() {
                 )}
 
 
-                {(tab === 'run-get' || tab === 'run-post' || tab === 'run-upload') && (
+                {(tab === 'run-get' || tab === 'run-post' || tab === 'run-put' || tab === 'run-patch' || tab === 'run-delete' || tab === 'run-upload') && (
                     <div className={styles.suiteContainer}>
                         {(() => {
-                            const m = tab === 'run-get' ? 'GET' : tab === 'run-post' ? 'POST' : undefined;
+                            const tabMethodMap: Record<string, string> = {
+                                'run-get': 'GET',
+                                'run-post': 'POST',
+                                'run-put': 'PUT',
+                                'run-patch': 'PATCH',
+                                'run-delete': 'DELETE'
+                            };
+                            const m = tabMethodMap[tab];
                             const isUpload = tab === 'run-upload';
                             const filtered = endpoints.filter(ep => {
                                 const path = ep.path.toLowerCase();
-                                const isUp = path.includes('upload') || path.includes('image') || path.includes('file');
+                                const hasFileInPath = path.includes('upload') || path.includes('image') || path.includes('file');
+                                
+                                // Check if any parameter is a file
+                                const hasFileInParams = ep.parameters?.some(p => 
+                                    p.type === 'file' || p.schema?.type === 'file' || p.schema?.format === 'binary'
+                                );
+
+                                // Check if request body has binary/file content
+                                const hasFileInBody = ep.requestBody?.content?.["multipart/form-data"]?.schema?.properties && 
+                                    Object.values(ep.requestBody.content["multipart/form-data"].schema.properties).some((p: any) => 
+                                        p.format === 'binary' || p.type === 'file'
+                                    );
+
+                                const isUp = hasFileInPath || hasFileInParams || hasFileInBody;
+
                                 if (isUpload) return isUp;
                                 if (m) return ep.method.toUpperCase() === m && !isUp;
                                 return false;
@@ -374,6 +545,9 @@ export default function Home() {
                                             <h2 className="animate-in fade-in slide-in-from-left-4 duration-700">
                                                 {tab === 'run-get' && 'GET Suite.'}
                                                 {tab === 'run-post' && 'POST Suite.'}
+                                                {tab === 'run-put' && 'PUT Suite.'}
+                                                {tab === 'run-patch' && 'PATCH Suite.'}
+                                                {tab === 'run-delete' && 'DELETE Suite.'}
                                                 {tab === 'run-upload' && 'Upload Suite.'}
                                             </h2>
                                             <p className="animate-in fade-in slide-in-from-left-4 duration-1000">Automated validation of {filtered.length} system endpoints.</p>
@@ -695,9 +869,35 @@ export default function Home() {
                                                                 setResults(prev => prev.filter(r => !(r.endpoint === singleEp.path && r.method === singleEp.method)));
                                                                 try {
                                                                     const resolvedEp = { ...singleEp, path: resolvePath(singleEp.path) };
+                                                                    const opId = singleEp.operationId || `${singleEp.method.toUpperCase()}_${singleEp.path}`;
+                                                                    let finalBody = {};
+                                                                    
+                                                                    // Priority 1: Manual Edit from current tile
+                                                                    if (manualBodies[opId]) {
+                                                                        try { finalBody = JSON.parse(manualBodies[opId]); } catch(e) {}
+                                                                    } else {
+                                                                        // Priority 2: Global Configuration/AI Data
+                                                                        const globalData = JSON.parse(testData);
+                                                                        finalBody = globalData[opId]?.body || globalData[singleEp.path]?.body || {};
+                                                                        
+                                                                        // Priority 3: Fresh Schema Generation if still empty
+                                                                        if (Object.keys(finalBody).length === 0) {
+                                                                            const content = singleEp.requestBody?.content?.["application/json"] || 
+                                                                                           singleEp.requestBody?.content?.["multipart/form-data"];
+                                                                            if (content?.schema) {
+                                                                                finalBody = generateFromSchema(content.schema);
+                                                                            }
+                                                                        }
+                                                                    }
+
                                                                     const r = await fetch('http://localhost:8000/run', {
                                                                         method: 'POST', headers: { 'Content-Type': 'application/json' },
-                                                                        body: JSON.stringify({ baseUrl: config.baseUrl, endpoints: [resolvedEp], testData: JSON.parse(testData), variables: {} })
+                                                                        body: JSON.stringify({ 
+                                                                            baseUrl: config.baseUrl, 
+                                                                            endpoints: [resolvedEp], 
+                                                                            testData: { [opId]: { body: finalBody } }, 
+                                                                            variables: {} 
+                                                                        })
                                                                     });
                                                                     const data = await r.json();
                                                                     setResults(prev => [...prev, ...data.results]);
@@ -727,6 +927,36 @@ export default function Home() {
                                                                     </div>
                                                                     
                                                                     {ep.summary && <p className="text-xs text-muted leading-relaxed line-clamp-2">{ep.summary}</p>}
+                                                                    {/* Request Body Preview for Mutations */}
+                                                                    {['POST', 'PUT', 'PATCH'].includes(ep.method.toUpperCase()) && (
+                                                                        <div className={styles.paramSection}>
+                                                                            <span className={styles.paramLabel}>Request Body (Editable)</span>
+                                                                            <textarea 
+                                                                                className={styles.paramInput}
+                                                                                style={{ marginTop: '8px', minHeight: '120px', fontFamily: 'monospace', fontSize: '11px', lineHeight: '1.4', background: '#0a192f', color: '#64ffda', border: '1px solid rgba(100, 255, 218, 0.2)' }}
+                                                                                value={(() => {
+                                                                                    const opId = ep.operationId || `${ep.method.toUpperCase()}_${ep.path}`;
+                                                                                    if (manualBodies[opId] !== undefined) return manualBodies[opId];
+                                                                                    
+                                                                                    // Initial Generation
+                                                                                    try {
+                                                                                        const data = JSON.parse(testData);
+                                                                                        let body = data[opId]?.body || data[ep.path]?.body;
+                                                                                        
+                                                                                        if (!body || Object.keys(body).length === 0) {
+                                                                                            const content = ep.requestBody?.content?.["application/json"] || 
+                                                                                                           ep.requestBody?.content?.["multipart/form-data"];
+                                                                                            if (content?.schema) body = generateFromSchema(content.schema);
+                                                                                        }
+                                                                                        return JSON.stringify(body || {}, null, 2);
+                                                                                    } catch (e) { return "{}"; }
+                                                                                })()}
+                                                                                onChange={(e) => {
+                                                                                    const opId = ep.operationId || `${ep.method.toUpperCase()}_${ep.path}`;
+                                                                                    setManualBodies(prev => ({ ...prev, [opId]: e.target.value }));
+                                                                                }}
+                                                                            />
+                                                                        </div>
 
                                                                     {res && (
                                                                         <div className="animate-in fade-in duration-500">

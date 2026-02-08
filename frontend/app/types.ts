@@ -7,6 +7,7 @@ export interface ApiEndpoint {
     parameters?: any[];
     responses?: any;
     tags?: string[];
+    requestBody?: any;
 }
 
 export interface TestExecutionResult {
