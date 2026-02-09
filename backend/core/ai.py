@@ -1,7 +1,7 @@
 from groq import Groq
 import json
-from typing import Dict, Any, List
-from models import ApiEndpoint
+from typing import Dict, Any, List, Optional
+from models import ApiEndpoint, TestExecutionResult
 
 def generate_ai_test_data(api_key: str, endpoints: List[ApiEndpoint]) -> Dict[str, Any]:
     client = Groq(api_key=api_key)
@@ -37,7 +37,7 @@ def generate_ai_test_data(api_key: str, endpoints: List[ApiEndpoint]) -> Dict[st
                 {"role": "system", "content": "You are a helpful JSON data generator for API testing."},
                 {"role": "user", "content": prompt}
             ],
-            model="llama3-70b-8192",
+            model="llama-3.3-70b-versatile",
             temperature=0.1,
             response_format={"type": "json_object"}
         )
@@ -86,3 +86,62 @@ def diagnose_error(api_key: str, endpoint: Dict[str, Any], request_body: Any, re
         return json.loads(completion.choices[0].message.content)
     except Exception as e:
         return {"error": str(e)}
+
+def chat_with_context(api_key: str, endpoints: List[ApiEndpoint], user_message: str, history: List[Dict[str, str]], results: List[TestExecutionResult]) -> str:
+    client = Groq(api_key=api_key)
+    
+    # Summarize API context to keep tokens manageable
+    context_summary = []
+    for ep in endpoints:
+        context_summary.append(f"{ep.method} {ep.path} - {ep.summary or 'No summary'}")
+        
+    # Summarize Test Results
+    passed_tests = [r.endpoint for r in results if r.passed]
+    failed_tests = [f"{r.method} {r.endpoint} (Error: {r.error or r.response})" for r in results if not r.passed]
+    
+    test_status_section = ""
+    if results:
+        test_status_section = f"""
+        CURRENT TEST EXECUTION STATUS:
+        People are asking about "working" APIs. You have this real-time data:
+        - Total Tests Run: {len(results)}
+        - Passed: {len(passed_tests)}
+        - Failed: {len(failed_tests)}
+        
+        Failed Endpoints Details:
+        {json.dumps(failed_tests, indent=2)}
+        """
+
+    system_prompt = f"""
+    You are an intelligent API Assistant for a QA Automation Engineer.
+    You have access to the following API Endpoints:
+    
+    {json.dumps(context_summary, indent=2)}
+    
+    {test_status_section}
+    
+    Your goal is to help the user understand the API, suggest test scenarios, or debug issues.
+    If the user asks "how many APIs are working?", use the CURRENT TEST EXECUTION STATUS data provided above.
+    If no tests have been run yet, explicitly state that you haven't seen any test results yet.
+    Be concise, technical, and helpful.
+    """
+    
+    messages = [
+        {"role": "system", "content": system_prompt}
+    ]
+    
+    # Add history
+    for msg in history[-10:]: # Keep last 10 messages for context window management
+        messages.append({"role": msg["role"], "content": msg["content"]})
+        
+    messages.append({"role": "user", "content": user_message})
+    
+    try:
+        completion = client.chat.completions.create(
+            messages=messages,
+            model="llama-3.3-70b-versatile",
+            temperature=0.3,
+        )
+        return completion.choices[0].message.content
+    except Exception as e:
+        return f"Error communicating with AI: {str(e)}"

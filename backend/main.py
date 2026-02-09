@@ -5,16 +5,23 @@ from typing import Dict, Any, List, Optional
 import httpx
 import logging
 
-from models import ApiEndpoint
+from models import ApiEndpoint, TestExecutionResult
 from core.parser import fetch_swagger, parse_swagger_endpoints
 from core.runner import execute_test_step
-from core.ai import generate_ai_test_data, diagnose_error
+from core.ai import generate_ai_test_data, diagnose_error, chat_with_context
 
 class DiagnoseRequest(BaseModel):
     apiKey: str
     endpoint: Dict[str, Any]
     requestBody: Any
     responseBody: Any
+
+class ChatRequest(BaseModel):
+    apiKey: str
+    message: str
+    endpoints: List[ApiEndpoint]
+    history: List[Dict[str, str]] = []
+    results: List[TestExecutionResult] = []
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -126,4 +133,24 @@ async def diagnose(request: DiagnoseRequest):
         return diagnosis
     except Exception as e:
         logger.error(f"Error diagnosing failure: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/chat")
+async def chat_interaction(request: ChatRequest):
+    logger.info("Executing Chat Interaction")
+    if not request.apiKey:
+        raise HTTPException(status_code=400, detail="API Key is required")
+        
+    try:
+        reply = chat_with_context(
+            request.apiKey,
+            request.endpoints,
+            request.message,
+            request.history,
+            request.results
+        )
+        return {"reply": reply}
+    except Exception as e:
+        logger.error(f"Chat error: {e}")
         raise HTTPException(status_code=500, detail=str(e))

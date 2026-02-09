@@ -22,3 +22,13 @@ class SwaggerDoc(BaseModel):
     servers: List[Dict[str, Any]] = []
     paths: Dict[str, Dict[str, Any]]
     components: Dict[str, Any] = {}
+
+class TestExecutionResult(BaseModel):
+    endpoint: str
+    method: str
+    status: Optional[int] = None
+    time: float
+    passed: bool
+    response: Any = None
+    error: Optional[str] = None
+    healed: Optional[bool] = False

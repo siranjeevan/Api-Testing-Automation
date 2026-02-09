@@ -9,12 +9,61 @@ export default function Home() {
     const [autoParams, setAutoParams] = React.useState<Record<string, any>>({});
     const [errorDrawerOpen, setErrorDrawerOpen] = React.useState(false);
     const [warningDrawerOpen, setWarningDrawerOpen] = React.useState(false);
-    
+
     // START: Payload Configuration State
     const [schemas, setSchemas] = React.useState<Record<string, any>>({});
     const [manualBodies, setManualBodies] = React.useState<Record<string, string>>({});
     const [aiDiagnoses, setAiDiagnoses] = React.useState<Record<string, { diagnosis: 'INPUT_ISSUE' | 'API_ISSUE', explanation: string, suggested_fix?: any }>>({});
-    
+
+    // START: Chat State
+    const [chatOpen, setChatOpen] = React.useState(false);
+    const [chatMessages, setChatMessages] = React.useState<{ role: 'user' | 'assistant', content: string }[]>([
+        { role: 'assistant', content: 'Hello! I am your API Copilot. Ask me anything about your endpoints or for help with testing.' }
+    ]);
+    const [chatInput, setChatInput] = React.useState('');
+    const [chatLoading, setChatLoading] = React.useState(false);
+    const chatEndRef = React.useRef<HTMLDivElement>(null);
+
+    React.useEffect(() => {
+        if (chatOpen && chatEndRef.current) {
+            chatEndRef.current.scrollIntoView({ behavior: 'smooth' });
+        }
+    }, [chatMessages, chatOpen]);
+
+    const sendChatMessage = async () => {
+        if (!chatInput.trim() || !config.apiKey) return;
+
+        const userMsg = chatInput;
+        setChatMessages(prev => [...prev, { role: 'user', content: userMsg }]);
+        setChatInput('');
+        setChatLoading(true);
+
+        try {
+            const res = await fetch('http://localhost:8000/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    apiKey: config.apiKey,
+                    message: userMsg,
+                    endpoints: endpoints,
+                    history: chatMessages.map(m => ({ role: m.role, content: m.content })),
+                    results: results
+                })
+            });
+            const data = await res.json();
+            if (data.reply) {
+                setChatMessages(prev => [...prev, { role: 'assistant', content: data.reply }]);
+            } else {
+                setChatMessages(prev => [...prev, { role: 'assistant', content: "Sorry, I couldn't process that." }]);
+            }
+        } catch (e) {
+            setChatMessages(prev => [...prev, { role: 'assistant', content: "Error communicating with the backend." }]);
+        } finally {
+            setChatLoading(false);
+        }
+    };
+    // END: Chat State
+
     // Helper to generate dummy data from schema
     const generateFromSchema = (schema: any, depth = 0, fieldName = ''): any => {
         if (!schema || depth > 5) return {};
@@ -45,7 +94,7 @@ export default function Home() {
 
         if (schema.example) return schema.example;
         if (schema.default !== undefined) return schema.default;
-        
+
         if (schema.allOf) {
             let merged: any = {};
             schema.allOf.forEach((sub: any) => {
@@ -67,7 +116,7 @@ export default function Home() {
             }
             return obj;
         }
-        
+
         if (schema.items) {
             return [generateFromSchema(schema.items, depth + 1, fieldName)];
         }
@@ -78,7 +127,7 @@ export default function Home() {
             if (schema.format === "date-time") return new Date().toISOString();
             if (schema.format === "date") return new Date().toISOString().split('T')[0];
             if (schema.enum) return schema.enum[0];
-            
+
             // Smart context-aware generation
             if (lowerName.includes('phone')) {
                 return "" + (Math.floor(Math.random() * 3) + 7) + Math.floor(100000000 + Math.random() * 900000000);
@@ -101,7 +150,7 @@ export default function Home() {
             return 0;
         }
         if (type === "boolean") return true;
-        
+
         return {};
     };
     // END: Payload Configuration State
@@ -123,7 +172,7 @@ export default function Home() {
     React.useEffect(() => {
         const savedConfig = localStorage.getItem('ag_config');
         if (savedConfig) {
-            try { setConfig(JSON.parse(savedConfig)); } catch (e) {}
+            try { setConfig(JSON.parse(savedConfig)); } catch (e) { }
         }
         const savedTestData = localStorage.getItem('ag_test_data');
         if (savedTestData) {
@@ -131,13 +180,13 @@ export default function Home() {
         }
         const savedSchemas = localStorage.getItem('ag_schemas');
         if (savedSchemas) {
-            try { setSchemas(JSON.parse(savedSchemas)); } catch (e) {}
+            try { setSchemas(JSON.parse(savedSchemas)); } catch (e) { }
         }
     }, []);
 
     React.useEffect(() => {
         if (config.openapiUrl !== 'http://localhost:8000/openapi.json' || config.baseUrl !== 'http://localhost:8000') {
-             localStorage.setItem('ag_config', JSON.stringify(config));
+            localStorage.setItem('ag_config', JSON.stringify(config));
         }
     }, [config]);
 
@@ -199,7 +248,7 @@ export default function Home() {
     const executeStep = async (ep: ApiEndpoint, passedContext: Record<string, any>, retryCount = 0, forcedBody?: any): Promise<Record<string, any>> => {
         let currentContext = { ...passedContext };
         const opId = ep.operationId || `${ep.method.toUpperCase()}_${ep.path}`;
-        
+
         if (retryCount === 0) {
             setAiDiagnoses(prev => {
                 const next = { ...prev };
@@ -211,34 +260,34 @@ export default function Home() {
         let bodyToAnalyze = forcedBody || {};
         if (!forcedBody) {
             if (manualBodies[opId]) {
-                try { bodyToAnalyze = JSON.parse(manualBodies[opId]); } catch(e) {}
+                try { bodyToAnalyze = JSON.parse(manualBodies[opId]); } catch (e) { }
             } else {
                 try {
                     const globalData = JSON.parse(testData);
                     bodyToAnalyze = globalData[opId]?.body || bodyToAnalyze;
-                } catch(e) {}
+                } catch (e) { }
             }
         }
-        
+
         const bodyString = JSON.stringify(bodyToAnalyze);
-        
+
         // Collect needed variables from path and body templates
         const needed = [
             ...(ep.path.match(/\{([^}]+)\}/g) || []),
             ...(bodyString.match(/\{\{([^}]+)\}\}/g) || [])
         ];
-        
+
         // ALSO: Scan body for any `_id` fields that have placeholder values
         // This handles cases like { "driver_id": "string" } which need resolution
         const scanBodyForIdFields = (obj: any, prefix = ''): string[] => {
             const foundIds: string[] = [];
             if (!obj || typeof obj !== 'object') return foundIds;
-            
+
             Object.entries(obj).forEach(([key, val]) => {
                 const fullKey = prefix ? `${prefix}.${key}` : key;
                 if (key.toLowerCase().endsWith('_id') || key.toLowerCase().endsWith('id')) {
                     // Check if value is a placeholder (empty, 'string', null, 0, or looks like a template)
-                    if (val === null || val === '' || val === 'string' || val === 0 || 
+                    if (val === null || val === '' || val === 'string' || val === 0 ||
                         (typeof val === 'string' && (val.includes('{{') || val === 'uuid'))) {
                         foundIds.push(`{${key}}`);
                     }
@@ -249,26 +298,26 @@ export default function Home() {
             });
             return foundIds;
         };
-        
+
         needed.push(...scanBodyForIdFields(bodyToAnalyze));
 
         for (const varName of Array.from(new Set(needed))) {
             const cleanVar = varName.replace(/[\{\}]/g, '');
             if (!currentContext[cleanVar]) {
                 const searchKey = cleanVar.replace('_id', '').toLowerCase();
-                
+
                 // Find ALL potential producers, then pick the BEST one (shortest path = base list endpoint)
                 const potentialProducers = endpoints.filter(e => {
                     if (e.method.toUpperCase() !== 'GET' || e.path.includes('{')) return false;
                     const path = e.path.toLowerCase();
                     const opIdDesc = (e.operationId || "").toLowerCase();
                     const tags = (e.tags || []).map(t => t.toLowerCase());
-                    
+
                     const pluralKey = searchKey + 's';
-                    return path.endsWith(`/${pluralKey}`) || path.endsWith(`/${searchKey}`) || 
-                           path.includes(searchKey) || opIdDesc.includes(searchKey) || tags.some(t => t.includes(searchKey));
+                    return path.endsWith(`/${pluralKey}`) || path.endsWith(`/${searchKey}`) ||
+                        path.includes(searchKey) || opIdDesc.includes(searchKey) || tags.some(t => t.includes(searchKey));
                 });
-                
+
                 // Sort by path length (shortest first) - this prioritizes /api/drivers over /api/drivers/check-phone
                 potentialProducers.sort((a, b) => a.path.length - b.path.length);
                 const producer = potentialProducers[0];
@@ -285,7 +334,7 @@ export default function Home() {
                             const parts = producer.path.split('/').filter(Boolean);
                             const pName = parts[parts.length - 1] || 'data';
                             const pSingular = pName.endsWith('s') ? pName.slice(0, -1) : pName;
-                            
+
                             if (learned['id']) {
                                 if (!learned[cleanVar]) learned[cleanVar] = learned['id'];
                                 learned[`${pSingular}_id`] = learned['id'];
@@ -293,7 +342,7 @@ export default function Home() {
 
                             // Fuzzy Logic: If exact key not found, try to find ANY relevant ID from the producer
                             if (!learned[cleanVar]) {
-                                const candidates = Object.keys(learned).filter(k => 
+                                const candidates = Object.keys(learned).filter(k =>
                                     k.toLowerCase().endsWith('id') || k.toLowerCase().endsWith('uuid')
                                 );
                                 // Prefer the shortest key usually (id vs transaction_id)? or longest?
@@ -306,7 +355,7 @@ export default function Home() {
 
                             currentContext = { ...currentContext, ...learned };
                         }
-                    } catch(e) {}
+                    } catch (e) { }
                 }
             }
         }
@@ -318,10 +367,10 @@ export default function Home() {
         (ep.path.match(/\{([^}]+)\}/g) || []).forEach(p => {
             const key = p.slice(1, -1);
             const val = currentContext[key];
-            
+
             // DEBUG: Log each variable resolution
             console.log(`[Path Resolve] Looking for '${key}' in context:`, val ? `FOUND (${val})` : 'NOT FOUND');
-            
+
             if (val) {
                 resolvedPath = resolvedPath.replace(p, val);
             } else {
@@ -333,22 +382,22 @@ export default function Home() {
                 }
             }
         });
-        
+
         console.log(`[executeStep] Resolved path:`, resolvedPath);
 
         if (Object.keys(bodyToAnalyze).length === 0 && ep.requestBody) {
-           const content = ep.requestBody?.content?.["application/json"];
-           if (content?.schema) bodyToAnalyze = generateFromSchema(content.schema);
+            const content = ep.requestBody?.content?.["application/json"];
+            if (content?.schema) bodyToAnalyze = generateFromSchema(content.schema);
         }
 
         try {
             const runRes = await fetch('http://localhost:8000/run-step', {
                 method: 'POST', headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ 
-                    baseUrl: config.baseUrl, 
-                    endpoint: { ...ep, path: resolvedPath }, 
-                    testData: { [opId]: { body: bodyToAnalyze } }, 
-                    variables: currentContext 
+                body: JSON.stringify({
+                    baseUrl: config.baseUrl,
+                    endpoint: { ...ep, path: resolvedPath },
+                    testData: { [opId]: { body: bodyToAnalyze } },
+                    variables: currentContext
                 })
             });
             const runData = await runRes.json();
@@ -381,30 +430,30 @@ export default function Home() {
                         const diagData = await diagR.json();
                         if (diagData.diagnosis) {
                             setAiDiagnoses(prev => ({ ...prev, [opId]: diagData }));
-                            
+
                             // Fully Automatic AI Multi-Step Healing
                             if (diagData.diagnosis === 'INPUT_ISSUE' && diagData.suggested_fix && retryCount < 1) {
                                 console.log(`[AI Auto-Healing] Encountered Input Issue on ${ep.path}. Applying fix and retrying...`);
-                                
+
                                 // WAIT for 1.5 seconds so the user can actually see the "INPUT GUIDANCE" box 
                                 // before it automatically fixes itself.
                                 await new Promise(r => setTimeout(r, 1500));
-                                
+
                                 const fixedContent = JSON.stringify(diagData.suggested_fix, null, 2);
                                 setManualBodies(prev => ({ ...prev, [opId]: fixedContent }));
-                                
+
                                 const healedCtx = await executeStep(ep, currentContext, retryCount + 1, diagData.suggested_fix);
-                                
-                                setResults(prev => prev.map(r => 
-                                    (r.endpoint === ep.path && r.method === ep.method && r.passed) 
-                                    ? { ...r, healed: true } 
-                                    : r
+
+                                setResults(prev => prev.map(r =>
+                                    (r.endpoint === ep.path && r.method === ep.method && r.passed)
+                                        ? { ...r, healed: true }
+                                        : r
                                 ));
-                                
-                return healedCtx;
+
+                                return healedCtx;
                             }
                         }
-                    } catch (e) {}
+                    } catch (e) { }
                 }
 
                 // Learn IDs from successful responses ONLY
@@ -425,9 +474,9 @@ export default function Home() {
                     return { ...currentContext, ...learned };
                 }
             }
-    } catch (e) { console.error(e); }
-    return currentContext;
-};
+        } catch (e) { console.error(e); }
+        return currentContext;
+    };
 
     const runTests = async (methodFilter?: string, overrideEndpoints?: ApiEndpoint[]) => {
         if (!config.baseUrl) {
@@ -435,9 +484,9 @@ export default function Home() {
             setTab('setup');
             return;
         }
-        
+
         const source = overrideEndpoints || endpoints;
-        const targetEndpoints = methodFilter 
+        const targetEndpoints = methodFilter
             ? source.filter(ep => ep.method.toUpperCase() === methodFilter.toUpperCase())
             : source;
 
@@ -454,22 +503,22 @@ export default function Home() {
         setResults(prev => prev.filter(r => !targetEndpoints.some(te => te.path === r.endpoint && te.method === r.method)));
 
         // Intelligent sequential execution
-        const sorted = [...targetEndpoints].sort((a,b) => {
+        const sorted = [...targetEndpoints].sort((a, b) => {
             // Priority 1: Producers (no path params) before Consumers (with path params)
             const aHasParam = a.path.includes('{');
             const bHasParam = b.path.includes('{');
             if (aHasParam && !bHasParam) return 1;
             if (!aHasParam && bHasParam) return -1;
-            
+
             // Priority 2: Among producers, shorter paths first (base list endpoints first)
             // This ensures /api/drivers runs before /api/drivers/check-phone
             return a.path.length - b.path.length;
         });
-        
+
         console.log('[Full Suite] Execution order:', sorted.map(e => e.path));
 
         let ctx = { ...autoParams };
-        for(const ep of sorted) {
+        for (const ep of sorted) {
             ctx = await executeStep(ep, ctx);
             // Small delay to allow UI to update and user to see the "flow"
             await new Promise(r => setTimeout(r, 100));
@@ -534,16 +583,16 @@ export default function Home() {
     const categories = Array.from(new Set(endpoints.flatMap(ep => ep.tags || ['General']))).sort();
     const isRealError = (r: TestExecutionResult) => {
         if (r.passed) return false;
-        
+
         // 1. Ignore 404s explicitly
         if (r.status === 404) return false;
 
         // 2. Ignore "Not Found" text patterns in the entire response body
         const responseStr = JSON.stringify(r.response || "").toLowerCase();
         const errorStr = (r.error || "").toLowerCase();
-        
+
         if (responseStr.includes("not found") || errorStr.includes("not found")) return false;
-        
+
         return true;
     };
     const failedCount = results.filter(isRealError).length;
@@ -559,69 +608,80 @@ export default function Home() {
     return (
         <div className={styles.container}>
             <aside className={`${styles.sidebar} ${!sidebarExpanded ? styles.collapsed : ''}`}>
-                <button 
-                    className={styles.collapseToggle} 
+                <button
+                    className={styles.collapseToggle}
                     onClick={() => setSidebarExpanded(!sidebarExpanded)}
                     title={sidebarExpanded ? "Collapse Sidebar" : "Expand Sidebar"}
                 >
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" style={{ transform: sidebarExpanded ? 'rotate(0deg)' : 'rotate(180deg)', transition: 'transform 0.3s ease' }}>
-                        <polyline points="15 18 9 12 15 6"/>
+                        <polyline points="15 18 9 12 15 6" />
                     </svg>
                 </button>
 
                 <div className={styles.logo}>
                     <div className={styles.logoIcon}>
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /></svg>
                     </div>
                     <h1 className="text-xl font-bold tracking-tight">AG Automation</h1>
                 </div>
                 <nav>
                     <div className={`${styles.navItem} ${tab === 'setup' ? styles.active : ''}`} onClick={() => setTab('setup')}>
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" /><circle cx="12" cy="12" r="3" /></svg>
                         <span>Configuration</span>
                     </div>
-                    
+
+                    {endpoints.length > 0 && config.apiKey && (
+                        <div className={`${styles.navItem}`} onClick={generateData} title="Generate Test Data with AI">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                                <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                                <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                            </svg>
+                            <span>{loading ? 'Generating...' : 'Generate AI Data'}</span>
+                        </div>
+                    )}
+
                     {/* Dynamic Runners Section */}
                     {endpoints.length > 0 && <div className="mt-8 mb-2 px-4 text-[10px] uppercase tracking-widest text-dim font-bold opacity-50">Runners</div>}
-                    
+
                     {availableMethods.has('GET') && (
                         <div className={`${styles.navItem} ${tab === 'run-get' ? styles.active : ''}`} onClick={() => setTab('run-get')}>
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><path d="m9 12 2 2 4-4" /></svg>
                             <span>GET Suite</span>
                         </div>
                     )}
-                    
+
                     {availableMethods.has('POST') && (
                         <div className={`${styles.navItem} ${tab === 'run-post' ? styles.active : ''}`} onClick={() => setTab('run-post')}>
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 5v14M5 12h14" /></svg>
                             <span>POST Suite</span>
                         </div>
                     )}
-                    
+
                     {availableMethods.has('PUT') && (
                         <div className={`${styles.navItem} ${tab === 'run-put' ? styles.active : ''}`} onClick={() => setTab('run-put')}>
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" /><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" /></svg>
                             <span>PUT Suite</span>
                         </div>
                     )}
-                    
+
                     {availableMethods.has('PATCH') && (
                         <div className={`${styles.navItem} ${tab === 'run-patch' ? styles.active : ''}`} onClick={() => setTab('run-patch')}>
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9" /><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" /></svg>
                             <span>PATCH Suite</span>
                         </div>
                     )}
-                    
+
                     {availableMethods.has('DELETE') && (
                         <div className={`${styles.navItem} ${tab === 'run-delete' ? styles.active : ''}`} onClick={() => setTab('run-delete')}>
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6" /><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" /><line x1="10" y1="11" x2="10" y2="17" /><line x1="14" y1="11" x2="14" y2="17" /></svg>
                             <span>DELETE Suite</span>
                         </div>
                     )}
-                    
+
                     {hasUploads && (
                         <div className={`${styles.navItem} ${tab === 'run-upload' ? styles.active : ''}`} onClick={() => setTab('run-upload')}>
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="17 8 12 3 7 8" /><line x1="12" y1="3" x2="12" y2="15" /></svg>
                             <span>Asset Uploads</span>
                         </div>
                     )}
@@ -630,72 +690,87 @@ export default function Home() {
             <main className={styles.main}>
                 {tab === 'setup' && (
                     <div className={styles.setupContainer}>
-                        <div className={styles.setupIntro}>
-                            <div>
-                                <h2 className="text-5xl font-black tracking-tight leading-none mb-6">Initialize<br/>Workspace.</h2>
-                                <p className="text-powder-blue/60 text-lg leading-relaxed max-w-sm">Connect your API blueprint and define target parameters to begin automated analysis.</p>
-                            </div>
-
-                            <div>
-                                <div className={styles.statusRow}>
-                                    <span className={styles.statusPill}>API ENGINE</span>
-                                    <span className={styles.statusPill}>ENV MAPPING</span>
-                                    <span className={styles.statusPill}>AI GEN</span>
-                                </div>
-                                <p className={styles.persistenceText}>
-                                    AVIATION GRADE PERSISTENCE ACTIVE
-                                </p>
-                            </div>
-                        </div>
-
-                        <div className={styles.setupWorkspace}>
-                            <div className={styles.setupGrid}>
-                                <div className={styles.stepSection}>
-                                    <div className={styles.stepHeader}>
-                                        <div className={styles.stepNumber}>Phase 01</div>
-                                        <h3 className={styles.stepTitle}>Blueprint Mapping</h3>
+                        <div className={styles.setupCard}>
+                            {/* LEFT SIDE: Intro & Stats */}
+                            <div className={styles.setupIntro}>
+                                <div className={styles.introContent}>
+                                    <div className="flex items-center gap-3 mb-6 opacity-80">
+                                        <div className="w-8 h-8 rounded-lg bg-teal-400/20 flex items-center justify-center border border-teal-400/30">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#64ffda" strokeWidth="3"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" /></svg>
+                                        </div>
+                                        <span className="font-mono text-xs font-bold tracking-widest text-teal-400 uppercase">System Initialized</span>
                                     </div>
-                                    <div className={styles.card}>
-                                        <div className={styles.formGroup} style={{ marginBottom: 0 }}>
-                                            <label className={styles.label}>Swagger Source URL</label>
+                                    <h2 className={styles.introTitle}>Mission<br />Control.</h2>
+                                    <p className={styles.introDesc}>Establish a secure connection to your API infrastructure. Configure your testing environment and authorized credentials to begin automated analysis.</p>
+                                </div>
+
+                                <div>
+                                    <div className="grid grid-cols-2 gap-4 mb-8">
+                                        <div className="p-4 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md">
+                                            <div className="text-2xl font-bold text-white mb-1">AI</div>
+                                            <div className="text-xs text-slate-400 font-mono tracking-wider">ENGINE READY</div>
+                                        </div>
+                                        <div className="p-4 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md">
+                                            <div className="text-2xl font-bold text-white mb-1">SEC</div>
+                                            <div className="text-xs text-slate-400 font-mono tracking-wider">ENCRYPTED</div>
+                                        </div>
+                                    </div>
+                                    <div className="flex items-center gap-3 text-[10px] text-slate-500 font-mono tracking-widest uppercase">
+                                        <div className="w-2 h-2 rounded-full bg-teal-400 animate-pulse"></div>
+                                        Aviation Grade Persistence Active
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* RIGHT SIDE: Workspace Form */}
+                            <div className={styles.setupWorkspace}>
+                                <div className={styles.setupGrid}>
+                                    <div className={styles.stepSection}>
+                                        <div className="mb-3 flex justify-between items-center">
+                                            <label className="text-sm font-bold text-slate-700 uppercase tracking-wider">01 // Blueprint Source</label>
+                                            <span className="text-[11px] font-bold text-teal-700 bg-teal-50 px-3 py-1 rounded-md border border-teal-200">REQUIRED</span>
+                                        </div>
+                                        <div className="relative">
+                                            <div className="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none">
+                                                <svg className="text-slate-400 transition-colors" style={{ width: '24px', height: '24px' }} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>
+                                            </div>
                                             <input
-                                                className={styles.input}
+                                                className="w-full bg-slate-50 text-slate-900 border-2 border-slate-200 rounded-xl py-5 pl-14 pr-6 text-lg focus:outline-none focus:border-teal-500 transition-all placeholder:text-slate-400 font-mono shadow-sm"
                                                 value={config.openapiUrl}
                                                 onChange={e => setConfig({ ...config, openapiUrl: e.target.value })}
-                                                placeholder="https://api.example.com/swagger.json"
+                                                placeholder="https://api.example.com/openapi.json"
                                             />
                                         </div>
                                     </div>
-                                </div>
 
-                                <div className={styles.stepSection}>
-                                    <div className={styles.stepHeader}>
-                                        <div className={styles.stepNumber}>Phase 02</div>
-                                        <h3 className={styles.stepTitle}>Execution Target</h3>
-                                    </div>
-                                    <div className={styles.card}>
-                                        <div className={styles.formGroup} style={{ marginBottom: 0 }}>
-                                            <label className={styles.label}>Environment Base URL</label>
+                                    <div className={styles.stepSection}>
+                                        <div className="mb-3 flex justify-between items-center">
+                                            <label className="text-sm font-bold text-slate-700 uppercase tracking-wider">02 // Environment Target</label>
+                                        </div>
+                                        <div className="relative">
+                                            <div className="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none">
+                                                <svg className="text-slate-400 transition-colors" style={{ width: '24px', height: '24px' }} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" /></svg>
+                                            </div>
                                             <input
-                                                className={styles.input}
+                                                className="w-full bg-slate-50 text-slate-900 border-2 border-slate-200 rounded-xl py-5 pl-14 pr-6 text-lg focus:outline-none focus:border-teal-500 transition-all placeholder:text-slate-400 font-mono shadow-sm"
                                                 value={config.baseUrl}
                                                 onChange={e => setConfig({ ...config, baseUrl: e.target.value })}
                                                 placeholder="https://api.production.com"
                                             />
                                         </div>
                                     </div>
-                                </div>
 
-                                <div className={styles.stepSection}>
-                                    <div className={styles.stepHeader}>
-                                        <div className={styles.stepNumber}>Phase 03</div>
-                                        <h3 className={styles.stepTitle}>Intelligence Key</h3>
-                                    </div>
-                                    <div className={styles.card}>
-                                        <div className={styles.formGroup} style={{ marginBottom: 0 }}>
-                                            <label className={styles.label}>Groq Authorization</label>
+                                    <div className={styles.stepSection}>
+                                        <div className="mb-3 flex justify-between items-center">
+                                            <label className="text-sm font-bold text-slate-700 uppercase tracking-wider">03 // Intelligence Key</label>
+                                            <span className="text-[11px] font-bold text-indigo-700 bg-indigo-50 px-3 py-1 rounded-md border border-indigo-200">SECURE</span>
+                                        </div>
+                                        <div className="relative">
+                                            <div className="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none">
+                                                <svg className="text-slate-400 transition-colors" style={{ width: '24px', height: '24px' }} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" /></svg>
+                                            </div>
                                             <input
-                                                className={styles.input}
+                                                className="w-full bg-slate-50 text-slate-900 border-2 border-slate-200 rounded-xl py-5 pl-14 pr-6 text-lg focus:outline-none focus:border-indigo-500 transition-all placeholder:text-slate-400 font-mono shadow-sm"
                                                 value={config.apiKey}
                                                 onChange={e => setConfig({ ...config, apiKey: e.target.value })}
                                                 placeholder="gsk_..."
@@ -704,23 +779,22 @@ export default function Home() {
                                         </div>
                                     </div>
                                 </div>
-                            </div>
 
-                            {config.openapiUrl && config.baseUrl && (
-                                <button className={`${styles.button} w-full py-5 text-lg rounded-xl mt-auto shadow-2xl`} onClick={parseSwagger} disabled={loading}>
+                                <button
+                                    className="mt-8 w-full bg-[#2563EB] hover:bg-[#1D4ED8] text-white text-lg font-bold py-5 rounded-xl transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-3"
+                                    onClick={parseSwagger}
+                                    disabled={loading || !config.openapiUrl}
+                                >
                                     {loading ? (
-                                        <div className="flex items-center justify-center gap-4">
-                                            <svg className="animate-spin" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
-                                            Initializing project context...
-                                        </div>
+                                        <>
+                                            <svg className="animate-spin h-5 w-5 text-teal-400" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                                            <span>CONNECTING...</span>
+                                        </>
                                     ) : (
-                                        <div className="flex items-center justify-center gap-4">
-                                            <span>Finalize & Launch Workspace</span>
-                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="m12 14 4-4-4-4"/><path d="M4 14V4h16v10Z"/><path d="M2 20h20"/></svg>
-                                        </div>
+                                        <span>INITIALIZE SYSTEM</span>
                                     )}
                                 </button>
-                            )}
+                            </div>
                         </div>
                     </div>
                 )}
@@ -741,15 +815,15 @@ export default function Home() {
                             const filtered = endpoints.filter(ep => {
                                 const path = ep.path.toLowerCase();
                                 const hasFileInPath = path.includes('upload') || path.includes('image') || path.includes('file');
-                                
+
                                 // Check if any parameter is a file
-                                const hasFileInParams = ep.parameters?.some(p => 
+                                const hasFileInParams = ep.parameters?.some(p =>
                                     p.type === 'file' || p.schema?.type === 'file' || p.schema?.format === 'binary'
                                 );
 
                                 // Check if request body has binary/file content
-                                const hasFileInBody = ep.requestBody?.content?.["multipart/form-data"]?.schema?.properties && 
-                                    Object.values(ep.requestBody.content["multipart/form-data"].schema.properties).some((p: any) => 
+                                const hasFileInBody = ep.requestBody?.content?.["multipart/form-data"]?.schema?.properties &&
+                                    Object.values(ep.requestBody.content["multipart/form-data"].schema.properties).some((p: any) =>
                                         p.format === 'binary' || p.type === 'file'
                                     );
 
@@ -772,7 +846,7 @@ export default function Home() {
                                 });
                                 return acc;
                             }, {} as Record<string, number>);
-                            
+
                             const uniqueTags = Object.keys(tagCounts).sort();
                             const activeTag = selectedTag || 'All';
 
@@ -807,11 +881,11 @@ export default function Home() {
                                                 </div>
                                             </div>
 
-                                            <button 
+                                            <button
                                                 className={styles.runAllButton}
                                                 onClick={() => {
                                                     const methodMap: Record<string, string> = {
-                                                        'run-get': 'GET', 'run-post': 'POST', 'run-put': 'PUT', 
+                                                        'run-get': 'GET', 'run-post': 'POST', 'run-put': 'PUT',
                                                         'run-patch': 'PATCH', 'run-delete': 'DELETE'
                                                     };
                                                     runTests(methodMap[tab]);
@@ -819,9 +893,9 @@ export default function Home() {
                                                 disabled={loading}
                                             >
                                                 {loading ? (
-                                                    <svg className="animate-spin" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
+                                                    <svg className="animate-spin" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4"><path d="M21 12a9 9 0 1 1-6.219-8.56" /></svg>
                                                 ) : (
-                                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M5 3l14 9-14 9V3z"/></svg>
+                                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M5 3l14 9-14 9V3z" /></svg>
                                                 )}
                                                 <span>Execute Full Suite</span>
                                             </button>
@@ -829,7 +903,7 @@ export default function Home() {
                                     </div>
 
                                     <div className={styles.tagNav}>
-                                        <button 
+                                        <button
                                             className={`${styles.tagPill} ${activeTag === 'All' ? styles.active : ''}`}
                                             onClick={() => setSelectedTag('All')}
                                         >
@@ -837,7 +911,7 @@ export default function Home() {
                                             <span className={styles.tagCount}>{filtered.length}</span>
                                         </button>
                                         {uniqueTags.map(tag => (
-                                            <button 
+                                            <button
                                                 key={tag}
                                                 className={`${styles.tagPill} ${activeTag === tag ? styles.active : ''}`}
                                                 onClick={() => setSelectedTag(tag)}
@@ -862,143 +936,143 @@ export default function Home() {
                                                     return acc;
                                                 }, {} as Record<string, typeof filtered>)
                                             )
-                                            .filter(([tag]) => activeTag === 'All' || activeTag === tag)
-                                            .map(([tag, categoryEndpoints], catIdx) => (
-                                                <div key={tag} className={styles.categorySection}>
-                                                    <div className={styles.categoryLabel}>
-                                                        <div className={styles.catLabelGroup}>
-                                                            <h3>{tag}</h3>
-                                                            <span className={styles.count}>{categoryEndpoints.length}</span>
+                                                .filter(([tag]) => activeTag === 'All' || activeTag === tag)
+                                                .map(([tag, categoryEndpoints], catIdx) => (
+                                                    <div key={tag} className={styles.categorySection}>
+                                                        <div className={styles.categoryLabel}>
+                                                            <div className={styles.catLabelGroup}>
+                                                                <h3>{tag}</h3>
+                                                                <span className={styles.count}>{categoryEndpoints.length}</span>
+                                                            </div>
+                                                            <button
+                                                                className={styles.catRunButton}
+                                                                disabled={loading}
+                                                                onClick={() => runTests(undefined, categoryEndpoints)}
+                                                            >
+                                                                {loading ? (
+                                                                    <svg className="animate-spin" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4"><path d="M21 12a9 9 0 1 1-6.219-8.56" /></svg>
+                                                                ) : (
+                                                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M5 3l10 9-10 9V3z" /></svg>
+                                                                )}
+                                                                Execute Category
+                                                            </button>
                                                         </div>
-                                                        <button 
-                                                            className={styles.catRunButton}
-                                                            disabled={loading}
-                                                            onClick={() => runTests(undefined, categoryEndpoints)}
-                                                        >
-                                                            {loading ? (
-                                                                <svg className="animate-spin" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
-                                                            ) : (
-                                                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M5 3l10 9-10 9V3z"/></svg>
-                                                            )}
-                                                            Execute Category
-                                                        </button>
-                                                    </div>
-                                                    <div className={styles.categoryGrid}>
-                                                        {categoryEndpoints.map((ep, i) => {
-                                                            const res = getResult(ep);
-                                                            const placeholders = ep.path.match(/\{([^}]+)\}/g) || [];
-                                                            const resolvePath = (path: string) => {
-                                                                let resolved = path;
-                                                                placeholders.forEach(p => {
-                                                                    const key = p.slice(1, -1);
-                                                                    const fallback = key.toLowerCase().includes('id') ? (autoParams['id'] || autoParams['uuid']) : null;
-                                                                    const val = autoParams[key] || fallback;
-                                                                    if (val) resolved = resolved.replace(p, val);
-                                                                });
-                                                                return resolved;
-                                                            };
-
-                                                            const updateAutoParams = (responseData: any) => {
-                                                                const learned = extractIdentifiers(responseData);
-                                                                const pathSegments = ep.path.split('/').filter(Boolean);
-                                                                const lastSegment = pathSegments[pathSegments.length - 1];
-                                                                if (lastSegment && !lastSegment.includes('{')) {
-                                                                    const singular = lastSegment.endsWith('s') ? lastSegment.slice(0, -1) : lastSegment;
-                                                                    ['id', 'uuid', '_id', 'userId'].forEach(idKey => {
-                                                                        if (learned[idKey]) {
-                                                                            learned[`${singular}_id`] = learned[idKey];
-                                                                            learned[`${singular}Id`] = learned[idKey];
-                                                                            learned[`${singular}Of`] = learned[idKey];
-                                                                        }
+                                                        <div className={styles.categoryGrid}>
+                                                            {categoryEndpoints.map((ep, i) => {
+                                                                const res = getResult(ep);
+                                                                const placeholders = ep.path.match(/\{([^}]+)\}/g) || [];
+                                                                const resolvePath = (path: string) => {
+                                                                    let resolved = path;
+                                                                    placeholders.forEach(p => {
+                                                                        const key = p.slice(1, -1);
+                                                                        const fallback = key.toLowerCase().includes('id') ? (autoParams['id'] || autoParams['uuid']) : null;
+                                                                        const val = autoParams[key] || fallback;
+                                                                        if (val) resolved = resolved.replace(p, val);
                                                                     });
-                                                                }
-                                                                setAutoParams(prev => ({ ...prev, ...learned }));
-                                                            };
+                                                                    return resolved;
+                                                                };
 
-                                                            const runEndpoint = async (singleEp: typeof ep) => {
-                                                                setLoading(true);
-                                                                const nextCtx = await executeStep(singleEp, autoParams);
-                                                                setAutoParams(nextCtx);
-                                                                setLoading(false);
-                                                            };
+                                                                const updateAutoParams = (responseData: any) => {
+                                                                    const learned = extractIdentifiers(responseData);
+                                                                    const pathSegments = ep.path.split('/').filter(Boolean);
+                                                                    const lastSegment = pathSegments[pathSegments.length - 1];
+                                                                    if (lastSegment && !lastSegment.includes('{')) {
+                                                                        const singular = lastSegment.endsWith('s') ? lastSegment.slice(0, -1) : lastSegment;
+                                                                        ['id', 'uuid', '_id', 'userId'].forEach(idKey => {
+                                                                            if (learned[idKey]) {
+                                                                                learned[`${singular}_id`] = learned[idKey];
+                                                                                learned[`${singular}Id`] = learned[idKey];
+                                                                                learned[`${singular}Of`] = learned[idKey];
+                                                                            }
+                                                                        });
+                                                                    }
+                                                                    setAutoParams(prev => ({ ...prev, ...learned }));
+                                                                };
 
-                                                            return (
-                                                                <div key={i} className={styles.endpointTile}>
-                                                                    <div className={styles.tileHeader}>
-                                                                        <div className={styles.tilePath}>{ep.path}</div>
-                                                                        <button className={styles.tileMethod} disabled={loading} onClick={() => runEndpoint(ep)}>
-                                                                            {loading ? <svg className="animate-spin" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg> : <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M5 3l14 9-14 9V3z"/></svg>}
-                                                                            {ep.method}
-                                                                        </button>
-                                                                    </div>
-                                                                    {ep.summary && <p className="text-xs text-muted leading-relaxed line-clamp-2">{ep.summary}</p>}
-                                                                    {['POST', 'PUT', 'PATCH'].includes(ep.method.toUpperCase()) && (
-                                                                        <div className={styles.paramSection}>
-                                                                            <span className={styles.paramLabel}>Request Body (Editable)</span>
-                                                                            <textarea 
-                                                                                className={styles.paramInput}
-                                                                                style={{ marginTop: '8px', minHeight: '120px', fontFamily: 'monospace', fontSize: '11px', lineHeight: '1.4', background: '#0a192f', color: '#64ffda', border: '1px solid rgba(100, 255, 218, 0.2)' }}
-                                                                                value={(() => {
-                                                                                    const opId = ep.operationId || `${ep.method.toUpperCase()}_${ep.path}`;
-                                                                                    if (manualBodies[opId] !== undefined) return manualBodies[opId];
-                                                                                    try {
-                                                                                        const data = JSON.parse(testData);
-                                                                                        let body = data[opId]?.body || data[ep.path]?.body;
-                                                                                        if (!body || Object.keys(body).length === 0) {
-                                                                                            const content = ep.requestBody?.content?.["application/json"] || ep.requestBody?.content?.["multipart/form-data"];
-                                                                                            if (content?.schema) body = generateFromSchema(content.schema);
-                                                                                        }
-                                                                                        return JSON.stringify(body || {}, null, 2);
-                                                                                    } catch (e) { return "{}"; }
-                                                                                })()}
-                                                                                onChange={(e) => {
-                                                                                    const opId = ep.operationId || `${ep.method.toUpperCase()}_${ep.path}`;
-                                                                                    setManualBodies(prev => ({ ...prev, [opId]: e.target.value }));
-                                                                                }}
-                                                                            />
+                                                                const runEndpoint = async (singleEp: typeof ep) => {
+                                                                    setLoading(true);
+                                                                    const nextCtx = await executeStep(singleEp, autoParams);
+                                                                    setAutoParams(nextCtx);
+                                                                    setLoading(false);
+                                                                };
+
+                                                                return (
+                                                                    <div key={i} className={styles.endpointTile}>
+                                                                        <div className={styles.tileHeader}>
+                                                                            <div className={styles.tilePath}>{ep.path}</div>
+                                                                            <button className={styles.tileMethod} disabled={loading} onClick={() => runEndpoint(ep)}>
+                                                                                {loading ? <svg className="animate-spin" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4"><path d="M21 12a9 9 0 1 1-6.219-8.56" /></svg> : <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M5 3l14 9-14 9V3z" /></svg>}
+                                                                                {ep.method}
+                                                                            </button>
                                                                         </div>
-                                                                    )}
-                                                                    {res && (
-                                                                        <div className="animate-in fade-in duration-500">
-                                                                            <div className={styles.tileInfo}>
-                                                                                <div className={styles.tileTime}>{res.time.toFixed(0)} MS</div>
-                                                                                <div className={`${styles.status} ${res.passed ? styles.pass : styles.fail}`}>
-                                                                                    <div className={`w-1.5 h-1.5 rounded-full ${res.passed ? 'bg-success' : 'bg-error'}`}></div>
-                                                                                    {res.passed ? (res.healed ? 'AI HEALED' : 'Passed') : 'Failed'}
-                                                                                </div>
+                                                                        {ep.summary && <p className="text-xs text-muted leading-relaxed line-clamp-2">{ep.summary}</p>}
+                                                                        {['POST', 'PUT', 'PATCH'].includes(ep.method.toUpperCase()) && (
+                                                                            <div className={styles.paramSection}>
+                                                                                <span className={styles.paramLabel}>Request Body (Editable)</span>
+                                                                                <textarea
+                                                                                    className={styles.paramInput}
+                                                                                    style={{ marginTop: '8px', minHeight: '120px', fontFamily: 'monospace', fontSize: '11px', lineHeight: '1.4', background: '#0a192f', color: '#64ffda', border: '1px solid rgba(100, 255, 218, 0.2)' }}
+                                                                                    value={(() => {
+                                                                                        const opId = ep.operationId || `${ep.method.toUpperCase()}_${ep.path}`;
+                                                                                        if (manualBodies[opId] !== undefined) return manualBodies[opId];
+                                                                                        try {
+                                                                                            const data = JSON.parse(testData);
+                                                                                            let body = data[opId]?.body || data[ep.path]?.body;
+                                                                                            if (!body || Object.keys(body).length === 0) {
+                                                                                                const content = ep.requestBody?.content?.["application/json"] || ep.requestBody?.content?.["multipart/form-data"];
+                                                                                                if (content?.schema) body = generateFromSchema(content.schema);
+                                                                                            }
+                                                                                            return JSON.stringify(body || {}, null, 2);
+                                                                                        } catch (e) { return "{}"; }
+                                                                                    })()}
+                                                                                    onChange={(e) => {
+                                                                                        const opId = ep.operationId || `${ep.method.toUpperCase()}_${ep.path}`;
+                                                                                        setManualBodies(prev => ({ ...prev, [opId]: e.target.value }));
+                                                                                    }}
+                                                                                />
                                                                             </div>
-                                                                            <div className={styles.inspectorBox}>
-                                                                                <pre>{JSON.stringify(res.response, null, 2)}</pre>
-                                                                            </div>
-                                                                            {(() => {
-                                                                                const opId = ep.operationId || `${ep.method.toUpperCase()}_${ep.path}`;
-                                                                                const diag = aiDiagnoses[opId];
-                                                                                if (!diag) return null;
-                                                                                return (
-                                                                                    <div className={styles.aiBox} style={{ border: diag.diagnosis === 'INPUT_ISSUE' ? '1px solid #64ffda44' : '1px solid #f43f5e44' }}>
-                                                                                        <div className={styles.aiHeader}>
-                                                                                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8z"/><path d="M12 6v6l4 2"/></svg>
-                                                                                            <span className={styles.aiLabel} style={{ color: diag.diagnosis === 'INPUT_ISSUE' ? '#64ffda' : '#f43f5e' }}>{diag.diagnosis === 'INPUT_ISSUE' ? 'INPUT GUIDANCE' : 'API LOGIC ISSUE'}</span>
-                                                                                        </div>
-                                                                                        <p className={styles.aiMessage}>{diag.explanation}</p>
-                                                                                        {diag.diagnosis === 'INPUT_ISSUE' && diag.suggested_fix && (
-                                                                                            <div className={styles.autoHealingStatus}>
-                                                                                                <div className={styles.pulseDot}></div>
-                                                                                                <span>{res.healed ? 'Auto-Fix Applied' : 'AI Auto-Healing Active...'}</span>
-                                                                                            </div>
-                                                                                        )}
+                                                                        )}
+                                                                        {res && (
+                                                                            <div className="animate-in fade-in duration-500">
+                                                                                <div className={styles.tileInfo}>
+                                                                                    <div className={styles.tileTime}>{res.time.toFixed(0)} MS</div>
+                                                                                    <div className={`${styles.status} ${res.passed ? styles.pass : styles.fail}`}>
+                                                                                        <div className={`w-1.5 h-1.5 rounded-full ${res.passed ? 'bg-success' : 'bg-error'}`}></div>
+                                                                                        {res.passed ? (res.healed ? 'AI HEALED' : 'Passed') : 'Failed'}
                                                                                     </div>
-                                                                                );
-                                                                            })()}
-                                                                            {res.error && <div className="text-[10px] text-error mt-2 font-mono">{res.error}</div>}
-                                                                        </div>
-                                                                    )}
-                                                                </div>
-                                                            );
-                                                        })}
+                                                                                </div>
+                                                                                <div className={styles.inspectorBox}>
+                                                                                    <pre>{JSON.stringify(res.response, null, 2)}</pre>
+                                                                                </div>
+                                                                                {(() => {
+                                                                                    const opId = ep.operationId || `${ep.method.toUpperCase()}_${ep.path}`;
+                                                                                    const diag = aiDiagnoses[opId];
+                                                                                    if (!diag) return null;
+                                                                                    return (
+                                                                                        <div className={styles.aiBox} style={{ border: diag.diagnosis === 'INPUT_ISSUE' ? '1px solid #64ffda44' : '1px solid #f43f5e44' }}>
+                                                                                            <div className={styles.aiHeader}>
+                                                                                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8z" /><path d="M12 6v6l4 2" /></svg>
+                                                                                                <span className={styles.aiLabel} style={{ color: diag.diagnosis === 'INPUT_ISSUE' ? '#64ffda' : '#f43f5e' }}>{diag.diagnosis === 'INPUT_ISSUE' ? 'INPUT GUIDANCE' : 'API LOGIC ISSUE'}</span>
+                                                                                            </div>
+                                                                                            <p className={styles.aiMessage}>{diag.explanation}</p>
+                                                                                            {diag.diagnosis === 'INPUT_ISSUE' && diag.suggested_fix && (
+                                                                                                <div className={styles.autoHealingStatus}>
+                                                                                                    <div className={styles.pulseDot}></div>
+                                                                                                    <span>{res.healed ? 'Auto-Fix Applied' : 'AI Auto-Healing Active...'}</span>
+                                                                                                </div>
+                                                                                            )}
+                                                                                        </div>
+                                                                                    );
+                                                                                })()}
+                                                                                {res.error && <div className="text-[10px] text-error mt-2 font-mono">{res.error}</div>}
+                                                                            </div>
+                                                                        )}
+                                                                    </div>
+                                                                );
+                                                            })}
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            ))
+                                                ))
                                         )}
                                     </div>
                                 </>
@@ -1012,7 +1086,7 @@ export default function Home() {
                 setWarningDrawerOpen(false);
                 setErrorDrawerOpen(false);
             }} />
-            
+
             {/* Active Warnings Filtered */}
             {(() => {
                 const visibleWarnings = results.filter(r => {
@@ -1021,138 +1095,188 @@ export default function Home() {
                     return (selectedTag === 'All' || (selectedTag !== null && rTags.includes(selectedTag)));
                 });
                 const count = visibleWarnings.length;
-                
+
                 if (count === 0) return null;
 
                 return (
                     <>
-                    <button 
-                        className={styles.warningToggle} 
-                        onClick={() => setWarningDrawerOpen(true)}
-                        style={{ bottom: failedCount > 0 ? '90px' : '32px' }}
-                    >
-                        <span>{count} No Data</span>
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
-                    </button>
+                        <button
+                            className={styles.warningToggle}
+                            onClick={() => setWarningDrawerOpen(true)}
+                            style={{ bottom: failedCount > 0 ? '90px' : '32px' }}
+                        >
+                            <span>{count} No Data</span>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+                        </button>
 
-                    <div className={`${styles.errorDrawer} ${warningDrawerOpen ? styles.open : ''}`}>
-                        <div className={styles.drawerHeader} style={{borderBottom: '1px solid rgba(245, 158, 11, 0.1)'}}>
-                            <div className={styles.drawerTitle} style={{color: '#d97706'}}>Missing Data ({count})</div>
-                            <button className={styles.closeButton} onClick={() => setWarningDrawerOpen(false)}>
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
-                            </button>
-                        </div>
-                        <div className={styles.drawerContent}>
-                            <div className={styles.errorGrid}>
-                            {(() => {
-                                // Filter warnings based on the ACTIVE TAG (Page)
-                                const allWarnings = results.filter(r => {
-                                    if (r.passed || isRealError(r)) return false;
-                                    const rTags = endpoints.find(e => e.path === r.endpoint && e.method === r.method)?.tags || ['General'];
-                                    return (selectedTag === 'All' || (selectedTag !== null && rTags.includes(selectedTag)));
-                                });
-                                if (allWarnings.length === 0) return null;
-                                
-                                return allWarnings.map((fail, idx) => {
-                                    const epDef = endpoints.find(e => e.path === fail.endpoint && e.method === fail.method);
-                                    // Use the first tag as the category label, default to 'General'
-                                    const category = epDef?.tags?.[0] || 'General'; 
-                                    
-                                    return (
-                                        <div key={idx} className={styles.warningItem}>
-                                            <div className={styles.cardHeader} style={{marginBottom: '8px'}}>
-                                                <div style={{fontSize: '0.65rem', fontWeight: 800, color: '#d97706', textTransform: 'uppercase', letterSpacing:'0.05em'}}>
-                                                    {category}
+                        <div className={`${styles.errorDrawer} ${warningDrawerOpen ? styles.open : ''}`}>
+                            <div className={styles.drawerHeader} style={{ borderBottom: '1px solid rgba(245, 158, 11, 0.1)' }}>
+                                <div className={styles.drawerTitle} style={{ color: '#d97706' }}>Missing Data ({count})</div>
+                                <button className={styles.closeButton} onClick={() => setWarningDrawerOpen(false)}>
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12" /></svg>
+                                </button>
+                            </div>
+                            <div className={styles.drawerContent}>
+                                <div className={styles.errorGrid}>
+                                    {(() => {
+                                        // Filter warnings based on the ACTIVE TAG (Page)
+                                        const allWarnings = results.filter(r => {
+                                            if (r.passed || isRealError(r)) return false;
+                                            const rTags = endpoints.find(e => e.path === r.endpoint && e.method === r.method)?.tags || ['General'];
+                                            return (selectedTag === 'All' || (selectedTag !== null && rTags.includes(selectedTag)));
+                                        });
+                                        if (allWarnings.length === 0) return null;
+
+                                        return allWarnings.map((fail, idx) => {
+                                            const epDef = endpoints.find(e => e.path === fail.endpoint && e.method === fail.method);
+                                            // Use the first tag as the category label, default to 'General'
+                                            const category = epDef?.tags?.[0] || 'General';
+
+                                            return (
+                                                <div key={idx} className={styles.warningItem}>
+                                                    <div className={styles.cardHeader} style={{ marginBottom: '8px' }}>
+                                                        <div style={{ fontSize: '0.65rem', fontWeight: 800, color: '#d97706', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                                                            {category}
+                                                        </div>
+                                                    </div>
+                                                    <div className={styles.cardHeader}>
+                                                        <div className={styles.cardPath}>{fail.endpoint}</div>
+                                                        <div className={styles.cardMethod}>{fail.method}</div>
+                                                    </div>
+
+                                                    <div className={styles.cardSummary}>
+                                                        {epDef?.summary || 'Endpoint Execution'}
+                                                    </div>
+
+                                                    <div className={styles.cardMeta}>
+                                                        <div className={styles.cardTime}>{Math.round(fail.time)} MS</div>
+                                                        <div className={`${styles.cardStatus} ${styles.warning}`}>NO DATA</div>
+                                                    </div>
+
+                                                    <div className={styles.cardCodeBlock}>
+                                                        <pre>{JSON.stringify(fail.response?.detail || fail.response || "No Data Found", null, 2)}</pre>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div className={styles.cardHeader}>
-                                                <div className={styles.cardPath}>{fail.endpoint}</div>
-                                                <div className={styles.cardMethod}>{fail.method}</div>
-                                            </div>
-                                            
-                                            <div className={styles.cardSummary}>
-                                                {epDef?.summary || 'Endpoint Execution'}
-                                            </div>
+                                            );
+                                        });
 
-                                            <div className={styles.cardMeta}>
-                                                <div className={styles.cardTime}>{Math.round(fail.time)} MS</div>
-                                                <div className={`${styles.cardStatus} ${styles.warning}`}>NO DATA</div>
-                                            </div>
-
-                                            <div className={styles.cardCodeBlock}>
-                                                <pre>{JSON.stringify(fail.response?.detail || fail.response || "No Data Found", null, 2)}</pre>
-                                            </div>
-                                        </div>
-                                    );
-                                });
-
+                                    })()}
+                                </div>
+                                {/* End drawerContent */}
+                            </div>
+                        </div>
+                    </>
+                );
             })()}
-            </div>
-            {/* End drawerContent */}
-            </div>
-            </div>
-            </>
-        );
-    })()}
-    {/* End Active Warnings Filtered Block */}
+            {/* End Active Warnings Filtered Block */}
 
             {/* Error Toggle & Drawer */}
             {failedCount > 0 && (
                 <>
-                    <button 
-                        className={styles.errorToggle} 
+                    <button
+                        className={styles.errorToggle}
                         onClick={() => setErrorDrawerOpen(true)}
                     >
                         <span>{failedCount} Errors</span>
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M18 6L6 18M6 6l12 12" /></svg>
                     </button>
 
                     <div className={`${styles.errorDrawer} ${errorDrawerOpen ? styles.open : ''}`}>
                         <div className={styles.drawerHeader}>
                             <div className={styles.drawerTitle}>Failed Requests ({failedCount})</div>
                             <button className={styles.closeButton} onClick={() => setErrorDrawerOpen(false)}>
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12" /></svg>
                             </button>
                         </div>
                         <div className={styles.drawerContent}>
                             <div className={styles.errorGrid}>
-                            {(() => {
-                                const allFailures = results.filter(r => isRealError(r));
-                                if (allFailures.length === 0) return null;
+                                {(() => {
+                                    const allFailures = results.filter(r => isRealError(r));
+                                    if (allFailures.length === 0) return null;
 
-                                return allFailures.map((fail, idx) => {
-                                    const epDef = endpoints.find(e => e.path === fail.endpoint && e.method === fail.method);
-                                    const category = epDef?.tags?.[0] || 'General';
+                                    return allFailures.map((fail, idx) => {
+                                        const epDef = endpoints.find(e => e.path === fail.endpoint && e.method === fail.method);
+                                        const category = epDef?.tags?.[0] || 'General';
 
-                                    return (
-                                        <div key={idx} className={styles.errorItem}>
-                                            <div className={styles.cardHeader} style={{marginBottom: '8px'}}>
-                                                <div style={{fontSize: '0.65rem', fontWeight: 800, color: '#475569', textTransform: 'uppercase', letterSpacing:'0.05em'}}>
-                                                    {category}
+                                        return (
+                                            <div key={idx} className={styles.errorItem}>
+                                                <div className={styles.cardHeader} style={{ marginBottom: '8px' }}>
+                                                    <div style={{ fontSize: '0.65rem', fontWeight: 800, color: '#475569', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                                                        {category}
+                                                    </div>
+                                                </div>
+                                                <div className={styles.cardHeader}>
+                                                    <div className={styles.cardPath}>{fail.endpoint}</div>
+                                                    <div className={styles.cardMethod}>{fail.method}</div>
+                                                </div>
+
+                                                <div className={styles.cardSummary}>
+                                                    {epDef?.summary || 'Endpoint Execution'}
+                                                </div>
+
+                                                <div className={styles.cardMeta}>
+                                                    <div className={styles.cardTime}>{Math.round(fail.time)} MS</div>
+                                                    <div className={`${styles.cardStatus} ${styles.failed}`}>FAILED</div>
+                                                </div>
+
+                                                <div className={styles.cardCodeBlock}>
+                                                    <pre>{JSON.stringify(fail.response?.detail || fail.response || "Unknown Error", null, 2)}</pre>
                                                 </div>
                                             </div>
-                                            <div className={styles.cardHeader}>
-                                                <div className={styles.cardPath}>{fail.endpoint}</div>
-                                                <div className={styles.cardMethod}>{fail.method}</div>
-                                            </div>
-                                            
-                                            <div className={styles.cardSummary}>
-                                                {epDef?.summary || 'Endpoint Execution'}
-                                            </div>
-
-                                            <div className={styles.cardMeta}>
-                                                <div className={styles.cardTime}>{Math.round(fail.time)} MS</div>
-                                                <div className={`${styles.cardStatus} ${styles.failed}`}>FAILED</div>
-                                            </div>
-
-                                            <div className={styles.cardCodeBlock}>
-                                                <pre>{JSON.stringify(fail.response?.detail || fail.response || "Unknown Error", null, 2)}</pre>
-                                            </div>
-                                        </div>
-                                    );
-                                });
-                            })()}
+                                        );
+                                    });
+                                })()}
                             </div>
+                        </div>
+                    </div>
+                </>
+            )}
+
+            {/* FLOATING CHAT WIDGET */}
+            {config.apiKey && (
+                <>
+                    <button
+                        className={styles.chatFab}
+                        onClick={() => setChatOpen(!chatOpen)}
+                        title="API Copilot"
+                    >
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /></svg>
+                    </button>
+
+                    <div className={`${styles.chatWindow} ${chatOpen ? styles.chatOpen : ''}`}>
+                        <div className={styles.chatHeader}>
+                            <div className="flex items-center gap-2">
+                                <div className="w-2 h-2 rounded-full bg-success"></div>
+                                <span className="font-bold">API Copilot</span>
+                            </div>
+                            <button onClick={() => setChatOpen(false)} className="opacity-50 hover:opacity-100">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
+                            </button>
+                        </div>
+                        <div className={styles.chatBody}>
+                            {chatMessages.map((msg, i) => (
+                                <div key={i} className={`${styles.chatMessage} ${msg.role === 'user' ? styles.chatUser : styles.chatBot}`}>
+                                    {msg.content}
+                                </div>
+                            ))}
+                            {chatLoading && (
+                                <div className={`${styles.chatMessage} ${styles.chatBot}`}>
+                                    <span className="animate-pulse">...</span>
+                                </div>
+                            )}
+                            <div ref={chatEndRef} />
+                        </div>
+                        <div className={styles.chatInputArea}>
+                            <input
+                                className={styles.chatInput}
+                                placeholder="Ask about endpoints..."
+                                value={chatInput}
+                                onChange={e => setChatInput(e.target.value)}
+                                onKeyDown={e => e.key === 'Enter' && sendChatMessage()}
+                            />
+                            <button className={styles.chatSend} onClick={sendChatMessage} disabled={chatLoading}>
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="22" y1="2" x2="11" y2="13" /><polygon points="22 2 15 22 11 13 2 9 22 2" /></svg>
+                            </button>
                         </div>
                     </div>
                 </>
