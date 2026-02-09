@@ -614,3 +614,7 @@ INFO:     127.0.0.1:52350 - "GET /api/vehicles/bb1cd08c-0667-4ebd-b7bf-0b5701f39
 INFO:     127.0.0.1:52351 - "GET /api/payments/1b0df0b1-368a-43a9-b3fa-362cf35c5632 HTTP/1.1" 200 OK
 INFO:     127.0.0.1:52353 - "GET /api/vehicles/driver/7594eede-bb87-4db0-ae6f-e06061ae8431 HTTP/1.1" 200 OK
 INFO:     127.0.0.1:52354 - "GET /api/v1/wallet-transactions/1 HTTP/1.1" 200 OK
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [32153]
