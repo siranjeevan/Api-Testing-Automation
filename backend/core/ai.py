@@ -55,14 +55,17 @@ def diagnose_error(api_key: str, endpoint: Dict[str, Any], request_body: Any, re
     You are an expert API Debugger. Analyze the following API failure.
     
     API Endpoint: {endpoint.get('method')} {endpoint.get('path')}
+    Targeted URL: {endpoint.get('url_hit')}
     Target Schema Requirement (OpenAPI Spec): {json.dumps(endpoint.get('requestBody'), indent=2)}
     Request Body Sent: {json.dumps(request_body, indent=2)}
     Response Received: {json.dumps(response_body, indent=2)}
     
     Task:
-    1. Compare the 'Request Body Sent' against the 'Target Schema Requirement'.
-    2. Determine if this is an "INPUT_ISSUE" or an "API_ISSUE". 
-       - NOTE: If the server returns errors like "already exists", "duplicate entry", "phone number registered", or "conflict", treat it as an "INPUT_ISSUE".
+    1. Check if the 'Targeted URL' still contains placeholders like '{{...}}' or '{{...}}'. If so, identify which data dependency is missing.
+    2. Compare the 'Request Body Sent' against the 'Target Schema Requirement'.
+    3. Determine if this is an "INPUT_ISSUE" or an "API_ISSUE". 
+       - NOTE: Unresolved URL placeholders are always an "INPUT_ISSUE".
+       - NOTE: If the server returns errors like "already exists", "duplicate entry", or "conflict", treat it as an "INPUT_ISSUE".
     3. If it is an "INPUT_ISSUE", provide the corrected JSON request body. If the error was a duplicate/conflict, generate a NEW random unique value for that specific field to ensure the next retry succeeds.
     4. If it is an "API_ISSUE" (e.g. 500 Internal Server Error, Null Pointer), explain why the server is failing based on the response.
     
@@ -72,7 +75,10 @@ def diagnose_error(api_key: str, endpoint: Dict[str, Any], request_body: Any, re
       {{
         "diagnosis": "INPUT_ISSUE" | "API_ISSUE",
         "explanation": "Short clear explanation in simple English",
-        "suggested_fix": {{ ... corrected JSON body if input issue ... }}
+        "suggested_fix": {{ 
+          "body": {{ ... corrected JSON body ... }},
+          "parameters": {{ ... corrected query/path parameters ... }}
+        }}
       }}
     """
     

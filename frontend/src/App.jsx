@@ -66,18 +66,25 @@ function App() {
   // Helper functions (simplified from page.tsx)
   const extractIdentifiers = (data) => {
     const found = {};
-    const scan = (obj) => {
+    const scan = (obj, prefix = '') => {
       if (!obj || typeof obj !== 'object') return;
       if (Array.isArray(obj)) {
-        obj.forEach(scan);
+        // Only scan first 3 items to avoid massive state growth
+        obj.slice(0, 3).forEach(item => scan(item, prefix));
         return;
       }
       Object.entries(obj).forEach(([key, val]) => {
-        if (found[key]) return;
-        if (val !== null && (typeof val === 'string' || typeof val === 'number' || typeof val === 'boolean')) {
-          found[key] = val;
-        } else {
-          scan(val);
+        const lowerKey = key.toLowerCase();
+        // Look for keys that smell like identifiers
+        const isId = lowerKey === 'id' || lowerKey.endsWith('_id') || lowerKey.endsWith('id') || lowerKey.includes('uid');
+        
+        if (isId && val !== null && (typeof val === 'string' || typeof val === 'number')) {
+          if (!found[key]) found[key] = val;
+          // Also store as normalized path segment for ADDR (e.g. driver_id)
+          const normalizedKey = lowerKey.includes('_') ? lowerKey : key;
+          if (!found[normalizedKey]) found[normalizedKey] = val;
+        } else if (val && typeof val === 'object' && !found[key]) {
+          scan(val, key);
         }
       });
     };
@@ -112,10 +119,14 @@ function App() {
     }
     if (schema.items) return [generateFromSchema(schema.items, depth + 1, fieldName, currentSchemas)];
     const type = schema.type?.toLowerCase();
-    if (type === "string") return schema.enum ? schema.enum[0] : "string";
+    if (type === "string") {
+        if (lowerName.includes('mail')) return "user@example.com";
+        if (lowerName.includes('phone')) return "9876543210";
+        return schema.enum ? schema.enum[0] : (fieldName || "string");
+    }
     if (type === "integer" || type === "number") return 0;
     if (type === "boolean") return true;
-    return {};
+    return (fieldName && typeof fieldName === 'string') ? fieldName : "string";
   };
 
   const parseSwagger = async () => {
@@ -141,13 +152,22 @@ function App() {
             bodySchema = ep.requestBody.content['application/json'].schema;
           }
           
+          const params = {};
+          if (ep.parameters) {
+            ep.parameters.forEach(p => {
+              if (p.in === 'path' || p.in === 'query') {
+                params[p.name] = p.schema?.default || (p.schema?.type === 'integer' ? 0 : '');
+              }
+            });
+          }
+
           initialData[opId] = {
             body: bodySchema ? generateFromSchema(bodySchema, 0, '', newSchemas) : {},
-            parameters: {}
+            parameters: params
           };
         });
         setTestData(JSON.stringify(initialData, null, 2));
-        setTab('run-get');
+        setTab('run-all');
       }
     } catch (e) {
       alert("Error parsing Swagger");
@@ -179,24 +199,140 @@ function App() {
     }
   };
 
-  const executeStep = async (ep, passedContext, retryCount = 0, forcedBody = null) => {
+  const executeStep = async (ep, passedContext, retryCount = 0, forcedData = null) => {
     let currentContext = { ...passedContext };
     const opId = ep.operationId || `${ep.method.toUpperCase()}_${ep.path}`;
     
-    let bodyToAnalyze = forcedBody || {};
-    if (!forcedBody) {
-        if (manualBodies[opId]) {
-            try { bodyToAnalyze = JSON.parse(manualBodies[opId]); } catch (e) {}
+    let opData = { body: null, parameters: {} };
+    
+    if (forcedData) {
+        if (forcedData.body || forcedData.parameters) {
+            opData = { 
+                body: forcedData.body || null, 
+                parameters: forcedData.parameters || {} 
+            };
         } else {
-            try {
-                const globalData = JSON.parse(testData);
-                bodyToAnalyze = globalData[opId]?.body || bodyToAnalyze;
-            } catch (e) {}
+            // Smart Split: Assign fields to parameters or body based on spec
+            const body = {};
+            const parameters = {};
+            const paramNames = (ep.parameters || []).map(p => p.name);
+            
+            Object.entries(forcedData).forEach(([k, v]) => {
+                if (paramNames.includes(k)) parameters[k] = v;
+                else body[k] = v;
+            });
+            opData = { 
+                body: Object.keys(body).length > 0 ? body : null, 
+                parameters 
+            };
+        }
+    } else {
+        try {
+            const globalData = JSON.parse(testData);
+            if (globalData[opId]) {
+                opData = { ...globalData[opId] };
+            }
+        } catch (e) {
+            console.error("Error parsing global testData:", e);
+        }
+        
+        if (manualBodies[opId]) {
+            try { opData.body = JSON.parse(manualBodies[opId]); } catch (e) {}
         }
     }
 
-    // Path resolution logic here... (omitted for brevity in this initial write, will add full logic in next step)
-    // For now, simple fetch
+    // Only default to empty object for POST/PUT/PATCH if a body is actually required/expected
+    const hasDefinedBody = !!ep.requestBody;
+    if (!opData.body && hasDefinedBody && ['POST', 'PUT', 'PATCH'].includes(ep.method.toUpperCase())) {
+        opData.body = {};
+    }
+
+    // AGGRESSIVE AUTONOMOUS DEPENDENCY RESOLUTION
+    const pathParamsNeeded = (ep.path.match(/\{([^}]+)\}/g) || []).map(m => m.replace(/[{}]/g, ''));
+    
+    // Check if any needed param is missing OR is a dummy value (0, empty, etc.)
+    const needsResolution = pathParamsNeeded.filter(p => {
+        const val = opData.parameters[p] || currentContext[p];
+        return !val || val === 0 || val === '0' || val === '12345' || val === 'string';
+    });
+    
+    if (needsResolution.length > 0 && retryCount === 0) {
+        console.log(`Resource ID resolution required for: ${needsResolution.join(', ')}. Seeking metadata producers...`);
+        
+        const pathParts = ep.path.split('/');
+        const firstMissing = needsResolution[0];
+        const paramIndex = pathParts.findIndex(p => p.includes(`{${firstMissing}}`));
+        const relevantResource = paramIndex > 0 ? pathParts[paramIndex - 1] : null;
+
+        if (relevantResource) {
+            const singularResource = relevantResource.replace(/s$/, '');
+            // Find a producer (GET list) OR a creator (POST)
+            const findEndpoint = (method, mustBeList = false) => endpoints.find(e => {
+                const pathLower = e.path.toLowerCase();
+                const matchesResource = pathLower.includes(relevantResource.toLowerCase()) || pathLower.includes(singularResource.toLowerCase());
+                const methodMatch = e.method === method;
+                const isList = !e.path.includes('{');
+                return methodMatch && matchesResource && (!mustBeList || isList) && e.path !== ep.path;
+            });
+
+            const producer = findEndpoint('GET', true);
+            const creator = findEndpoint('POST');
+            
+            if (producer) {
+                console.log(`Executing targeted discovery mission for ${relevantResource}...`);
+                let updatedContext = await executeStep(producer, currentContext, retryCount + 1);
+                
+                // If producer empty, seed it
+                if (creator && (!updatedContext[firstMissing] && Object.keys(updatedContext).length <= Object.keys(currentContext).length)) {
+                    console.log(`Resource list empty. Seeding ${relevantResource} via ${creator.method}...`);
+                    const seedContext = await executeStep(creator, currentContext, retryCount + 1);
+                    updatedContext = await executeStep(producer, { ...currentContext, ...seedContext }, retryCount + 1);
+                }
+
+                needsResolution.forEach(p => {
+                    const lowerP = p.toLowerCase();
+                    const fuzzyMatch = Object.keys(updatedContext).find(k => {
+                        const lk = k.toLowerCase();
+                        return lk.includes(lowerP) || lowerP.includes(lk) || (lk === 'id' && lowerP.includes(singularResource));
+                    });
+                    
+                    const resolvedVal = updatedContext[p] || 
+                                      updatedContext[`${singularResource}_id`] || 
+                                      updatedContext[`${relevantResource}_id`] || 
+                                      (fuzzyMatch ? updatedContext[fuzzyMatch] : null) ||
+                                      updatedContext['id'] || // Universal fallback
+                                      Object.values(updatedContext).find(v => typeof v === 'string' && (v.length > 20 || v.length === 36));
+
+                    if (resolvedVal) {
+                        opData.parameters[p] = resolvedVal;
+                        currentContext[p] = resolvedVal;
+                        console.log(`ADDR Success: Resolved ${p} = ${resolvedVal}`);
+                        
+                        // Persistent Update: update global testData so it stays fixed
+                        try {
+                            const gd = JSON.parse(testData);
+                            if (gd[opId]) {
+                                gd[opId].parameters = { ...gd[opId].parameters, [p]: resolvedVal };
+                                setTestData(JSON.stringify(gd, null, 2));
+                            }
+                        } catch(e) {}
+                    }
+                });
+                currentContext = { ...currentContext, ...updatedContext };
+            }
+        }
+    }
+
+    // Final Context Merge for Execution
+    const finalVariables = { 
+        ...currentContext, 
+        ...opData.parameters,
+        headers: { 
+            ...currentContext.headers, 
+            ...(config.apiKey ? { 'X-API-KEY': config.apiKey, 'Authorization': `Bearer ${config.apiKey}` } : {})
+        } 
+    };
+
     try {
         const runRes = await fetch('http://localhost:8000/run-step', {
             method: 'POST',
@@ -204,14 +340,8 @@ function App() {
             body: JSON.stringify({
                 baseUrl: config.baseUrl,
                 endpoint: ep,
-                variables: { 
-                    ...currentContext, 
-                    headers: { 
-                        ...currentContext.headers, 
-                        ...(config.apiKey ? { 'X-API-KEY': config.apiKey, 'Authorization': `Bearer ${config.apiKey}` } : {})
-                    } 
-                },
-                testData: { [opId]: { body: bodyToAnalyze } }
+                variables: finalVariables,
+                testData: { [opId]: opData }
             })
         });
         const runData = await runRes.json();
@@ -232,7 +362,7 @@ function App() {
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
                             apiKey: config.apiKey,
-                            endpoint: ep,
+                            endpoint: { ...ep, url_hit: resultItem.url },
                             requestBody: resultItem.request_body,
                             responseBody: resultItem.response
                         })
@@ -309,9 +439,9 @@ function App() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           apiKey: config.apiKey,
-          endpoint: ep,
-          requestBody: result.request_body,
-          responseBody: result.response
+          endpoint: { ...ep, url_hit: result?.url },
+          requestBody: result?.request_body,
+          responseBody: result?.response
         })
       });
       const data = await res.json();
@@ -558,7 +688,6 @@ function App() {
                 }
              </div>
            </div>
-            </div>
           </div>
         )}
 
@@ -702,10 +831,25 @@ function EndpointCard({ ep, result, diagnosis, onRun, onDiagnose }) {
                   
                   {diagnosis.suggested_fix && !diagnosis.autonomous && (
                     <div className="space-y-4">
-                        <div className="text-[10px] font-black uppercase tracking-[0.2em] opacity-40">Intelligence Solution // AI Generated Payload</div>
-                        <pre className="bg-black/20 p-4 rounded-xl text-[11px] font-mono overflow-auto max-h-[150px] border border-white/5">
-                          {JSON.stringify(diagnosis.suggested_fix, null, 2)}
-                        </pre>
+                        <div className="text-[10px] font-black uppercase tracking-[0.2em] opacity-40">Intelligence Solution // AI Generated Updates</div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          {diagnosis.suggested_fix.body && (
+                            <div>
+                              <div className="text-[8px] font-bold opacity-30 mb-1 uppercase">Body</div>
+                              <pre className="bg-black/20 p-3 rounded-xl text-[10px] font-mono overflow-auto max-h-[120px] border border-white/5">
+                                {JSON.stringify(diagnosis.suggested_fix.body, null, 2)}
+                              </pre>
+                            </div>
+                          )}
+                          {diagnosis.suggested_fix.parameters && (
+                            <div>
+                              <div className="text-[8px] font-bold opacity-30 mb-1 uppercase">Parameters</div>
+                              <pre className="bg-black/20 p-3 rounded-xl text-[10px] font-mono overflow-auto max-h-[120px] border border-white/5">
+                                {JSON.stringify(diagnosis.suggested_fix.parameters, null, 2)}
+                              </pre>
+                            </div>
+                          )}
+                        </div>
                         <button 
                           onClick={() => onRun(diagnosis.suggested_fix)}
                           className="w-full py-3 bg-soft-gray text-cocoa rounded-xl font-black text-[10px] uppercase tracking-widest hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2"

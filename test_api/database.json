@@ -1,7 +1,7 @@
 {
   "drivers": [
     {
-      "name": "name 680",
+      "name": "name",
       "phone_number": "8770417380",
       "email": "email71@gmail.com",
       "primary_location": "string",
@@ -12,7 +12,7 @@
       "is_approved": false,
       "fcm_token": null,
       "created_at": "2026-02-09T01:29:11.784301",
-      "updated_at": "2026-02-09T01:29:11.784301"
+      "updated_at": "2026-03-12T00:19:31.070413"
     },
     {
       "name": "John Doe",
@@ -120,13 +120,13 @@
       "vehicle_brand": "string",
       "vehicle_model": "string",
       "vehicle_number": "string",
-      "vehicle_color": "string",
-      "seating_capacity": 0,
+      "vehicle_color": "vehicle_color",
+      "seating_capacity": 5,
       "rc_expiry_date": "string",
       "vehicle_id": "bb1cd08c-0667-4ebd-b7bf-0b5701f390f0",
-      "vehicle_approved": false,
+      "vehicle_approved": true,
       "created_at": "2026-02-09T01:29:11.924503",
-      "updated_at": "2026-02-09T01:30:15.791064"
+      "updated_at": "2026-03-12T00:19:31.554774"
     },
     {
       "driver_id": "af5c7e41-b1d4-4ed2-bae9-2ff28f2a4826",
@@ -242,11 +242,11 @@
       "passenger_count": 7,
       "planned_start_at": "string",
       "trip_id": "8ab90151-8fd2-4fce-aa4e-7040efe93ec0",
-      "fare": 0.0,
-      "trip_status": "OPEN",
+      "fare": 10.99,
+      "trip_status": "trip_status",
       "created_at": "2026-02-09T01:29:12.069336",
       "assigned_driver_id": null,
-      "waiting_charges": 0.0
+      "waiting_charges": 5.99
     },
     {
       "customer_name": "customer_name 697",
@@ -326,15 +326,6 @@
   ],
   "payments": [
     {
-      "driver_id": "7594eede-bb87-4db0-ae6f-e06061ae8431",
-      "amount": 0.0,
-      "transaction_type": "CREDIT",
-      "status": "PENDING",
-      "razorpay_payment_id": "{{razorpay_payment_id}}",
-      "payment_id": "1b0df0b1-368a-43a9-b3fa-362cf35c5632",
-      "created_at": "2026-02-09T01:29:12.329860"
-    },
-    {
       "driver_id": "582865aa-58de-4be7-a6d9-be05f0026f33",
       "amount": 0.0,
       "transaction_type": "CREDIT",
@@ -384,22 +375,12 @@
     {
       "driver_id": 12345,
       "transaction_type": "credit",
-      "amount": 0.0,
-      "description": "string",
-      "reference_id": "67890",
-      "transaction_id": 1,
-      "created_at": "2026-02-09T01:29:46.433248",
-      "updated_at": "2026-02-09T01:30:16.177865"
-    },
-    {
-      "driver_id": 12345,
-      "transaction_type": "credit",
       "amount": 10.99,
-      "description": "Test transaction",
+      "description": "description",
       "reference_id": "582865aa-58de-4be7-a6d9-be05f0026f33",
       "transaction_id": 2,
       "created_at": "2026-02-09T01:42:37.802916",
-      "updated_at": null
+      "updated_at": "2026-03-12T00:19:32.170789"
     },
     {
       "driver_id": 12345,

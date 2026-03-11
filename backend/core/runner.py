@@ -12,7 +12,7 @@ async def execute_test_step(
 ) -> Dict[str, Any]:
     
     # 0. Get specific data for this endpoint
-    op_id = endpoint.operationId or f"{endpoint.method}_{endpoint.path}"
+    op_id = endpoint.operationId or f"{endpoint.method.upper()}_{endpoint.path}"
     op_data = test_data.get(op_id, {})
     print(f"DEBUG: Executing {endpoint.method} {endpoint.path} (OpId: {op_id})")
     print(f"DEBUG: Op Data found: {list(op_data.keys())}")
@@ -59,10 +59,16 @@ async def execute_test_step(
                 val = variables.get(p_name) or test_data.get(p_name)
 
             if val is not None:
+                # Format booleans for URLs correctly (true/false instead of True/False)
+                # Handle both actual booleans and strings that look like booleans
+                str_val = str(val)
+                if isinstance(val, bool) or (isinstance(val, str) and val.lower() in ['true', 'false']):
+                    str_val = str_val.lower()
+                
                 if p_in == "path":
-                    path_params[p_name] = str(val)
+                    path_params[p_name] = str_val
                 elif p_in == "query":
-                    query_params[p_name] = str(val)
+                    query_params[p_name] = str_val
 
     # Substitute Path Parameters in URL
     for p_name, val in path_params.items():
