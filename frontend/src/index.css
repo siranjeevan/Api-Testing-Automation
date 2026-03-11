@@ -1,0 +1,14 @@
+@import "tailwindcss";
+
+/* vscode-css-languageservice-ignore-at-rule: theme */
+@theme {
+  --color-cocoa: #5A3A2E;
+  --color-soft-gray: #D7CCC8;
+}
+
+body {
+  margin: 0;
+  font-family: 'Outfit', sans-serif;
+  color: #5A3A2E;
+  background-color: #D7CCC8;
+}
