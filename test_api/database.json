@@ -83,6 +83,34 @@
       "fcm_token": null,
       "created_at": "2026-02-14T11:03:44.416190",
       "updated_at": "2026-02-14T11:03:44.416190"
+    },
+    {
+      "name": "string",
+      "phone_number": "string",
+      "email": "string",
+      "primary_location": "string",
+      "driver_id": "14cd872d-c50f-4bed-b37f-2d829100f426",
+      "kyc_verified": "pending",
+      "wallet_balance": 0.0,
+      "is_available": true,
+      "is_approved": false,
+      "fcm_token": null,
+      "created_at": "2026-03-11T23:24:58.304317",
+      "updated_at": "2026-03-11T23:24:58.304317"
+    },
+    {
+      "name": "string",
+      "phone_number": "new_unique_phone_number_12345",
+      "email": "string",
+      "primary_location": "string",
+      "driver_id": "5fdad760-371f-4287-a0e4-c9961acd2f03",
+      "kyc_verified": "pending",
+      "wallet_balance": 0.0,
+      "is_available": true,
+      "is_approved": false,
+      "fcm_token": null,
+      "created_at": "2026-03-11T23:48:24.584976",
+      "updated_at": "2026-03-11T23:48:24.584976"
     }
   ],
   "vehicles": [
@@ -113,6 +141,20 @@
       "vehicle_approved": false,
       "created_at": "2026-02-09T01:53:05.988106",
       "updated_at": "2026-02-09T01:53:05.988106"
+    },
+    {
+      "driver_id": "5fdad760-371f-4287-a0e4-c9961acd2f03",
+      "vehicle_type": "sedan",
+      "vehicle_brand": "string",
+      "vehicle_model": "string",
+      "vehicle_number": "NEW-VEHICLE-1234",
+      "vehicle_color": "string",
+      "seating_capacity": 0,
+      "rc_expiry_date": "string",
+      "vehicle_id": "38cf7f82-81f9-4ea5-8079-898c142a616f",
+      "vehicle_approved": false,
+      "created_at": "2026-03-11T23:48:25.371185",
+      "updated_at": "2026-03-11T23:48:25.371185"
     }
   ],
   "tariff_configs": [
@@ -163,6 +205,30 @@
       "is_active": true,
       "created_at": "2026-02-14T11:03:50.092592",
       "updated_at": "2026-02-09T01:30:16.177865"
+    },
+    {
+      "config_id": 5,
+      "vehicle_type": "sedan",
+      "one_way_per_km": 0.0,
+      "one_way_min_km": 0.0,
+      "round_trip_per_km": 0.0,
+      "round_trip_min_km": 0.0,
+      "driver_allowance": 0.0,
+      "is_active": true,
+      "created_at": "2026-03-11T23:40:16.077874",
+      "updated_at": "2022-01-01T00:00:00"
+    },
+    {
+      "config_id": 6,
+      "vehicle_type": "sedan",
+      "one_way_per_km": 0.0,
+      "one_way_min_km": 0.0,
+      "round_trip_per_km": 0.0,
+      "round_trip_min_km": 0.0,
+      "driver_allowance": 0.0,
+      "is_active": true,
+      "created_at": "2026-03-11T23:48:26.677967",
+      "updated_at": "2024-03-16T14:30:00"
     }
   ],
   "trips": [
@@ -211,6 +277,51 @@
       "trip_status": "OPEN",
       "created_at": "2026-02-14T11:03:41.851417",
       "assigned_driver_id": null
+    },
+    {
+      "customer_name": "string",
+      "customer_phone": "string",
+      "pickup_address": "string",
+      "drop_address": "string",
+      "trip_type": "one_way",
+      "vehicle_type": "sedan",
+      "passenger_count": 0,
+      "planned_start_at": "string",
+      "trip_id": "66e42006-2485-4e8f-8cad-567308eb890a",
+      "fare": 0.0,
+      "trip_status": "OPEN",
+      "created_at": "2026-03-11T23:24:58.361068",
+      "assigned_driver_id": null
+    },
+    {
+      "customer_name": "string",
+      "customer_phone": "string",
+      "pickup_address": "string",
+      "drop_address": "string",
+      "trip_type": "one_way",
+      "vehicle_type": "sedan",
+      "passenger_count": 0,
+      "planned_start_at": "string",
+      "trip_id": "494bae0f-d8b0-4a33-8aed-14e98c6648d0",
+      "fare": 0.0,
+      "trip_status": "OPEN",
+      "created_at": "2026-03-11T23:40:14.851571",
+      "assigned_driver_id": null
+    },
+    {
+      "customer_name": "string",
+      "customer_phone": "string",
+      "pickup_address": "string",
+      "drop_address": "string",
+      "trip_type": "one_way",
+      "vehicle_type": "sedan",
+      "passenger_count": 0,
+      "planned_start_at": "string",
+      "trip_id": "362823e1-9849-44f2-ac6c-01a18a32ec33",
+      "fare": 0.0,
+      "trip_status": "OPEN",
+      "created_at": "2026-03-11T23:48:25.412966",
+      "assigned_driver_id": null
     }
   ],
   "payments": [
@@ -240,6 +351,33 @@
       "razorpay_payment_id": "{{razorpay_payment_id}}",
       "payment_id": "b7f369a3-de38-47e4-b077-5a29c31f7b69",
       "created_at": "2026-02-14T11:03:49.873532"
+    },
+    {
+      "driver_id": "14cd872d-c50f-4bed-b37f-2d829100f426",
+      "amount": 0.0,
+      "transaction_type": "CREDIT",
+      "status": "PENDING",
+      "razorpay_payment_id": "{{razorpay_payment_id}}",
+      "payment_id": "aa9b798e-168c-4bb7-8572-4223bb5da254",
+      "created_at": "2026-03-11T23:24:58.389813"
+    },
+    {
+      "driver_id": "14cd872d-c50f-4bed-b37f-2d829100f426",
+      "amount": 0.0,
+      "transaction_type": "CREDIT",
+      "status": "PENDING",
+      "razorpay_payment_id": "{{razorpay_payment_id}}",
+      "payment_id": "4e712cae-000b-4609-aca0-8a65d99ff268",
+      "created_at": "2026-03-11T23:40:14.877154"
+    },
+    {
+      "driver_id": "5fdad760-371f-4287-a0e4-c9961acd2f03",
+      "amount": 0.0,
+      "transaction_type": "CREDIT",
+      "status": "PENDING",
+      "razorpay_payment_id": "{{razorpay_payment_id}}",
+      "payment_id": "3385cbeb-406a-4b79-b684-0dfab41437c9",
+      "created_at": "2026-03-11T23:48:25.465533"
     }
   ],
   "wallet_transactions": [
@@ -271,6 +409,26 @@
       "reference_id": "7594eede-bb87-4db0-ae6f-e06061ae8431",
       "transaction_id": 3,
       "created_at": "2026-02-14T11:03:52.732161",
+      "updated_at": null
+    },
+    {
+      "driver_id": 12345,
+      "transaction_type": "credit",
+      "amount": 0.0,
+      "description": "string",
+      "reference_id": "some_reference_id",
+      "transaction_id": 4,
+      "created_at": "2026-03-11T23:40:15.344227",
+      "updated_at": null
+    },
+    {
+      "driver_id": 12345,
+      "transaction_type": "credit",
+      "amount": 0.0,
+      "description": "string",
+      "reference_id": "{{reference_id}}",
+      "transaction_id": 5,
+      "created_at": "2026-03-11T23:48:26.077372",
       "updated_at": null
     }
   ],

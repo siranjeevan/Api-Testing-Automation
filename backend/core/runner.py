@@ -14,6 +14,8 @@ async def execute_test_step(
     # 0. Get specific data for this endpoint
     op_id = endpoint.operationId or f"{endpoint.method}_{endpoint.path}"
     op_data = test_data.get(op_id, {})
+    print(f"DEBUG: Executing {endpoint.method} {endpoint.path} (OpId: {op_id})")
+    print(f"DEBUG: Op Data found: {list(op_data.keys())}")
     
     # 1. Substitute Variables in URL
     # Context includes global variables, global test data, and this operation's specific parameters
@@ -40,32 +42,43 @@ async def execute_test_step(
     path = endpoint.path.lstrip("/")
     url = f"{base}/{path}"
     url = replace_placeholders(url, context)
+
+    # 2. Extract Parameters (Path and Query)
+    path_params = {}
+    query_params = {}
     
-    # Also replace path parameters explicitly defined in Swagger if missing from placeholder logic
     if endpoint.parameters:
         for param in endpoint.parameters:
-            if param.get("in") == "path":
-                p_name = param["name"]
-                if p_name in context:
-                    val = context[p_name]
-                    url = url.replace(f"{{{p_name}}}", str(val))
+            p_name = param["name"]
+            p_in = param.get("in", "query")
+            val = context.get(p_name)
+            
+            # If not in context, check if it's a template we need to replace
+            if val is None:
+                # Attempt to find it in variables or test_data if not found in context
+                val = variables.get(p_name) or test_data.get(p_name)
 
-    # 2. Prepare Body
+            if val is not None:
+                if p_in == "path":
+                    path_params[p_name] = str(val)
+                elif p_in == "query":
+                    query_params[p_name] = str(val)
+
+    # Substitute Path Parameters in URL
+    for p_name, val in path_params.items():
+        url = url.replace(f"{{{p_name}}}", val)
+    
+    # 3. Prepare Body
     body = op_data.get("body")
-    if body and endpoint.method in ["POST", "PUT", "PATCH"]:
+    if body is not None and endpoint.method.upper() in ["POST", "PUT", "PATCH"]:
         def resolve_body_placeholders(obj):
             if isinstance(obj, str):
-                # 1. Check if it's a DIRECT replacement (e.g. "{{id}}" or "{id}")
-                # This preserves types (ints, bools) which is critical for parsing
                 stripped = obj.strip()
                 if (stripped.startswith("{{") and stripped.endswith("}}")) or (stripped.startswith("{") and stripped.endswith("}")):
                     key = stripped.strip("{}")
                     if key in context:
                         return context[key]
-                
-                # 2. General string replacement for templates
                 return replace_placeholders(obj, context)
-            
             elif isinstance(obj, dict):
                 return {k: resolve_body_placeholders(v) for k, v in obj.items()}
             elif isinstance(obj, list):
@@ -73,11 +86,13 @@ async def execute_test_step(
             return obj
 
         body = resolve_body_placeholders(body)
+        print(f"DEBUG: Resolved Body: {body}")
+    else:
+        body = None # Don't send body for GET/DELETE unless specified
     
-    # 3. Request
+    # 4. Request
     start_time = time.time()
     
-    # Merge headers
     req_headers = variables.get("headers", {})
     if not req_headers and "headers" in test_data:
         req_headers = test_data["headers"]
@@ -87,15 +102,16 @@ async def execute_test_step(
             method=endpoint.method,
             url=url,
             json=body,
+            params=query_params,
             headers=req_headers,
             timeout=10.0
         )
         
         duration = (time.time() - start_time) * 1000
         
-        # Safe JSON extraction
         resp_data = None
-        if "application/json" in response.headers.get("content-type", "").lower():
+        content_type = response.headers.get("content-type", "").lower()
+        if "application/json" in content_type:
             try:
                 resp_data = response.json()
             except:
@@ -103,15 +119,11 @@ async def execute_test_step(
         else:
             resp_data = response.text
 
-        # If data is empty string or None, explicitly return "No Data"
         if not resp_data and resp_data != 0 and resp_data != False:
              resp_data = "No Data"
 
-        # Strict passing condition: any response from server < 400 is considered a pass.
-        # 4xx (Client Error) and 5xx (Server Error) are marked as failures.
         passed = response.status_code < 400
         
-        # Check body for logical failures even if status is 200
         if passed and isinstance(resp_data, dict):
             if resp_data.get("success") is False or resp_data.get("error") is True:
                 passed = False
@@ -123,7 +135,8 @@ async def execute_test_step(
             "time": duration,
             "passed": passed,
             "response": resp_data,
-            "url": url # for debugging
+            "request_body": body,
+            "url": str(response.url) # Actual URL used
         }
 
     except Exception as e:
@@ -133,6 +146,8 @@ async def execute_test_step(
             "status": 0,
             "time": 0,
             "passed": False,
+            "response": None,
+            "request_body": body,
             "error": str(e),
             "url": url
         }
